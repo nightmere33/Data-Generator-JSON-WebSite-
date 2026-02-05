@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#4F46E5">
+    <title>{% block title %}Mosaic Visa Generator - Create JSON Data{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                    },
+                    animation: {
+                        'slide-down': 'slideDown 0.2s ease-out',
+                        'slide-up': 'slideUp 0.2s ease-out',
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                    },
+                    keyframes: {
+                        slideDown: {
+                            '0%': { transform: 'translateY(-10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(0)', opacity: '1' },
+                            '100%': { transform: 'translateY(-10px)', opacity: '0' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Mobile menu styles */
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .mobile-menu.open {
+            max-height: 400px;
+            transition: max-height 0.3s ease-in;
+        }
+        
+        /* Remove tap highlight on mobile */
+        button, a {
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Better touch targets */
+        @media (max-width: 768px) {
+            input, select, textarea, button {
+                font-size: 16px !important; /* Prevents iOS zoom */
+            }
+            
+            .touch-target {
+                min-height: 44px;
+                min-width: 44px;
+            }
+        }
+        
+        /* Smooth transitions */
+        * {
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+    </style>
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 min-h-screen flex flex-col">
+    
+    <!-- Clean Modern Header -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="{% url 'index' %}" class="flex items-center space-x-3 group">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow">
+                            <i class="fas fa-passport text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-gray-900 text-lg leading-tight">Mosaic Visa</div>
+                            <div class="text-xs text-gray-500">JSON Generator</div>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="{% url 'index' %}" 
+                       class="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition flex items-center gap-2 rounded-lg hover:bg-blue-50">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                    
+                    <a href="{% url 'form' %}" 
+                       class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-medium shadow hover:shadow-md transition-all duration-200 flex items-center gap-2">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Create Data</span>
+                    </a>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-button" 
+                        class="md:hidden w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition touch-target">
+                    <i class="fas fa-bars text-gray-700 text-xl" id="menu-icon"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu (Simple Dropdown) -->
+            <div id="mobile-menu" class="mobile-menu md:hidden">
+                <div class="py-3 border-t border-gray-100">
+                    <div class="space-y-1">
+                        <a href="{% url 'index' %}" 
+                           class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition touch-target">
+                            <i class="fas fa-home w-5"></i>
+                            <span>Home</span>
+                        </a>
+                        
+                        <a href="{% url 'form' %}" 
+                           class="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-medium shadow mt-2 touch-target">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Create New Data</span>
+                            <i class="fas fa-arrow-right ml-auto"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-6">
+        {% if messages %}
+        <div class="mb-6">
+            {% for message in messages %}
+            <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl flex items-center gap-3">
+                <i class="fas fa-check-circle text-green-500"></i>
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Clean Footer -->
+    <footer class="mt-auto bg-gray-900 text-gray-300 py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Brand -->
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-passport text-white"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-white text-lg">Mosaic Visa</div>
+                            <div class="text-sm text-gray-400">JSON Generator</div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-400">
+                        Create JSON data for Mosaic Visa appointments. Simple, fast, and mobile-friendly.
+                    </p>
+                </div>
+                
+                <!-- Links -->
+                <div>
+                    <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="{% url 'index' %}" class="text-gray-400 hover:text-white transition flex items-center gap-2 text-sm">
+                                <i class="fas fa-chevron-right text-xs"></i>
+                                Home
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'form' %}" class="text-gray-400 hover:text-white transition flex items-center gap-2 text-sm">
+                                <i class="fas fa-chevron-right text-xs"></i>
+                                Create Data
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Features -->
+                <div>
+                    <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Features</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check-circle text-green-400"></i>
+                            Mobile-Friendly
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check-circle text-green-400"></i>
+                            Secure Processing
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check-circle text-green-400"></i>
+                            Instant JSON
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Bottom Bar -->
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center">
+                <p class="text-sm text-gray-400">
+                    © 2024 Mosaic Visa JSON Generator
+                </p>
+                <p class="text-xs text-gray-500 mt-2">
+                    Generate JSON data for visa appointment automation
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    {% block extra_scripts %}{% endblock %}
+    
+    <script>
+        // Simple mobile menu toggle without glitches
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+        
+        if (mobileMenuButton && mobileMenu) {
+            let isMenuOpen = false;
+            
+            mobileMenuButton.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent event bubbling
+                
+                if (isMenuOpen) {
+                    // Close menu
+                    mobileMenu.classList.remove('open');
+                    menuIcon.className = 'fas fa-bars text-gray-700 text-xl';
+                } else {
+                    // Open menu
+                    mobileMenu.classList.add('open');
+                    menuIcon.className = 'fas fa-times text-gray-700 text-xl';
+                }
+                
+                isMenuOpen = !isMenuOpen;
+            });
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (isMenuOpen && 
+                    !mobileMenu.contains(e.target) && 
+                    !mobileMenuButton.contains(e.target)) {
+                    mobileMenu.classList.remove('open');
+                    menuIcon.className = 'fas fa-bars text-gray-700 text-xl';
+                    isMenuOpen = false;
+                }
+            });
+            
+            // Close menu when clicking a link (for better mobile UX)
+            mobileMenu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.remove('open');
+                    menuIcon.className = 'fas fa-bars text-gray-700 text-xl';
+                    isMenuOpen = false;
+                });
+            });
+            
+            // Prevent menu from closing when clicking inside it
+            mobileMenu.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+        
+        // Form validation enhancement
+        document.addEventListener('DOMContentLoaded', function() {
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const requiredFields = form.querySelectorAll('[required]');
+                    let valid = true;
+                    let firstInvalid = null;
+                    
+                    requiredFields.forEach(field => {
+                        if (!field.value.trim()) {
+                            valid = false;
+                            field.classList.add('border-red-500', 'ring-2', 'ring-red-200');
+                            
+                            if (!firstInvalid) {
+                                firstInvalid = field;
+                            }
+                        } else {
+                            field.classList.remove('border-red-500', 'ring-2', 'ring-red-200');
+                        }
+                    });
+                    
+                    if (!valid) {
+                        e.preventDefault();
+                        
+                        // Show simple alert
+                        alert('Please fill in all required fields.');
+                        
+                        // Scroll to first invalid field
+                        if (firstInvalid) {
+                            firstInvalid.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center'
+                            });
+                            firstInvalid.focus();
+                        }
+                    }
+                });
+            });
+            
+            // Remove red border when user starts typing
+            const inputs = document.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    if (this.value.trim()) {
+                        this.classList.remove('border-red-500', 'ring-2', 'ring-red-200');
+                    }
+                });
+            });
+            
+            // Fix iOS date input
+            if (navigator.userAgent.match(/iPad|iPhone|iPod/)) {
+                const dateInputs = document.querySelectorAll('input[type="date"]');
+                dateInputs.forEach(input => {
+                    // Ensure date inputs are large enough for iOS
+                    input.style.minHeight = '44px';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

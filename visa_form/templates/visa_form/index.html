@@ -1,0 +1,157 @@
+{% extends 'visa_form/base.html' %}
+
+{% block title %}Mosaic Visa Generator - Create JSON Data{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Hero Section -->
+    <div class="text-center mb-12">
+        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 mb-6">
+            <i class="fas fa-passport text-4xl text-white"></i>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Mosaic Visa Data Generator
+        </h1>
+        <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+            Create JSON data for your Mosaic Visa appointments in minutes. 
+            Simple, fast, and mobile-friendly.
+        </p>
+        <a href="{% url 'form' %}" 
+           class="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-10 rounded-xl text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <i class="fas fa-plus-circle mr-3"></i> Start Creating Your Data
+            <i class="fas fa-arrow-right ml-3"></i>
+        </a>
+    </div>
+
+    <!-- Simple Steps -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-edit text-2xl"></i>
+            </div>
+            <h3 class="font-bold text-gray-800 mb-2">1. Fill Form</h3>
+            <p class="text-gray-600 text-sm">Enter your visa application details</p>
+        </div>
+        
+        <div class="text-center">
+            <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-check-circle text-2xl"></i>
+            </div>
+            <h3 class="font-bold text-gray-800 mb-2">2. Download</h3>
+            <p class="text-gray-600 text-sm">Get your JSON data file</p>
+        </div>
+        
+        <div class="text-center">
+            <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-paper-plane text-2xl"></i>
+            </div>
+            <h3 class="font-bold text-gray-800 mb-2">3. Share</h3>
+            <p class="text-gray-600 text-sm">Send to administrator for auto-filling</p>
+        </div>
+    </div>
+
+    <!-- Simple Features -->
+    <div class="bg-white rounded-2xl shadow-lg p-8 mb-12 border border-gray-100">
+        <div class="grid md:grid-cols-2 gap-8">
+            <div>
+                <div class="flex items-start mb-6">
+                    <div class="bg-blue-100 p-3 rounded-lg mr-4">
+                        <i class="fas fa-mobile-alt text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-800 mb-2">Mobile-Friendly</h3>
+                        <p class="text-gray-600 text-sm">Works perfectly on all devices</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start mb-6">
+                    <div class="bg-green-100 p-3 rounded-lg mr-4">
+                        <i class="fas fa-shield-alt text-green-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-800 mb-2">Secure & Private</h3>
+                        <p class="text-gray-600 text-sm">No data stored on our servers</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <div class="flex items-start mb-6">
+                    <div class="bg-purple-100 p-3 rounded-lg mr-4">
+                        <i class="fas fa-bolt text-purple-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-800 mb-2">Fast & Easy</h3>
+                        <p class="text-gray-600 text-sm">Generate data in seconds</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start mb-6">
+                    <div class="bg-indigo-100 p-3 rounded-lg mr-4">
+                        <i class="fas fa-code text-indigo-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-800 mb-2">Tampermonkey Ready</h3>
+                        <p class="text-gray-600 text-sm">Perfect JSON format for automation</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Simple How It Works -->
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 mb-12">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Simple Process</h2>
+        
+        <div class="space-y-6">
+            <div class="flex items-start">
+                <div class="bg-white text-blue-600 rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 font-bold">
+                    1
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-800 mb-2">Fill the Form</h3>
+                    <p class="text-gray-600">Enter your visa application details for you and your family members.</p>
+                </div>
+            </div>
+            
+            <div class="flex items-start">
+                <div class="bg-white text-green-600 rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 font-bold">
+                    2
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-800 mb-2">Download Your Data</h3>
+                    <p class="text-gray-600">Get a JSON file with Tampermonkey integration code and your data.</p>
+                </div>
+            </div>
+            
+            <div class="flex items-start">
+                <div class="bg-white text-purple-600 rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 font-bold">
+                    3
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-800 mb-2">Send to Administrator</h3>
+                    <p class="text-gray-600">Share the file with your administrator via WhatsApp or email.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final CTA -->
+    <div class="text-center">
+        <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">Ready to Get Started?</h3>
+            <p class="text-gray-600 mb-6 max-w-xl mx-auto">
+                Create your Mosaic Visa JSON data now. It's free and takes just a few minutes.
+            </p>
+            <a href="{% url 'form' %}" 
+               class="inline-flex items-center bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-12 rounded-xl text-lg shadow-xl hover:shadow-2xl transition-all duration-300">
+                <i class="fas fa-play-circle mr-3"></i> Create Your Visa Data Now
+                <i class="fas fa-arrow-right ml-3"></i>
+            </a>
+            <p class="text-gray-500 text-sm mt-4">
+                <i class="fas fa-lock mr-2"></i> Your data is processed locally and never stored
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
