@@ -1,16 +1,18 @@
 from django import forms
+from django.contrib.auth.models import User
 from datetime import date, timedelta
+from .models import AgencyProfile
 
 class VisaApplicationForm(forms.Form):
     # Common fields
-    slot = forms.ChoiceField(
-        choices=[('', 'Random / Aléatoire')] + 
-                [(f"{h:02d}:{m:02d}", f"{h:02d}:{m:02d}") 
-                 for h in range(8, 16) for m in [0, 20, 40] 
-                 if not (h == 15 and m > 20)],
-        required=False,
-        widget=forms.Select(attrs={'class': 'form-select rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'})
-    )
+    # slot = forms.ChoiceField(
+    #     choices=[('', 'Random / Aléatoire')] + 
+    #             [(f"{h:02d}:{m:02d}", f"{h:02d}:{m:02d}") 
+     #             for h in range(8, 16) for m in [0, 20, 40] 
+     #             if not (h == 15 and m > 20)],
+    #     required=False,
+     #    widget=forms.Select(attrs={'class': 'form-select rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'})
+    # )
     
     visa = forms.ChoiceField(
         choices=[
@@ -88,6 +90,38 @@ class VisaApplicationForm(forms.Form):
         }),
         initial=date.today() + timedelta(days=45)
     )
+
+     # New fields
+    start_date = forms.DateField(
+        label="Minimum desired date",
+        widget=forms.DateInput(attrs={'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full', 'type': 'date'}),
+        initial=date.today() + timedelta(days=30)
+    )
+    max_date = forms.DateField(
+        label="Maximum allowed date",
+        widget=forms.DateInput(attrs={'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full', 'type': 'date'}),
+        initial=date.today() + timedelta(days=45)
+    )
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'})
+    )
+    phone_local = forms.CharField(
+        label="Phone",
+        widget=forms.TextInput(attrs={'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'})
+    )
+    passports = forms.CharField(
+        label="Passport numbers (one per line)",
+        widget=forms.Textarea(attrs={'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full', 'rows': 3, 'placeholder': '314690857\n187204660\n...'}),
+        required=False,
+        help_text="Enter each passport number on a new line"
+    )
+    relations = forms.CharField(
+        label="Relations (comma separated)",
+        widget=forms.TextInput(attrs={'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full', 'placeholder': 'Wife, Father, Mother, Child'}),
+        required=False,
+        help_text="e.g., Wife, Father, Mother, Child"
+    )
+
 
 class ApplicantForm(forms.Form):
     name = forms.CharField(
@@ -215,3 +249,22 @@ class ApplicantForm(forms.Form):
             'class': 'form-select rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'
         })
     )
+
+    
+class AgencyRegistrationForm(forms.Form):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-input rounded-lg w-full'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-input rounded-lg w-full'}))
+    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-input rounded-lg w-full'}))
+    agency_name = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class': 'form-input rounded-lg w-full'}))
+    phone = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'class': 'form-input rounded-lg w-full'}))
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        confirm = cleaned_data.get("confirm_password")
+        if password and confirm and password != confirm:
+            raise forms.ValidationError("Passwords do not match")
+        email = cleaned_data.get("email")
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError("Email already registered")
+        return cleaned_data

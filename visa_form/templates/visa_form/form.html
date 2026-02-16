@@ -127,12 +127,9 @@
     .section-header {
         display: flex;
         align-items: center;
-        padding-bottom: 20px;
-        border-bottom: 2px solid #f3f4f6;
-        margin-bottom: 24px;
-        background: linear-gradient(to right, #f8fafc, transparent);
         padding: 20px;
-        border-radius: 12px 12px 0 0;
+        border-bottom: 2px solid #f3f4f6;
+        background: linear-gradient(to right, #f8fafc, transparent);
     }
     
     .section-icon {
@@ -146,29 +143,48 @@
         justify-content: center;
         margin-right: 16px;
         font-size: 20px;
+        flex-shrink: 0;
     }
     
-    /* Progress bar enhancement */
-    .progress-step {
+    /* Simple progress bar */
+    .progress-steps {
         display: flex;
         align-items: center;
-        position: relative;
-        flex: 1;
+        justify-content: space-between;
+        background: white;
+        padding: 20px;
+        border-radius: 50px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     }
     
-    .progress-step:not(:last-child):after {
+    .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+        position: relative;
+    }
+    
+    .step:not(:last-child)::after {
         content: '';
         position: absolute;
-        left: 30px;
-        right: 0;
-        height: 3px;
+        top: 18px;
+        right: -50%;
+        width: 100%;
+        height: 2px;
         background: #e5e7eb;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 1;
+        z-index: 0;
     }
     
-    .step-indicator {
+    .step.active:not(:last-child)::after {
+        background: linear-gradient(90deg, #4f46e5 50%, #e5e7eb 50%);
+    }
+    
+    .step.completed:not(:last-child)::after {
+        background: #4f46e5;
+    }
+    
+    .step-icon {
         width: 36px;
         height: 36px;
         border-radius: 50%;
@@ -176,49 +192,64 @@
         align-items: center;
         justify-content: center;
         font-weight: 600;
-        z-index: 2;
-        position: relative;
-        background: #e5e7eb;
-        color: #6b7280;
-        transition: all 0.3s ease;
+        background: white;
+        border: 2px solid #e5e7eb;
+        color: #9ca3af;
+        z-index: 1;
+        margin-bottom: 8px;
     }
     
-    .step-indicator.active {
-        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    .step.active .step-icon {
+        background: #4f46e5;
+        border-color: #4f46e5;
         color: white;
-        box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
     }
     
-    .step-indicator.completed {
-        background: linear-gradient(135deg, #10b981, #34d399);
+    .step.completed .step-icon {
+        background: #10b981;
+        border-color: #10b981;
         color: white;
     }
     
     .step-label {
-        margin-left: 12px;
-        font-weight: 600;
-        color: #6b7280;
-        transition: all 0.3s ease;
-        white-space: nowrap;
+        font-size: 12px;
+        font-weight: 500;
+        color: #9ca3af;
+        text-align: center;
     }
     
-    .step-label.active {
+    .step.active .step-label {
         color: #4f46e5;
+        font-weight: 600;
     }
     
-    .step-label.completed {
+    .step.completed .step-label {
         color: #10b981;
     }
     
-    /* Form grid improvements */
-    .form-grid {
+    @media (max-width: 640px) {
+        .progress-steps {
+            padding: 15px 10px;
+        }
+        .step-label {
+            font-size: 10px;
+        }
+        .step-icon {
+            width: 30px;
+            height: 30px;
+            font-size: 12px;
+        }
+    }
+    
+    /* Two-column grid */
+    .two-col {
         display: grid;
-        grid-template-columns: repeat(1, 1fr);
+        grid-template-columns: 1fr;
         gap: 24px;
     }
     
     @media (min-width: 768px) {
-        .form-grid {
+        .two-col {
             grid-template-columns: repeat(2, 1fr);
         }
     }
@@ -230,45 +261,52 @@
         padding: 20px;
         border: 1px solid #e5e7eb;
         transition: all 0.2s ease;
+        margin-bottom: 20px;
     }
     
     .field-group:focus-within {
         border-color: #4f46e5;
         box-shadow: 0 4px 15px rgba(79, 70, 229, 0.1);
     }
+    
+    .field-group:last-child {
+        margin-bottom: 0;
+    }
+    
+    /* Compact field groups inside two-col */
+    .two-col .field-group {
+        margin-bottom: 0;
+    }
+    
+    /* Small adjustments */
+    .text-muted {
+        color: #6b7280;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="max-w-7xl mx-auto">
-    <!-- Enhanced Progress Bar -->
-    <div class="mb-12">
-        <div class="flex items-center justify-between">
-            <div class="progress-step">
-                <div class="step-indicator active">
-                    <i class="fas fa-edit"></i>
-                </div>
-                <span class="step-label active">Fill Form</span>
+    <!-- Simple Progress Bar -->
+    <div class="mb-10">
+        <div class="progress-steps">
+            <div class="step active">
+                <div class="step-icon"><i class="fas fa-edit"></i></div>
+                <span class="step-label">Fill Form</span>
             </div>
-            
-            <div class="progress-step">
-                <div class="step-indicator">
-                    <i class="fas fa-eye"></i>
-                </div>
-                <span class="step-label">Preview JSON</span>
+            <div class="step">
+                <div class="step-icon"><i class="fas fa-eye"></i></div>
+                <span class="step-label">Preview</span>
             </div>
-            
-            <div class="progress-step">
-                <div class="step-indicator">
-                    <i class="fas fa-download"></i>
-                </div>
+            <div class="step">
+                <div class="step-icon"><i class="fas fa-download"></i></div>
                 <span class="step-label">Download</span>
             </div>
         </div>
     </div>
 
     <!-- Form -->
-    <form method="post" class="space-y-10" id="visaForm">
+    <form method="post" class="space-y-8" id="visaForm">
         {% csrf_token %}
         
         <!-- Common Information -->
@@ -278,25 +316,53 @@
                     <i class="fas fa-globe-americas"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-900">Common Application Information</h2>
-                    <p class="text-gray-600 mt-1">Shared details for all applicants</p>
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-900">Common Application Information</h2>
+                    <p class="text-sm text-gray-600 mt-1">Shared details for all applicants</p>
                 </div>
             </div>
             
             <div class="p-6 md:p-8">
-                <div class="form-grid">
+                <!-- Two-column layout -->
+                <div class="two-col">
                     <!-- Left Column -->
                     <div class="space-y-6">
                         <div class="field-group">
                             <label class="form-label">
-                                <i class="fas fa-clock mr-2 text-blue-500"></i>Time Slot
+                                <i class="fas fa-calendar-day mr-2 text-blue-500"></i>Minimum Desired Date
+                                <span class="required-star">*</span>
                             </label>
-                            {{ visa_form.slot }}
-                            <p class="form-help">
-                                <i class="fas fa-info-circle mr-1"></i> Leave empty for random selection
-                            </p>
+                            {{ visa_form.start_date }}
+                            <p class="form-help">Earliest acceptable appointment date</p>
                         </div>
                         
+                        <div class="field-group">
+                            <label class="form-label">
+                                <i class="fas fa-calendar-times mr-2 text-blue-500"></i>Maximum Allowed Date
+                                <span class="required-star">*</span>
+                            </label>
+                            {{ visa_form.max_date }}
+                            <p class="form-help">Latest acceptable appointment date</p>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="form-label">
+                                <i class="fas fa-envelope mr-2 text-blue-500"></i>Email
+                                <span class="required-star">*</span>
+                            </label>
+                            {{ visa_form.email }}
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="form-label">
+                                <i class="fas fa-phone mr-2 text-blue-500"></i>Phone
+                                <span class="required-star">*</span>
+                            </label>
+                            {{ visa_form.phone_local }}
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column -->
+                    <div class="space-y-6">
                         <div class="field-group">
                             <label class="form-label">
                                 <i class="fas fa-file-alt mr-2 text-blue-500"></i>Visa Type
@@ -312,57 +378,73 @@
                             </label>
                             {{ visa_form.nationality }}
                         </div>
-                    </div>
-                    
-                    <!-- Right Column -->
-                    <div class="space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="field-group">
-                                <label class="form-label">
-                                    <i class="fas fa-plane-departure mr-2 text-blue-500"></i>Departure Date
-                                    <span class="required-star">*</span>
-                                </label>
-                                {{ visa_form.departure_date }}
-                            </div>
-                            <div class="field-group">
-                                <label class="form-label">
-                                    <i class="fas fa-plane-arrival mr-2 text-blue-500"></i>Return Date
-                                    <span class="required-star">*</span>
-                                </label>
-                                {{ visa_form.return_date }}
-                            </div>
+                        
+                        <div class="field-group">
+                            <label class="form-label">
+                                <i class="fas fa-id-card mr-2 text-blue-500"></i>Passport numbers
+                            </label>
+                            {{ visa_form.passports }}
+                            <p class="form-help">One per line</p>
                         </div>
                         
                         <div class="field-group">
                             <label class="form-label">
-                                <i class="fas fa-home mr-2 text-blue-500"></i>Contact Address
+                                <i class="fas fa-users mr-2 text-blue-500"></i>Relations
+                            </label>
+                            {{ visa_form.relations }}
+                            <p class="form-help">Comma separated, e.g., Wife, Father, Mother</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Full-width fields below the two columns -->
+                <div class="mt-6 space-y-6">
+                    <div class="field-group">
+                        <label class="form-label">
+                            <i class="fas fa-home mr-2 text-blue-500"></i>Contact Address
+                            <span class="required-star">*</span>
+                        </label>
+                        {{ visa_form.contact_address }}
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="field-group">
+                            <label class="form-label">
+                                City
                                 <span class="required-star">*</span>
                             </label>
-                            {{ visa_form.contact_address }}
+                            {{ visa_form.contact_city }}
                         </div>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="field-group">
-                                <label class="form-label">
-                                    City
-                                    <span class="required-star">*</span>
-                                </label>
-                                {{ visa_form.contact_city }}
-                            </div>
-                            <div class="field-group">
-                                <label class="form-label">
-                                    Postal Code
-                                    <span class="required-star">*</span>
-                                </label>
-                                {{ visa_form.contact_postcode }}
-                            </div>
+                        <div class="field-group">
+                            <label class="form-label">
+                                Postal Code
+                                <span class="required-star">*</span>
+                            </label>
+                            {{ visa_form.contact_postcode }}
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="field-group">
+                            <label class="form-label">
+                                <i class="fas fa-plane-departure mr-2 text-blue-500"></i>Departure Date
+                                <span class="required-star">*</span>
+                            </label>
+                            {{ visa_form.departure_date }}
+                        </div>
+                        <div class="field-group">
+                            <label class="form-label">
+                                <i class="fas fa-plane-arrival mr-2 text-blue-500"></i>Return Date
+                                <span class="required-star">*</span>
+                            </label>
+                            {{ visa_form.return_date }}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Applicants Section -->
+        <!-- Applicants Section (unchanged) -->
         <div class="form-section">
             <div class="section-header">
                 <div class="section-icon">
@@ -371,8 +453,8 @@
                 <div class="flex-1">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <h2 class="text-2xl font-bold text-gray-900">Applicants Information</h2>
-                            <p class="text-gray-600 mt-1">Add details for each applicant (maximum 5)</p>
+                            <h2 class="text-xl md:text-2xl font-bold text-gray-900">Applicants Information</h2>
+                            <p class="text-sm text-gray-600 mt-1">Add details for each applicant (maximum 5)</p>
                         </div>
                         <button type="button" id="add-applicant" 
                                 class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center">
@@ -409,7 +491,7 @@
                             </div>
                         </div>
                         
-                        <div class="form-grid">
+                        <div class="two-col">
                             <!-- Left Column -->
                             <div class="space-y-6">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -496,7 +578,7 @@
             </div>
         </div>
 
-        <!-- Form Actions -->
+        <!-- Form Actions (unchanged) -->
         <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
             <div class="flex flex-col lg:flex-row justify-between items-center gap-8">
                 <div class="text-center lg:text-left">

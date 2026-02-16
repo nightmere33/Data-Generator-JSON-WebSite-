@@ -1,4 +1,40 @@
 from django.db import models
+from django.contrib.auth.models import User
+import uuid
+
+class AgencyProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    agency_name = models.CharField(max_length=200)
+    phone = models.CharField(max_length=20, blank=True)
+    default_start_date = models.DateField(null=True, blank=True)
+    default_end_date = models.DateField(null=True, blank=True)
+    passports = models.JSONField(default=list, blank=True)  # list of passport numbers
+    relations = models.JSONField(default=list, blank=True)  # list of relations (e.g., ["Wife","Father"])
+    default_applicants = models.IntegerField(default=1)
+    
+    def __str__(self):
+        return self.agency_name
+
+class InviteLink(models.Model):
+    token = models.UUIDField(default=uuid.uuid4, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    used_by = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='used_invite')
+    is_used = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.token)
+
+class Submission(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='submissions')
+    data = models.JSONField()
+    filename = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.created_at}"
+
+
+
 
 class VisaApplication(models.Model):
     # Common Data
