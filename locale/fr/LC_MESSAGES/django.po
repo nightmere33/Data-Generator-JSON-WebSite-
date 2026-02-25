@@ -1,0 +1,834 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-24 18:10+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: .\mosaic_autofill\settings.py:121
+msgid "French"
+msgstr "Français"
+
+#: .\mosaic_autofill\settings.py:122
+msgid "English"
+msgstr "Anglais"
+
+#: .\mosaic_autofill\settings.py:123
+msgid "Arabic"
+msgstr "Arabe"
+
+#: .\visa_form\forms.py:10
+msgid "Tourisme Simple"
+msgstr "Tourisme Simple"
+
+#: .\visa_form\forms.py:11
+msgid "Tourisme Multiple"
+msgstr "Tourisme Multiple"
+
+#: .\visa_form\forms.py:12
+msgid "Affaires Simple"
+msgstr "Affaires Simple"
+
+#: .\visa_form\forms.py:13
+msgid "Affaires Multiple"
+msgstr "Affaires Multiple"
+
+#: .\visa_form\forms.py:14
+msgid "Traitement Simple"
+msgstr "Traitement Simple"
+
+#: .\visa_form\forms.py:15
+msgid "Traitement Multiple"
+msgstr "Traitement Multiple"
+
+#: .\visa_form\forms.py:16
+msgid "Étudiant Simple"
+msgstr "Étudiant Simple"
+
+#: .\visa_form\forms.py:17
+msgid "Accompagnement Simple"
+msgstr "Accompagnement Simple"
+
+#: .\visa_form\forms.py:18
+msgid "Accompagnement Multiple"
+msgstr "Accompagnement Multiple"
+
+#: .\visa_form\forms.py:19
+msgid "Permis de Travail Simple"
+msgstr "Permis de Travail Simple"
+
+#: .\visa_form\forms.py:20
+msgid "Permis de Travail Multiple"
+msgstr "Permis de Travail Multiple"
+
+#: .\visa_form\forms.py:21
+msgid "Transit Double"
+msgstr "Transit Double"
+
+#: .\visa_form\forms.py:22
+msgid "Transit Simple"
+msgstr "Transit Simple"
+
+#: .\visa_form\forms.py:25 .\visa_form\templates\visa_form\form.html:368
+msgid "Visa Type"
+msgstr "Type de visa"
+
+#: .\visa_form\forms.py:31
+msgid "Algérie"
+msgstr "Algérie"
+
+#: .\visa_form\forms.py:32
+msgid "États-Unis d'Amérique"
+msgstr "États-Unis d'Amérique"
+
+#: .\visa_form\forms.py:33
+msgid "Royaume-Uni"
+msgstr "Royaume-Uni"
+
+#: .\visa_form\forms.py:34
+msgid "Chine"
+msgstr "Chine"
+
+#: .\visa_form\forms.py:35
+msgid "Inde"
+msgstr "Inde"
+
+#: .\visa_form\forms.py:36
+msgid "Italie"
+msgstr "Italie"
+
+#: .\visa_form\forms.py:37
+msgid "Canada"
+msgstr "Canada"
+
+#: .\visa_form\forms.py:38
+msgid "Australie"
+msgstr "Australie"
+
+#: .\visa_form\forms.py:39
+msgid "Allemagne"
+msgstr "Allemagne"
+
+#: .\visa_form\forms.py:40
+msgid "France"
+msgstr "France"
+
+#: .\visa_form\forms.py:41
+msgid "Espagne"
+msgstr "Espagne"
+
+#: .\visa_form\forms.py:42
+msgid "Turquie"
+msgstr "Turquie"
+
+#: .\visa_form\forms.py:45 .\visa_form\templates\visa_form\form.html:376
+msgid "Nationality"
+msgstr "Nationalité"
+
+#: .\visa_form\forms.py:50 .\visa_form\templates\visa_form\form.html:404
+msgid "Contact Address"
+msgstr "Adresse de contact"
+
+#: .\visa_form\forms.py:54
+msgid "123 Main Street, City, Country"
+msgstr "123 Rue Principale, Ville, Pays"
+
+#: .\visa_form\forms.py:59 .\visa_form\forms.py:62
+msgid "City"
+msgstr "Ville"
+
+#: .\visa_form\forms.py:67 .\visa_form\forms.py:70
+msgid "Postal Code"
+msgstr "Code postal"
+
+#: .\visa_form\forms.py:75 .\visa_form\templates\visa_form\form.html:430
+msgid "Departure Date"
+msgstr "Date de départ"
+
+#: .\visa_form\forms.py:84 .\visa_form\templates\visa_form\form.html:437
+msgid "Return Date"
+msgstr "Date de retour"
+
+#: .\visa_form\forms.py:93
+msgid "Minimum desired date"
+msgstr "Date minimale souhaitée"
+
+#: .\visa_form\forms.py:98
+msgid "Maximum allowed date"
+msgstr "Date maximale autorisée"
+
+#: .\visa_form\forms.py:103 .\visa_form\forms.py:267
+#: .\visa_form\templates\visa_form\login.html:18
+#: .\visa_form\templates\visa_form\register.html:13
+msgid "Email"
+msgstr "E-mail"
+
+#: .\visa_form\forms.py:107 .\visa_form\forms.py:284
+#: .\visa_form\templates\visa_form\form.html:357
+msgid "Phone"
+msgstr "Téléphone"
+
+#: .\visa_form\forms.py:111
+msgid "Passport numbers (one per line)"
+msgstr "Numéros de passeport (un par ligne)"
+
+#: .\visa_form\forms.py:112
+msgid ""
+"314690857\n"
+"187204660\n"
+"..."
+msgstr ""
+"314690857\n"
+"187204660\n"
+"..."
+
+#: .\visa_form\forms.py:114
+msgid "Enter each passport number on a new line"
+msgstr "Saisissez chaque numéro de passeport sur une nouvelle ligne"
+
+#: .\visa_form\forms.py:117
+msgid "Relations (comma separated)"
+msgstr "Liens de parenté (séparés par des virgules)"
+
+#: .\visa_form\forms.py:118
+msgid "Wife, Father, Mother, Child"
+msgstr "Épouse, Père, Mère, Enfant"
+
+#: .\visa_form\forms.py:120
+msgid "e.g., Wife, Father, Mother, Child"
+msgstr "ex. : Épouse, Père, Mère, Enfant"
+
+#: .\visa_form\forms.py:126 .\visa_form\forms.py:129
+#: .\visa_form\templates\visa_form\form.html:500
+msgid "First Name"
+msgstr "Prénom"
+
+#: .\visa_form\forms.py:134 .\visa_form\forms.py:137
+#: .\visa_form\templates\visa_form\form.html:507
+msgid "Last Name"
+msgstr "Nom de famille"
+
+#: .\visa_form\forms.py:142 .\visa_form\templates\visa_form\form.html:516
+msgid "Gender"
+msgstr "Sexe"
+
+#: .\visa_form\forms.py:143
+msgid "Male"
+msgstr "Masculin"
+
+#: .\visa_form\forms.py:143
+msgid "Female"
+msgstr "Féminin"
+
+#: .\visa_form\forms.py:150 .\visa_form\templates\visa_form\form.html:526
+msgid "Date of Birth"
+msgstr "Date de naissance"
+
+#: .\visa_form\forms.py:158 .\visa_form\forms.py:161
+#: .\visa_form\templates\visa_form\form.html:531
+msgid "Place of Birth"
+msgstr "Lieu de naissance"
+
+#: .\visa_form\forms.py:166 .\visa_form\templates\visa_form\form.html:520
+msgid "Marital Status"
+msgstr "Situation familiale"
+
+#: .\visa_form\forms.py:167
+msgid "Single"
+msgstr "Célibataire"
+
+#: .\visa_form\forms.py:167
+msgid "Married"
+msgstr "Marié(e)"
+
+#: .\visa_form\forms.py:174 .\visa_form\forms.py:177
+#: .\visa_form\templates\visa_form\form.html:544
+msgid "Father's Full Name"
+msgstr "Nom complet du père"
+
+#: .\visa_form\forms.py:182 .\visa_form\forms.py:185
+#: .\visa_form\templates\visa_form\form.html:549
+msgid "Mother's Full Name"
+msgstr "Nom complet de la mère"
+
+#: .\visa_form\forms.py:190 .\visa_form\templates\visa_form\form.html:536
+msgid "Occupation"
+msgstr "Profession"
+
+#: .\visa_form\forms.py:192
+msgid "Agriculture"
+msgstr "Agriculture"
+
+#: .\visa_form\forms.py:193
+msgid "Armed/Security Force"
+msgstr "Forces armées / sécurité"
+
+#: .\visa_form\forms.py:194
+msgid "Artist/Performer"
+msgstr "Artiste / interprète"
+
+#: .\visa_form\forms.py:195
+msgid "Business"
+msgstr "Affaires"
+
+#: .\visa_form\forms.py:196
+msgid "Caregiver/Babysitter"
+msgstr "Aide-soignant / garde d'enfants"
+
+#: .\visa_form\forms.py:197
+msgid "Construction"
+msgstr "Bâtiment"
+
+#: .\visa_form\forms.py:198
+msgid "Culinary/Cookery"
+msgstr "Cuisine / arts culinaires"
+
+#: .\visa_form\forms.py:199
+msgid "Driver/Lorry"
+msgstr "Chauffeur / poids lourd"
+
+#: .\visa_form\forms.py:200
+msgid "Education/Training"
+msgstr "Éducation / formation"
+
+#: .\visa_form\forms.py:201
+msgid "Engineer"
+msgstr "Ingénieur"
+
+#: .\visa_form\forms.py:202
+msgid "Finance/Banking"
+msgstr "Finance / banque"
+
+#: .\visa_form\forms.py:203
+msgid "Government"
+msgstr "Fonction publique"
+
+#: .\visa_form\forms.py:204
+msgid "Health/Medical"
+msgstr "Santé / médical"
+
+#: .\visa_form\forms.py:205
+msgid "Information Technologies"
+msgstr "Technologies de l'information"
+
+#: .\visa_form\forms.py:206
+msgid "Legal Professional"
+msgstr "Professionnel du droit"
+
+#: .\visa_form\forms.py:207
+msgid "Other"
+msgstr "Autre"
+
+#: .\visa_form\forms.py:208
+msgid "Press/Media"
+msgstr "Presse / médias"
+
+#: .\visa_form\forms.py:209
+msgid "Professional Sportsperson"
+msgstr "Sportif professionnel"
+
+#: .\visa_form\forms.py:210
+msgid "Religious Functionary"
+msgstr "Responsable religieux"
+
+#: .\visa_form\forms.py:211
+msgid "Researcher/Scientist"
+msgstr "Chercheur / scientifique"
+
+#: .\visa_form\forms.py:212
+msgid "Retired"
+msgstr "Retraité"
+
+#: .\visa_form\forms.py:213
+msgid "Seafarer"
+msgstr "Marin"
+
+#: .\visa_form\forms.py:214
+msgid "Self-Employed"
+msgstr "Travailleur indépendant"
+
+#: .\visa_form\forms.py:215
+msgid "Service Sector"
+msgstr "Secteur des services"
+
+#: .\visa_form\forms.py:216
+msgid "Student/Trainee"
+msgstr "Étudiant / stagiaire"
+
+#: .\visa_form\forms.py:217
+msgid "Tourism"
+msgstr "Tourisme"
+
+#: .\visa_form\forms.py:218
+msgid "Unemployed"
+msgstr "Sans emploi"
+
+#: .\visa_form\forms.py:226 .\visa_form\templates\visa_form\form.html:559
+msgid "Passport Issued By"
+msgstr "Délivré par"
+
+#: .\visa_form\forms.py:229
+msgid "Passport Authority"
+msgstr "Autorité de délivrance"
+
+#: .\visa_form\forms.py:234 .\visa_form\templates\visa_form\form.html:565
+msgid "Issue Date"
+msgstr "Date de délivrance"
+
+#: .\visa_form\forms.py:242 .\visa_form\templates\visa_form\form.html:569
+msgid "Expiry Date"
+msgstr "Date d'expiration"
+
+#: .\visa_form\forms.py:250 .\visa_form\templates\visa_form\form.html:554
+msgid "Travel Document Type"
+msgstr "Type de document de voyage"
+
+#: .\visa_form\forms.py:252
+msgid "Passeport Ordinaire"
+msgstr "Passeport ordinaire"
+
+#: .\visa_form\forms.py:253
+msgid "Passeport Diplomatique"
+msgstr "Passeport diplomatique"
+
+#: .\visa_form\forms.py:254
+msgid "Carte d'Identité"
+msgstr "Carte d'identité"
+
+#: .\visa_form\forms.py:255
+msgid "Autres"
+msgstr "Autres"
+
+#: .\visa_form\forms.py:256
+msgid "Document de Voyage pour Réfugiés"
+msgstr "Document de voyage pour réfugiés"
+
+#: .\visa_form\forms.py:271 .\visa_form\templates\visa_form\login.html:23
+#: .\visa_form\templates\visa_form\register.html:21
+msgid "Password"
+msgstr "Mot de passe"
+
+#: .\visa_form\forms.py:275 .\visa_form\templates\visa_form\register.html:26
+msgid "Confirm Password"
+msgstr "Confirmer le mot de passe"
+
+#: .\visa_form\forms.py:279 .\visa_form\templates\visa_form\register.html:31
+msgid "Agency Name"
+msgstr "Nom de l'agence"
+
+#: .\visa_form\forms.py:295
+msgid "Passwords do not match"
+msgstr "Les mots de passe ne correspondent pas"
+
+#: .\visa_form\forms.py:298
+msgid "Email already registered"
+msgstr "E-mail déjà enregistré"
+
+#: .\visa_form\templates\visa_form\base.html:8
+msgid "Mosaic Visa Generator - Create JSON Data"
+msgstr "Générateur Mosaic Visa - Créer des données JSON"
+
+#: .\visa_form\templates\visa_form\base.html:144
+#: .\visa_form\templates\visa_form\base.html:275
+msgid "Mosaic Visa"
+msgstr "Mosaic Visa"
+
+#: .\visa_form\templates\visa_form\base.html:145
+#: .\visa_form\templates\visa_form\base.html:276
+msgid "JSON Generator"
+msgstr "Générateur JSON"
+
+#: .\visa_form\templates\visa_form\base.html:154
+#, python-format
+msgid "Welcome, %(name)s"
+msgstr "Bienvenue, %(name)s"
+
+#: .\visa_form\templates\visa_form\base.html:174
+#: .\visa_form\templates\visa_form\base.html:297
+msgid "Create Data"
+msgstr "Créer des données"
+
+#: .\visa_form\templates\visa_form\base.html:179
+#: .\visa_form\templates\visa_form\base.html:232
+msgid "Logout"
+msgstr "Déconnexion"
+
+#: .\visa_form\templates\visa_form\base.html:183
+#: .\visa_form\templates\visa_form\base.html:239
+msgid "Login"
+msgstr "Connexion"
+
+#: .\visa_form\templates\visa_form\base.html:218
+#: .\visa_form\templates\visa_form\base.html:291
+msgid "Home"
+msgstr "Accueil"
+
+#: .\visa_form\templates\visa_form\base.html:225
+#: .\visa_form\templates\visa_form\success.html:23
+msgid "Create New Data"
+msgstr "Créer de nouvelles données"
+
+#: .\visa_form\templates\visa_form\base.html:280
+msgid ""
+"Create JSON data for Mosaic Visa appointments. Simple, fast, and mobile-"
+"friendly."
+msgstr ""
+"Créez des données JSON pour les rendez‑vous Mosaic Visa. Simple, rapide et "
+"adapté aux mobiles."
+
+#: .\visa_form\templates\visa_form\base.html:286
+msgid "Quick Links"
+msgstr "Liens rapides"
+
+#: .\visa_form\templates\visa_form\base.html:305
+msgid "Features"
+msgstr "Fonctionnalités"
+
+#: .\visa_form\templates\visa_form\base.html:309
+#: .\visa_form\templates\visa_form\index.html:63
+msgid "Mobile-Friendly"
+msgstr "Adapté aux mobiles"
+
+#: .\visa_form\templates\visa_form\base.html:313
+msgid "Secure Processing"
+msgstr "Traitement sécurisé"
+
+#: .\visa_form\templates\visa_form\base.html:317
+msgid "Instant JSON"
+msgstr "JSON instantané"
+
+#: .\visa_form\templates\visa_form\base.html:326
+msgid "Mosaic Visa JSON Generator"
+msgstr "Générateur JSON Mosaic Visa"
+
+#: .\visa_form\templates\visa_form\base.html:329
+msgid "Generate JSON data for visa appointment automation"
+msgstr "Générez des données JSON pour l'automatisation des rendez‑vous de visa"
+
+#: .\visa_form\templates\visa_form\base.html:414
+msgid "Please fill in all required fields."
+msgstr "Veuillez remplir tous les champs obligatoires."
+
+#: .\visa_form\templates\visa_form\form.html:295
+msgid "Fill Form"
+msgstr "Remplir le formulaire"
+
+#: .\visa_form\templates\visa_form\form.html:299
+msgid "Preview"
+msgstr "Aperçu"
+
+#: .\visa_form\templates\visa_form\form.html:303
+msgid "Download"
+msgstr "Télécharger"
+
+#: .\visa_form\templates\visa_form\form.html:319
+msgid "Common Application Information"
+msgstr "Informations communes"
+
+#: .\visa_form\templates\visa_form\form.html:320
+msgid "Shared details for all applicants"
+msgstr "Détails partagés pour tous les demandeurs"
+
+#: .\visa_form\templates\visa_form\form.html:331
+msgid "Minimum Desired Date"
+msgstr "Date minimale souhaitée"
+
+#: .\visa_form\templates\visa_form\form.html:335
+msgid "Earliest acceptable appointment date"
+msgstr "Date de rendez‑vous la plus proche acceptable"
+
+#: .\visa_form\templates\visa_form\form.html:340
+msgid "Maximum Allowed Date"
+msgstr "Date maximale autorisée"
+
+#: .\visa_form\templates\visa_form\form.html:344
+msgid "Latest acceptable appointment date"
+msgstr "Date de rendez‑vous la plus éloignée acceptable"
+
+#: .\visa_form\templates\visa_form\form.html:384
+msgid "Passport numbers"
+msgstr "Numéros de passeport"
+
+#: .\visa_form\templates\visa_form\form.html:387
+msgid "One per line"
+msgstr "Un par ligne"
+
+#: .\visa_form\templates\visa_form\form.html:392
+msgid "Relations"
+msgstr "Liens de parenté"
+
+#: .\visa_form\templates\visa_form\form.html:395
+msgid "Comma separated, e.g., Wife, Father, Mother"
+msgstr "Séparés par des virgules, ex. : Épouse, Père, Mère"
+
+#: .\visa_form\templates\visa_form\form.html:456
+msgid "Applicants Information"
+msgstr "Informations des demandeurs"
+
+#: .\visa_form\templates\visa_form\form.html:457
+msgid "Add details for each applicant (maximum 5)"
+msgstr "Ajoutez les détails pour chaque demandeur (maximum 5)"
+
+#: .\visa_form\templates\visa_form\form.html:461
+msgid "Add Applicant"
+msgstr "Ajouter un demandeur"
+
+#: .\visa_form\templates\visa_form\form.html:489
+msgid "Applicant"
+msgstr "Demandeur"
+
+#: .\visa_form\templates\visa_form\form.html:490
+msgid "Personal and passport details"
+msgstr "Coordonnées personnelles et passeport"
+
+#: .\visa_form\templates\visa_form\form.html:585
+msgid "Ready to Generate JSON?"
+msgstr "Prêt à générer le JSON ?"
+
+#: .\visa_form\templates\visa_form\form.html:588
+msgid "Your data is processed locally and not stored on our servers"
+msgstr "Vos données sont traitées localement et ne sont pas stockées sur nos serveurs"
+
+#: .\visa_form\templates\visa_form\form.html:595
+msgid "Clear Form"
+msgstr "Effacer le formulaire"
+
+#: .\visa_form\templates\visa_form\form.html:599
+msgid "Preview & Generate JSON"
+msgstr "Aperçu et génération JSON"
+
+#: .\visa_form\templates\visa_form\form.html:611
+msgid "All fields are required unless marked optional"
+msgstr "Tous les champs sont obligatoires sauf mention contraire"
+
+#: .\visa_form\templates\visa_form\form.html:617
+msgid "Dates should be in YYYY-MM-DD format"
+msgstr "Les dates doivent être au format AAAA-MM-JJ"
+
+#: .\visa_form\templates\visa_form\index.html:22
+msgid "Start Creating Your Data"
+msgstr "Commencez à créer vos données"
+
+#: .\visa_form\templates\visa_form\index.html:33
+msgid "1. Fill Form"
+msgstr "1. Remplir le formulaire"
+
+#: .\visa_form\templates\visa_form\index.html:34
+msgid "Enter your visa application details"
+msgstr "Saisissez les détails de votre demande de visa"
+
+#: .\visa_form\templates\visa_form\index.html:41
+msgid "2. Download"
+msgstr "2. Télécharger"
+
+#: .\visa_form\templates\visa_form\index.html:42
+msgid "Get your JSON data file"
+msgstr "Obtenez votre fichier de données JSON"
+
+#: .\visa_form\templates\visa_form\index.html:49
+msgid "3. Share"
+msgstr "3. Partager"
+
+#: .\visa_form\templates\visa_form\index.html:50
+msgid "Send to administrator for auto-filling"
+msgstr "Envoyez à l'administrateur pour le remplissage automatique"
+
+#: .\visa_form\templates\visa_form\index.html:64
+msgid "Works perfectly on all devices"
+msgstr "Fonctionne parfaitement sur tous les appareils"
+
+#: .\visa_form\templates\visa_form\index.html:73
+msgid "Secure & Private"
+msgstr "Sécurisé et privé"
+
+#: .\visa_form\templates\visa_form\index.html:74
+msgid "No data stored on our servers"
+msgstr "Aucune donnée stockée sur nos serveurs"
+
+#: .\visa_form\templates\visa_form\index.html:85
+msgid "Fast & Easy"
+msgstr "Rapide et facile"
+
+#: .\visa_form\templates\visa_form\index.html:86
+msgid "Generate data in seconds"
+msgstr "Générez des données en quelques secondes"
+
+#: .\visa_form\templates\visa_form\index.html:95
+msgid "Tampermonkey Ready"
+msgstr "Prêt pour Tampermonkey"
+
+#: .\visa_form\templates\visa_form\index.html:96
+msgid "Perfect JSON format for automation"
+msgstr "Format JSON parfait pour l'automatisation"
+
+#: .\visa_form\templates\visa_form\index.html:105
+msgid "Simple Process"
+msgstr "Processus simple"
+
+#: .\visa_form\templates\visa_form\index.html:113
+msgid "Fill the Form"
+msgstr "Remplir le formulaire"
+
+#: .\visa_form\templates\visa_form\index.html:114
+msgid "Enter your visa application details for you and your family members."
+msgstr "Saisissez les détails de votre demande de visa pour vous et les membres de votre famille."
+
+#: .\visa_form\templates\visa_form\index.html:123
+#: .\visa_form\templates\visa_form\preview.html:114
+msgid "Download Your Data"
+msgstr "Téléchargez vos données"
+
+#: .\visa_form\templates\visa_form\index.html:124
+msgid "Get a JSON file with Tampermonkey integration code and your data."
+msgstr "Obtenez un fichier JSON avec le code d'intégration Tampermonkey et vos données."
+
+#: .\visa_form\templates\visa_form\index.html:133
+msgid "Send to Administrator"
+msgstr "Envoyer à l'administrateur"
+
+#: .\visa_form\templates\visa_form\index.html:134
+msgid "Share the file with your administrator via WhatsApp or email."
+msgstr "Partagez le fichier avec votre administrateur par WhatsApp ou e-mail."
+
+#: .\visa_form\templates\visa_form\index.html:143
+msgid "Ready to Get Started?"
+msgstr "Prêt à commencer ?"
+
+#: .\visa_form\templates\visa_form\index.html:145
+msgid ""
+"Create your Mosaic Visa JSON data now. It's free and takes just a few "
+"minutes."
+msgstr "Créez vos données JSON Mosaic Visa maintenant. C'est gratuit et ne prend que quelques minutes."
+
+#: .\visa_form\templates\visa_form\index.html:149
+msgid "Create Your Visa Data Now"
+msgstr "Créez vos données de visa maintenant"
+
+#: .\visa_form\templates\visa_form\index.html:153
+msgid "Your data is processed locally and never stored"
+msgstr "Vos données sont traitées localement et ne sont jamais stockées"
+
+#: .\visa_form\templates\visa_form\login.html:3
+msgid "Login - Mosaic Visa Generator"
+msgstr "Connexion - Générateur Mosaic Visa"
+
+#: .\visa_form\templates\visa_form\login.html:7
+msgid "Agency Login"
+msgstr "Connexion agence"
+
+#: .\visa_form\templates\visa_form\login.html:29
+msgid "Log In"
+msgstr "Se connecter"
+
+#: .\visa_form\templates\visa_form\preview.html:77
+msgid "Data Ready for Download"
+msgstr "Données prêtes à être téléchargées"
+
+#: .\visa_form\templates\visa_form\preview.html:78
+msgid "Your data has been generated successfully"
+msgstr "Vos données ont été générées avec succès"
+
+#: .\visa_form\templates\visa_form\preview.html:85
+msgid "Applicants"
+msgstr "Demandeurs"
+
+#: .\visa_form\templates\visa_form\preview.html:89
+msgid "Random"
+msgstr "Aléatoire"
+
+#: .\visa_form\templates\visa_form\preview.html:91
+msgid "Time Slot"
+msgstr "Créneau horaire"
+
+#: .\visa_form\templates\visa_form\preview.html:100
+msgid "Copy"
+msgstr "Copier"
+
+#: .\visa_form\templates\visa_form\preview.html:104
+msgid "Highlight"
+msgstr "Surligner"
+
+#: .\visa_form\templates\visa_form\preview.html:115
+msgid "Click below to download your data file"
+msgstr "Cliquez ci-dessous pour télécharger votre fichier de données"
+
+#: .\visa_form\templates\visa_form\preview.html:120
+msgid "Edit Data"
+msgstr "Modifier les données"
+
+#: .\visa_form\templates\visa_form\preview.html:125
+msgid "Download File"
+msgstr "Télécharger le fichier"
+
+#: .\visa_form\templates\visa_form\preview.html:133
+msgid "The file includes Tampermonkey integration code and JSON data"
+msgstr "Le fichier contient le code d'intégration Tampermonkey et les données JSON"
+
+#: .\visa_form\templates\visa_form\preview.html:141
+msgid "File Includes:"
+msgstr "Le fichier contient :"
+
+#: .\visa_form\templates\visa_form\preview.html:144
+msgid "Tampermonkey integration code (ready to paste)"
+msgstr "Code d'intégration Tampermonkey (prêt à coller)"
+
+#: .\visa_form\templates\visa_form\preview.html:145
+msgid "Raw JSON data for reference"
+msgstr "Données JSON brutes pour référence"
+
+#: .\visa_form\templates\visa_form\preview.html:146
+msgid "All applicant and common information"
+msgstr "Toutes les informations des demandeurs et les informations communes"
+
+#: .\visa_form\templates\visa_form\register.html:3
+msgid "Register - Mosaic Visa Generator"
+msgstr "Inscription - Générateur Mosaic Visa"
+
+#: .\visa_form\templates\visa_form\register.html:7
+msgid "Create Agency Account"
+msgstr "Créer un compte agence"
+
+#: .\visa_form\templates\visa_form\register.html:36
+msgid "Phone (optional)"
+msgstr "Téléphone (facultatif)"
+
+#: .\visa_form\templates\visa_form\register.html:48
+msgid "Register"
+msgstr "S'inscrire"
+
+#: .\visa_form\templates\visa_form\success.html:4
+msgid "Download Complete - Mosaic Visa Generator"
+msgstr "Téléchargement terminé - Générateur Mosaic Visa"
+
+#: .\visa_form\templates\visa_form\success.html:13
+msgid "Download Complete!"
+msgstr "Téléchargement terminé !"
+
+#: .\visa_form\templates\visa_form\success.html:16
+msgid "Your data file has been downloaded."
+msgstr "Votre fichier de données a été téléchargé."
+
+#: .\visa_form\templates\visa_form\success.html:17
+msgid "Send it to your administrator for auto-filling the Mosaic Visa form."
+msgstr "Envoyez-le à votre administrateur pour remplir automatiquement le formulaire Mosaic Visa."
+
+#: .\visa_form\templates\visa_form\success.html:28
+msgid "Return to Home"
+msgstr "Retour à l'accueil"
+
+#: .\visa_form\views.py:186
+msgid "Invalid credentials"
+msgstr "Identifiants invalides"

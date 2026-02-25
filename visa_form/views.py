@@ -10,6 +10,8 @@ import json
 import uuid
 import random
 from datetime import datetime, date, timedelta
+from django.utils.translation import gettext as _
+
 
 def index(request):
     return render(request, 'visa_form/index.html')
@@ -181,7 +183,7 @@ def login_view(request):
             login(request, user)
             return redirect('form')
         else:
-            return render(request, 'visa_form/login.html', {'error': 'Invalid credentials'})
+           return render(request, 'visa_form/login.html', {'error': _('Invalid credentials')})
     return render(request, 'visa_form/login.html')
 
 def logout_view(request):

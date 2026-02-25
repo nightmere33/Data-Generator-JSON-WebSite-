@@ -1,10 +1,11 @@
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="{{ LANGUAGE_CODE }}" class="scroll-smooth" dir="{% get_current_language_bidi as lang_bidi %}{% if lang_bidi %}rtl{% else %}ltr{% endif %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta name="theme-color" content="#4F46E5">
-    <title>{% block title %}Mosaic Visa Generator - Create JSON Data{% endblock %}</title>
+    <title>{% block title %}{% trans "Mosaic Visa Generator - Create JSON Data" %}{% endblock %}</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -85,6 +86,47 @@
             transition: max-height 0.3s ease-in;
         }
         
+        /* Language dropdown */
+        .lang-dropdown {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            min-width: 140px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+            z-index: 50;
+        }
+        
+        .lang-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .lang-dropdown a {
+            display: block;
+            padding: 8px 16px;
+            color: #374151;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        .lang-dropdown a:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .lang-dropdown a.active {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            font-weight: 500;
+        }
+        
         /* Remove tap highlight on mobile */
         button, a {
             -webkit-tap-highlight-color: transparent;
@@ -106,6 +148,23 @@
         * {
             transition: background-color 0.2s ease, border-color 0.2s ease;
         }
+
+        /* RTL overrides */
+        [dir="rtl"] .ml-auto {
+            margin-left: 0;
+            margin-right: auto;
+        }
+        [dir="rtl"] .mr-2 {
+            margin-right: 0;
+            margin-left: 0.5rem;
+        }
+        [dir="rtl"] .mr-3 {
+            margin-right: 0;
+            margin-left: 0.75rem;
+        }
+        [dir="rtl"] .space-x-4 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-x-reverse: 1;
+        }
     </style>
     
     {% block extra_head %}{% endblock %}
@@ -123,32 +182,63 @@
                             <i class="fas fa-passport text-white text-lg"></i>
                         </div>
                         <div>
-                            <div class="font-bold text-gray-900 text-lg leading-tight">Mosaic Visa</div>
-                            <div class="text-xs text-gray-500">JSON Generator</div>
+                            <div class="font-bold text-gray-900 text-lg leading-tight">{% trans "Mosaic Visa" %}</div>
+                            <div class="text-xs text-gray-500">{% trans "JSON Generator" %}</div>
                         </div>
                     </a>
                 </div>
                 
                 <!-- Desktop Navigation -->
                 <div class="hidden md:flex items-center space-x-4">
+                    <!-- Modern language switcher (desktop) -->
+                    <div class="relative">
+                        <button id="desktop-lang-button" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition">
+                            <i class="fas fa-globe text-gray-600"></i>
+                            <span class="text-sm font-medium text-gray-700">
+                                {% get_current_language as LANGUAGE_CODE %}
+                                {% get_language_info for LANGUAGE_CODE as lang %}
+                                {{ lang.name_local }}
+                            </span>
+                            <i class="fas fa-chevron-down text-xs text-gray-500"></i>
+                        </button>
+                        <div id="desktop-lang-dropdown" class="lang-dropdown">
+                            {% get_available_languages as LANGUAGES %}
+                            {% get_language_info_list for LANGUAGES as languages %}
+                            <form id="lang-form" action="{% url 'set_language' %}" method="post" style="display: none;">
+                                {% csrf_token %}
+                                <input name="next" type="hidden" value="{{ request.path }}">
+                                <input name="language" type="hidden" id="language-input">
+                            </form>
+                            {% for language in languages %}
+                                <a href="#" data-lang-code="{{ language.code }}" class="lang-option {% if language.code == LANGUAGE_CODE %}active{% endif %}">
+                                    {{ language.name_local }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
                     {% if user.is_authenticated %}
-                        <span class="text-sm text-gray-600 mr-2">Welcome, {{ user.profile.agency_name|default:user.email }}</span>
+                        <span class="text-sm text-gray-600 mr-2">
+                            {% blocktrans trimmed with name=user.profile.agency_name|default:user.email %}
+                                Welcome, {{ name }}
+                            {% endblocktrans %}
+                        </span>
                         <a href="{% url 'form' %}" 
-                        class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-medium shadow hover:shadow-md transition-all duration-200 flex items-center gap-2">
-                            <i class="fas fa-plus-circle"></i> Create Data
+                           class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-medium shadow hover:shadow-md transition-all duration-200 flex items-center gap-2">
+                            <i class="fas fa-plus-circle"></i> {% trans "Create Data" %}
                         </a>
                         <form method="post" action="{% url 'logout' %}" class="inline">
                             {% csrf_token %}
                             <button type="submit" class="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition">
-                                <i class="fas fa-sign-out-alt mr-1"></i> Logout
+                                <i class="fas fa-sign-out-alt mr-1"></i> {% trans "Logout" %}
                             </button>
                         </form>
                     {% else %}
-                        <a href="{% url 'login' %}" class="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition">Login</a>
+                        <a href="{% url 'login' %}" class="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition">{% trans "Login" %}</a>
                     {% endif %}
                 </div>
                 
-                <!-- Mobile Menu Button -->
+                <!-- Mobile Menu Button (includes language in mobile menu) -->
                 <button id="mobile-menu-button" 
                         class="md:hidden w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition touch-target">
                     <i class="fas fa-bars text-gray-700 text-xl" id="menu-icon"></i>
@@ -159,18 +249,56 @@
             <div id="mobile-menu" class="mobile-menu md:hidden">
                 <div class="py-3 border-t border-gray-100">
                     <div class="space-y-1">
+                        <!-- Mobile language switcher as a list -->
+                        <div class="px-4 py-2 border-b border-gray-100 mb-2">
+                            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{% trans "Language" %}</span>
+                        </div>
+                        <form id="mobile-lang-form" action="{% url 'set_language' %}" method="post" style="display: none;">
+                            {% csrf_token %}
+                            <input name="next" type="hidden" value="{{ request.path }}">
+                            <input name="language" type="hidden" id="mobile-language-input">
+                        </form>
+                        {% get_available_languages as LANGUAGES %}
+                        {% get_language_info_list for LANGUAGES as languages %}
+                        {% for language in languages %}
+                            <a href="#" data-lang-code="{{ language.code }}" class="mobile-lang-option flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition touch-target {% if language.code == LANGUAGE_CODE %}bg-blue-50 text-blue-600 font-medium{% endif %}">
+                                <i class="fas fa-globe w-5"></i>
+                                <span>{{ language.name_local }}</span>
+                                {% if language.code == LANGUAGE_CODE %}
+                                    <i class="fas fa-check ml-auto text-blue-600"></i>
+                                {% endif %}
+                            </a>
+                        {% endfor %}
+                        
+                        <div class="border-t border-gray-100 my-2"></div>
+                        
                         <a href="{% url 'index' %}" 
                            class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition touch-target">
                             <i class="fas fa-home w-5"></i>
-                            <span>Home</span>
+                            <span>{% trans "Home" %}</span>
                         </a>
                         
-                        <a href="{% url 'form' %}" 
-                           class="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-medium shadow mt-2 touch-target">
-                            <i class="fas fa-plus-circle"></i>
-                            <span>Create New Data</span>
-                            <i class="fas fa-arrow-right ml-auto"></i>
-                        </a>
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'form' %}" 
+                               class="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-medium shadow mt-2 touch-target">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>{% trans "Create New Data" %}</span>
+                                <i class="fas fa-arrow-right ml-auto"></i>
+                            </a>
+                            <form method="post" action="{% url 'logout' %}" class="mt-2">
+                                {% csrf_token %}
+                                <button type="submit" class="flex items-center gap-3 px-4 py-3 w-full text-left text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg touch-target">
+                                    <i class="fas fa-sign-out-alt w-5"></i>
+                                    <span>{% trans "Logout" %}</span>
+                                </button>
+                            </form>
+                        {% else %}
+                            <a href="{% url 'login' %}" 
+                               class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition touch-target">
+                                <i class="fas fa-sign-in-alt w-5"></i>
+                                <span>{% trans "Login" %}</span>
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -204,29 +332,29 @@
                             <i class="fas fa-passport text-white"></i>
                         </div>
                         <div>
-                            <div class="font-bold text-white text-lg">Mosaic Visa</div>
-                            <div class="text-sm text-gray-400">JSON Generator</div>
+                            <div class="font-bold text-white text-lg">{% trans "Mosaic Visa" %}</div>
+                            <div class="text-sm text-gray-400">{% trans "JSON Generator" %}</div>
                         </div>
                     </div>
                     <p class="text-sm text-gray-400">
-                        Create JSON data for Mosaic Visa appointments. Simple, fast, and mobile-friendly.
+                        {% trans "Create JSON data for Mosaic Visa appointments. Simple, fast, and mobile-friendly." %}
                     </p>
                 </div>
                 
                 <!-- Links -->
                 <div>
-                    <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Quick Links</h4>
+                    <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">{% trans "Quick Links" %}</h4>
                     <ul class="space-y-2">
                         <li>
                             <a href="{% url 'index' %}" class="text-gray-400 hover:text-white transition flex items-center gap-2 text-sm">
                                 <i class="fas fa-chevron-right text-xs"></i>
-                                Home
+                                {% trans "Home" %}
                             </a>
                         </li>
                         <li>
                             <a href="{% url 'form' %}" class="text-gray-400 hover:text-white transition flex items-center gap-2 text-sm">
                                 <i class="fas fa-chevron-right text-xs"></i>
-                                Create Data
+                                {% trans "Create Data" %}
                             </a>
                         </li>
                     </ul>
@@ -234,19 +362,19 @@
                 
                 <!-- Features -->
                 <div>
-                    <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Features</h4>
+                    <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">{% trans "Features" %}</h4>
                     <ul class="space-y-2 text-sm">
                         <li class="flex items-center gap-2">
                             <i class="fas fa-check-circle text-green-400"></i>
-                            Mobile-Friendly
+                            {% trans "Mobile-Friendly" %}
                         </li>
                         <li class="flex items-center gap-2">
                             <i class="fas fa-check-circle text-green-400"></i>
-                            Secure Processing
+                            {% trans "Secure Processing" %}
                         </li>
                         <li class="flex items-center gap-2">
                             <i class="fas fa-check-circle text-green-400"></i>
-                            Instant JSON
+                            {% trans "Instant JSON" %}
                         </li>
                     </ul>
                 </div>
@@ -255,10 +383,10 @@
             <!-- Bottom Bar -->
             <div class="border-t border-gray-800 mt-8 pt-8 text-center">
                 <p class="text-sm text-gray-400">
-                    © 2024 Mosaic Visa JSON Generator
+                    © 2024 {% trans "Mosaic Visa JSON Generator" %}
                 </p>
                 <p class="text-xs text-gray-500 mt-2">
-                    Generate JSON data for visa appointment automation
+                    {% trans "Generate JSON data for visa appointment automation" %}
                 </p>
             </div>
         </div>
@@ -267,6 +395,49 @@
     {% block extra_scripts %}{% endblock %}
     
     <script>
+        // Language dropdown for desktop
+        const langButton = document.getElementById('desktop-lang-button');
+        const langDropdown = document.getElementById('desktop-lang-dropdown');
+        const langForm = document.getElementById('lang-form');
+        const langInput = document.getElementById('language-input');
+        const langOptions = document.querySelectorAll('.lang-option');
+        const mobileLangOptions = document.querySelectorAll('.mobile-lang-option');
+
+        // Toggle dropdown on click
+        if (langButton && langDropdown) {
+            langButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                langDropdown.classList.toggle('show');
+            });
+
+            // Close when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!langButton.contains(e.target) && !langDropdown.contains(e.target)) {
+                    langDropdown.classList.remove('show');
+                }
+            });
+
+            // Handle language selection
+            langOptions.forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const langCode = this.dataset.langCode;
+                    langInput.value = langCode;
+                    langForm.submit();
+                });
+            });
+        }
+
+        // Mobile language selection
+        mobileLangOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                const langCode = this.dataset.langCode;
+                document.getElementById('mobile-language-input').value = langCode;
+                document.getElementById('mobile-lang-form').submit();
+            });
+        });
+
         // Simple mobile menu toggle without glitches
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
@@ -303,7 +474,7 @@
             });
             
             // Close menu when clicking a link (for better mobile UX)
-            mobileMenu.querySelectorAll('a').forEach(link => {
+            mobileMenu.querySelectorAll('a, button').forEach(link => {
                 link.addEventListener('click', () => {
                     mobileMenu.classList.remove('open');
                     menuIcon.className = 'fas fa-bars text-gray-700 text-xl';
@@ -317,7 +488,7 @@
             });
         }
         
-        // Form validation enhancement
+        // Form validation enhancement (same as before)
         document.addEventListener('DOMContentLoaded', function() {
             const forms = document.querySelectorAll('form');
             forms.forEach(form => {
@@ -343,7 +514,7 @@
                         e.preventDefault();
                         
                         // Show simple alert
-                        alert('Please fill in all required fields.');
+                        alert('{% trans "Please fill in all required fields." %}');
                         
                         // Scroll to first invalid field
                         if (firstInvalid) {

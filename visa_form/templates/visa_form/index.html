@@ -1,157 +1,313 @@
 {% extends 'visa_form/base.html' %}
+{% load i18n %}
 
-{% block title %}Mosaic Visa Generator - Create JSON Data{% endblock %}
+{% block title %}{% trans "Mosaic Visa Generator - Create JSON Data" %}{% endblock %}
+
+{% block extra_head %}
+<style>
+    #particles-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: -1;
+        pointer-events: none;
+        opacity: 0.7; /* Slightly more visible on desktop */
+    }
+
+    /* Floating cards effect */
+    .floating-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        will-change: transform;
+    }
+
+    .floating-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.15);
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 768px) {
+        #particles-canvas {
+            opacity: 0.4; /* More subtle on mobile */
+        }
+        .floating-card:hover {
+            transform: translateY(-4px) scale(1.01); /* Smaller lift on touch */
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto">
+<div class="max-w-6xl mx-auto">
+    <!-- Full‑page fixed canvas -->
+    <canvas id="particles-canvas"></canvas>
+    
     <!-- Hero Section -->
-    <div class="text-center mb-12">
-        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 mb-6">
-            <i class="fas fa-passport text-4xl text-white"></i>
+    <div class="relative text-center mb-16 pt-8">
+        <!-- Decorative blurred circles -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
+            <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
         </div>
-        <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Mosaic Visa Data Generator
-        </h1>
-        <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-            Create JSON data for your Mosaic Visa appointments in minutes. 
-            Simple, fast, and mobile-friendly.
-        </p>
-        <a href="{% url 'form' %}" 
-           class="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-10 rounded-xl text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-            <i class="fas fa-plus-circle mr-3"></i> Start Creating Your Data
-            <i class="fas fa-arrow-right ml-3"></i>
-        </a>
+        
+        <div class="relative hero-content">
+            <div class="inline-flex items-center justify-center w-28 h-28 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 mb-8 shadow-xl floating-card">
+                <i class="fas fa-passport text-4xl text-white"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
+                {% trans "Mosaic Visa Data Generator" %}
+            </h1>
+            <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+                {% trans "Create JSON data for your Mosaic Visa appointments in minutes. Simple, fast, and mobile-friendly." %}
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{% url 'form' %}" 
+                   class="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-10 rounded-xl text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 floating-card">
+                    <i class="fas fa-plus-circle mr-3"></i> {% trans "Start Creating Your Data" %}
+                    <i class="fas fa-arrow-right ml-3"></i>
+                </a>
+                <a href="#how-it-works" 
+                   class="inline-flex items-center justify-center bg-white border-2 border-gray-300 hover:border-gray-400 text-gray-700 font-bold py-4 px-10 rounded-xl text-lg shadow hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 floating-card">
+                    <i class="fas fa-info-circle mr-3"></i> {% trans "Learn More" %}
+                </a>
+            </div>
+        </div>
     </div>
 
     <!-- Simple Steps -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        <div class="text-center">
-            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-edit text-2xl"></i>
-            </div>
-            <h3 class="font-bold text-gray-800 mb-2">1. Fill Form</h3>
-            <p class="text-gray-600 text-sm">Enter your visa application details</p>
-        </div>
-        
-        <div class="text-center">
-            <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-check-circle text-2xl"></i>
-            </div>
-            <h3 class="font-bold text-gray-800 mb-2">2. Download</h3>
-            <p class="text-gray-600 text-sm">Get your JSON data file</p>
-        </div>
-        
-        <div class="text-center">
-            <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-paper-plane text-2xl"></i>
-            </div>
-            <h3 class="font-bold text-gray-800 mb-2">3. Share</h3>
-            <p class="text-gray-600 text-sm">Send to administrator for auto-filling</p>
-        </div>
-    </div>
-
-    <!-- Simple Features -->
-    <div class="bg-white rounded-2xl shadow-lg p-8 mb-12 border border-gray-100">
-        <div class="grid md:grid-cols-2 gap-8">
-            <div>
-                <div class="flex items-start mb-6">
-                    <div class="bg-blue-100 p-3 rounded-lg mr-4">
-                        <i class="fas fa-mobile-alt text-blue-600"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-gray-800 mb-2">Mobile-Friendly</h3>
-                        <p class="text-gray-600 text-sm">Works perfectly on all devices</p>
-                    </div>
+    <div id="how-it-works" class="mb-20">
+        <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">{% trans "How It Works" %}</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white rounded-2xl shadow-lg p-8 text-center border border-gray-100 floating-card">
+                <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <span class="text-3xl font-bold">1</span>
                 </div>
-                
-                <div class="flex items-start mb-6">
-                    <div class="bg-green-100 p-3 rounded-lg mr-4">
-                        <i class="fas fa-shield-alt text-green-600"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-gray-800 mb-2">Secure & Private</h3>
-                        <p class="text-gray-600 text-sm">No data stored on our servers</p>
-                    </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">{% trans "Fill Form" %}</h3>
+                <p class="text-gray-600">{% trans "Enter your visa application details" %}</p>
+                <div class="mt-6 text-blue-600">
+                    <i class="fas fa-arrow-down text-2xl"></i>
                 </div>
             </div>
             
-            <div>
-                <div class="flex items-start mb-6">
-                    <div class="bg-purple-100 p-3 rounded-lg mr-4">
-                        <i class="fas fa-bolt text-purple-600"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-gray-800 mb-2">Fast & Easy</h3>
-                        <p class="text-gray-600 text-sm">Generate data in seconds</p>
-                    </div>
+            <div class="bg-white rounded-2xl shadow-lg p-8 text-center border border-gray-100 floating-card">
+                <div class="w-20 h-20 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <span class="text-3xl font-bold">2</span>
                 </div>
-                
-                <div class="flex items-start mb-6">
-                    <div class="bg-indigo-100 p-3 rounded-lg mr-4">
-                        <i class="fas fa-code text-indigo-600"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-gray-800 mb-2">Tampermonkey Ready</h3>
-                        <p class="text-gray-600 text-sm">Perfect JSON format for automation</p>
-                    </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">{% trans "Download" %}</h3>
+                <p class="text-gray-600">{% trans "Get your JSON data file" %}</p>
+                <div class="mt-6 text-green-600">
+                    <i class="fas fa-arrow-down text-2xl"></i>
                 </div>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-lg p-8 text-center border border-gray-100 floating-card">
+                <div class="w-20 h-20 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <span class="text-3xl font-bold">3</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">{% trans "Share" %}</h3>
+                <p class="text-gray-600">{% trans "Send to administrator for auto-filling" %}</p>
             </div>
         </div>
     </div>
 
-    <!-- Simple How It Works -->
-    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 mb-12">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Simple Process</h2>
+    <!-- Features Grid -->
+    <div class="mb-20">
+        <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">{% trans "Why Choose Our Generator" %}</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-gradient-to-br from-blue-50 to-white p-6 rounded-2xl border border-blue-100 floating-card">
+                <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-4">
+                    <i class="fas fa-mobile-alt text-xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">{% trans "Mobile-Friendly" %}</h3>
+                <p class="text-gray-600 text-sm">{% trans "Works perfectly on all devices" %}</p>
+            </div>
+            
+            <div class="bg-gradient-to-br from-green-50 to-white p-6 rounded-2xl border border-green-100 floating-card">
+                <div class="w-12 h-12 bg-green-100 text-green-600 rounded-xl flex items-center justify-center mb-4">
+                    <i class="fas fa-shield-alt text-xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">{% trans "Secure & Private" %}</h3>
+                <p class="text-gray-600 text-sm">{% trans "No data stored on our servers" %}</p>
+            </div>
+            
+            <div class="bg-gradient-to-br from-purple-50 to-white p-6 rounded-2xl border border-purple-100 floating-card">
+                <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mb-4">
+                    <i class="fas fa-bolt text-xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">{% trans "Fast & Easy" %}</h3>
+                <p class="text-gray-600 text-sm">{% trans "Generate data in seconds" %}</p>
+            </div>
+            
+            <div class="bg-gradient-to-br from-indigo-50 to-white p-6 rounded-2xl border border-indigo-100 floating-card">
+                <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
+                    <i class="fas fa-code text-xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">{% trans "Tampermonkey Ready" %}</h3>
+                <p class="text-gray-600 text-sm">{% trans "Perfect JSON format for automation" %}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Process -->
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-3xl p-8 md:p-12 mb-20 floating-card">
+        <h2 class="text-3xl font-bold text-gray-900 mb-10 text-center">{% trans "Simple 3-Step Process" %}</h2>
         
-        <div class="space-y-6">
-            <div class="flex items-start">
-                <div class="bg-white text-blue-600 rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 font-bold">
+        <div class="space-y-8">
+            <div class="flex flex-col md:flex-row items-start gap-6">
+                <div class="flex-shrink-0 w-16 h-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-2xl font-bold shadow-lg">
                     1
                 </div>
                 <div>
-                    <h3 class="font-bold text-gray-800 mb-2">Fill the Form</h3>
-                    <p class="text-gray-600">Enter your visa application details for you and your family members.</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">{% trans "Fill the Form" %}</h3>
+                    <p class="text-gray-700 text-lg">{% trans "Enter your visa application details for you and your family members." %}</p>
                 </div>
             </div>
             
-            <div class="flex items-start">
-                <div class="bg-white text-green-600 rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 font-bold">
+            <div class="flex flex-col md:flex-row items-start gap-6">
+                <div class="flex-shrink-0 w-16 h-16 bg-green-600 text-white rounded-2xl flex items-center justify-center text-2xl font-bold shadow-lg">
                     2
                 </div>
                 <div>
-                    <h3 class="font-bold text-gray-800 mb-2">Download Your Data</h3>
-                    <p class="text-gray-600">Get a JSON file with Tampermonkey integration code and your data.</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">{% trans "Download Your Data" %}</h3>
+                    <p class="text-gray-700 text-lg">{% trans "Get a JSON file with Tampermonkey integration code and your data." %}</p>
                 </div>
             </div>
             
-            <div class="flex items-start">
-                <div class="bg-white text-purple-600 rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 font-bold">
+            <div class="flex flex-col md:flex-row items-start gap-6">
+                <div class="flex-shrink-0 w-16 h-16 bg-purple-600 text-white rounded-2xl flex items-center justify-center text-2xl font-bold shadow-lg">
                     3
                 </div>
                 <div>
-                    <h3 class="font-bold text-gray-800 mb-2">Send to Administrator</h3>
-                    <p class="text-gray-600">Share the file with your administrator via WhatsApp or email.</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">{% trans "Send to Administrator" %}</h3>
+                    <p class="text-gray-700 text-lg">{% trans "Share the file with your administrator via WhatsApp or email." %}</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Final CTA -->
-    <div class="text-center">
-        <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-            <h3 class="text-2xl font-bold text-gray-900 mb-4">Ready to Get Started?</h3>
-            <p class="text-gray-600 mb-6 max-w-xl mx-auto">
-                Create your Mosaic Visa JSON data now. It's free and takes just a few minutes.
+    <div class="text-center mb-12">
+        <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-100 floating-card">
+            <h3 class="text-3xl font-bold text-gray-900 mb-4">{% trans "Ready to Get Started?" %}</h3>
+            <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+                {% trans "Create your Mosaic Visa JSON data now. It's free and takes just a few minutes." %}
             </p>
             <a href="{% url 'form' %}" 
-               class="inline-flex items-center bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-12 rounded-xl text-lg shadow-xl hover:shadow-2xl transition-all duration-300">
-                <i class="fas fa-play-circle mr-3"></i> Create Your Visa Data Now
+               class="inline-flex items-center bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-5 px-14 rounded-xl text-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 floating-card">
+                <i class="fas fa-play-circle mr-3"></i> {% trans "Create Your Visa Data Now" %}
                 <i class="fas fa-arrow-right ml-3"></i>
             </a>
-            <p class="text-gray-500 text-sm mt-4">
-                <i class="fas fa-lock mr-2"></i> Your data is processed locally and never stored
+            <p class="text-gray-500 text-sm mt-6">
+                <i class="fas fa-lock mr-2 text-green-500"></i> {% trans "Your data is processed locally and never stored" %}
             </p>
         </div>
     </div>
 </div>
+
+<script>
+    (function() {
+        const canvas = document.getElementById('particles-canvas');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        // Adjust particle count based on screen size
+        const isMobile = window.innerWidth <= 768;
+        const PARTICLE_COUNT = isMobile ? 40 : 70;
+        const MAX_SPEED = 0.15;
+        const CONNECT_DISTANCE = isMobile ? 120 : 180;
+        const BASE_OPACITY = 0.35;
+        const LINE_OPACITY = 0.2;
+
+        function init() {
+            resizeCanvas();
+            createParticles();
+            animate();
+        }
+
+        function resizeCanvas() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+
+        function createParticles() {
+            particles = [];
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    vx: (Math.random() - 0.5) * MAX_SPEED,
+                    vy: (Math.random() - 0.5) * MAX_SPEED,
+                });
+            }
+        }
+
+        function animate() {
+            if (width === 0 || height === 0) {
+                requestAnimationFrame(animate);
+                return;
+            }
+
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = `rgba(79, 70, 229, ${BASE_OPACITY})`;
+            ctx.lineWidth = 1;
+
+            for (let i = 0; i < particles.length; i++) {
+                let p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+
+                // Wrap around edges
+                if (p.x < 0) p.x = width;
+                if (p.x > width) p.x = 0;
+                if (p.y < 0) p.y = height;
+                if (p.y > height) p.y = 0;
+
+                // Draw particle
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Connect nearby particles
+                for (let j = i + 1; j < particles.length; j++) {
+                    let p2 = particles[j];
+                    let dx = p.x - p2.x;
+                    let dy = p.y - p2.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < CONNECT_DISTANCE) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.strokeStyle = `rgba(79, 70, 229, ${LINE_OPACITY * (1 - distance / CONNECT_DISTANCE)})`;
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            // Re‑create particles to adapt to new dimensions
+            createParticles();
+        });
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    })();
+</script>
 {% endblock %}

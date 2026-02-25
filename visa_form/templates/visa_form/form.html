@@ -1,5 +1,5 @@
 {% extends 'visa_form/base.html' %}
-
+{% load i18n %}
 {% block title %}Create Visa Data - Mosaic Visa Generator{% endblock %}
 
 {% block extra_head %}
@@ -292,15 +292,15 @@
         <div class="progress-steps">
             <div class="step active">
                 <div class="step-icon"><i class="fas fa-edit"></i></div>
-                <span class="step-label">Fill Form</span>
+                <span class="step-label">{% trans "Fill Form" %}</span>
             </div>
             <div class="step">
                 <div class="step-icon"><i class="fas fa-eye"></i></div>
-                <span class="step-label">Preview</span>
+                <span class="step-label">{% trans "Preview" %}</span>
             </div>
             <div class="step">
                 <div class="step-icon"><i class="fas fa-download"></i></div>
-                <span class="step-label">Download</span>
+                <span class="step-label">{% trans "Download" %}</span>
             </div>
         </div>
     </div>
@@ -316,8 +316,8 @@
                     <i class="fas fa-globe-americas"></i>
                 </div>
                 <div>
-                    <h2 class="text-xl md:text-2xl font-bold text-gray-900">Common Application Information</h2>
-                    <p class="text-sm text-gray-600 mt-1">Shared details for all applicants</p>
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-900">{% trans "Common Application Information" %}</h2>
+                    <p class="text-sm text-gray-600 mt-1">{% trans "Shared details for all applicants" %}</p>
                 </div>
             </div>
             
@@ -328,20 +328,20 @@
                     <div class="space-y-6">
                         <div class="field-group">
                             <label class="form-label">
-                                <i class="fas fa-calendar-day mr-2 text-blue-500"></i>Minimum Desired Date
+                                <i class="fas fa-calendar-day mr-2 text-blue-500"></i>{% trans "Minimum Desired Date" %}
                                 <span class="required-star">*</span>
                             </label>
                             {{ visa_form.start_date }}
-                            <p class="form-help">Earliest acceptable appointment date</p>
+                            <p class="form-help">{% trans "Earliest acceptable appointment date" %}</p>
                         </div>
                         
                         <div class="field-group">
                             <label class="form-label">
-                                <i class="fas fa-calendar-times mr-2 text-blue-500"></i>Maximum Allowed Date
+                                <i class="fas fa-calendar-times mr-2 text-blue-500"></i>{% trans "Maximum Allowed Date" %}
                                 <span class="required-star">*</span>
                             </label>
                             {{ visa_form.max_date }}
-                            <p class="form-help">Latest acceptable appointment date</p>
+                            <p class="form-help">{% trans "Latest acceptable appointment date" %}</p>
                         </div>
                         
                         <div class="field-group">
@@ -354,7 +354,7 @@
                         
                         <div class="field-group">
                             <label class="form-label">
-                                <i class="fas fa-phone mr-2 text-blue-500"></i>Phone
+                                <i class="fas fa-phone mr-2 text-blue-500"></i>{% trans "Phone" %}
                                 <span class="required-star">*</span>
                             </label>
                             {{ visa_form.phone_local }}
@@ -365,7 +365,7 @@
                     <div class="space-y-6">
                         <div class="field-group">
                             <label class="form-label">
-                                <i class="fas fa-file-alt mr-2 text-blue-500"></i>Visa Type
+                                <i class="fas fa-file-alt mr-2 text-blue-500"></i>{% trans "Visa Type" %}
                                 <span class="required-star">*</span>
                             </label>
                             {{ visa_form.visa }}
@@ -373,7 +373,7 @@
                         
                         <div class="field-group">
                             <label class="form-label">
-                                <i class="fas fa-flag mr-2 text-blue-500"></i>Nationality
+                                <i class="fas fa-flag mr-2 text-blue-500"></i>{% trans "Nationality" %}
                                 <span class="required-star">*</span>
                             </label>
                             {{ visa_form.nationality }}
@@ -381,18 +381,18 @@
                         
                         <div class="field-group">
                             <label class="form-label">
-                                <i class="fas fa-id-card mr-2 text-blue-500"></i>Passport numbers
+                                <i class="fas fa-id-card mr-2 text-blue-500"></i>{% trans "Passport numbers" %}
                             </label>
                             {{ visa_form.passports }}
-                            <p class="form-help">One per line</p>
+                            <p class="form-help">{% trans "One per line" %}</p>
                         </div>
                         
                         <div class="field-group">
                             <label class="form-label">
-                                <i class="fas fa-users mr-2 text-blue-500"></i>Relations
+                                <i class="fas fa-users mr-2 text-blue-500"></i>{% trans "Relations" %}
                             </label>
                             {{ visa_form.relations }}
-                            <p class="form-help">Comma separated, e.g., Wife, Father, Mother</p>
+                            <p class="form-help">{% trans "Comma separated, e.g., Wife, Father, Mother" %}</p>
                         </div>
                     </div>
                 </div>
@@ -401,7 +401,7 @@
                 <div class="mt-6 space-y-6">
                     <div class="field-group">
                         <label class="form-label">
-                            <i class="fas fa-home mr-2 text-blue-500"></i>Contact Address
+                            <i class="fas fa-home mr-2 text-blue-500"></i>{% trans "Contact Address" %}
                             <span class="required-star">*</span>
                         </label>
                         {{ visa_form.contact_address }}
@@ -427,14 +427,14 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="field-group">
                             <label class="form-label">
-                                <i class="fas fa-plane-departure mr-2 text-blue-500"></i>Departure Date
+                                <i class="fas fa-plane-departure mr-2 text-blue-500"></i>{% trans "Departure Date" %}
                                 <span class="required-star">*</span>
                             </label>
                             {{ visa_form.departure_date }}
                         </div>
                         <div class="field-group">
                             <label class="form-label">
-                                <i class="fas fa-plane-arrival mr-2 text-blue-500"></i>Return Date
+                                <i class="fas fa-plane-arrival mr-2 text-blue-500"></i>{% trans "Return Date" %}
                                 <span class="required-star">*</span>
                             </label>
                             {{ visa_form.return_date }}
@@ -453,12 +453,12 @@
                 <div class="flex-1">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <h2 class="text-xl md:text-2xl font-bold text-gray-900">Applicants Information</h2>
-                            <p class="text-sm text-gray-600 mt-1">Add details for each applicant (maximum 5)</p>
+                            <h2 class="text-xl md:text-2xl font-bold text-gray-900">{% trans "Applicants Information" %}</h2>
+                            <p class="text-sm text-gray-600 mt-1">{% trans "Add details for each applicant (maximum 5)" %}</p>
                         </div>
                         <button type="button" id="add-applicant" 
                                 class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center">
-                            <i class="fas fa-user-plus mr-2"></i> Add Applicant
+                            <i class="fas fa-user-plus mr-2"></i> {% trans "Add Applicant" %}
                         </button>
                     </div>
                 </div>
@@ -486,8 +486,8 @@
                                 <i class="fas fa-user text-lg"></i>
                             </div>
                             <div>
-                                <h3 class="text-xl font-bold text-gray-900">Applicant {{ forloop.counter }}</h3>
-                                <p class="text-gray-600 text-sm mt-1">Personal and passport details</p>
+                                <h3 class="text-xl font-bold text-gray-900">{% trans "Applicant" %} {{ forloop.counter }}</h3>
+                                <p class="text-gray-600 text-sm mt-1">{% trans "Personal and passport details" %}</p>
                             </div>
                         </div>
                         
@@ -497,14 +497,14 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div class="field-group">
                                         <label class="form-label">
-                                            First Name
+                                            {% trans "First Name" %}
                                             <span class="required-star">*</span>
                                         </label>
                                         {{ form.name }}
                                     </div>
                                     <div class="field-group">
                                         <label class="form-label">
-                                            Last Name
+                                            {% trans "Last Name" %}
                                             <span class="required-star">*</span>
                                         </label>
                                         {{ form.surname }}
@@ -513,27 +513,27 @@
                                 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div class="field-group">
-                                        <label class="form-label">Gender</label>
+                                        <label class="form-label">{% trans "Gender" %}</label>
                                         {{ form.gender }}
                                     </div>
                                     <div class="field-group">
-                                        <label class="form-label">Marital Status</label>
+                                        <label class="form-label">{% trans "Marital Status" %}</label>
                                         {{ form.marital_status }}
                                     </div>
                                 </div>
                                 
                                 <div class="field-group">
-                                    <label class="form-label">Date of Birth</label>
+                                    <label class="form-label">{% trans "Date of Birth" %}</label>
                                     {{ form.birthday }}
                                 </div>
                                 
                                 <div class="field-group">
-                                    <label class="form-label">Place of Birth</label>
+                                    <label class="form-label">{% trans "Place of Birth" %}</label>
                                     {{ form.birth_place }}
                                 </div>
                                 
                                 <div class="field-group">
-                                    <label class="form-label">Occupation</label>
+                                    <label class="form-label">{% trans "Occupation" %}</label>
                                     {{ form.occupation }}
                                 </div>
                             </div>
@@ -541,32 +541,32 @@
                             <!-- Right Column -->
                             <div class="space-y-6">
                                 <div class="field-group">
-                                    <label class="form-label">Father's Full Name</label>
+                                    <label class="form-label">{% trans "Father's Full Name" %}</label>
                                     {{ form.father_name }}
                                 </div>
                                 
                                 <div class="field-group">
-                                    <label class="form-label">Mother's Full Name</label>
+                                    <label class="form-label">{% trans "Mother's Full Name" %}</label>
                                     {{ form.mother_name }}
                                 </div>
                                 
                                 <div class="field-group">
-                                    <label class="form-label">Travel Document Type</label>
+                                    <label class="form-label">{% trans "Travel Document Type" %}</label>
                                     {{ form.travel_document }}
                                 </div>
                                 
                                 <div class="field-group">
-                                    <label class="form-label">Passport Issued By</label>
+                                    <label class="form-label">{% trans "Passport Issued By" %}</label>
                                     {{ form.passport_issued_by }}
                                 </div>
                                 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div class="field-group">
-                                        <label class="form-label">Issue Date</label>
+                                        <label class="form-label">{% trans "Issue Date" %}</label>
                                         {{ form.passport_issue_date }}
                                     </div>
                                     <div class="field-group">
-                                        <label class="form-label">Expiry Date</label>
+                                        <label class="form-label">{% trans "Expiry Date" %}</label>
                                         {{ form.passport_expiry }}
                                     </div>
                                 </div>
@@ -582,21 +582,21 @@
         <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
             <div class="flex flex-col lg:flex-row justify-between items-center gap-8">
                 <div class="text-center lg:text-left">
-                    <h3 class="text-lg font-bold text-gray-900 mb-2">Ready to Generate JSON?</h3>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">{% trans "Ready to Generate JSON?" %}</h3>
                     <p class="text-gray-600 text-sm">
                         <i class="fas fa-shield-alt mr-1 text-green-500"></i>
-                        Your data is processed locally and not stored on our servers
+                        {% trans "Your data is processed locally and not stored on our servers" %}
                     </p>
                 </div>
                 
                 <div class="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
                     <button type="reset" 
                             class="bg-gray-50 hover:bg-gray-100 text-gray-700 font-semibold py-4 px-8 rounded-xl border border-gray-200 transition-all duration-300 flex items-center justify-center order-2 sm:order-1">
-                        <i class="fas fa-redo mr-3"></i> Clear Form
+                        <i class="fas fa-redo mr-3"></i> {% trans "Clear Form" %}
                     </button>
                     <button type="submit" 
                             class="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center order-1 sm:order-2">
-                        <i class="fas fa-eye mr-3"></i> Preview & Generate JSON
+                        <i class="fas fa-eye mr-3"></i> {% trans "Preview & Generate JSON" %}
                         <i class="fas fa-arrow-right ml-3"></i>
                     </button>
                 </div>
@@ -608,13 +608,13 @@
                         <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-3">
                             <i class="fas fa-info-circle text-sm"></i>
                         </div>
-                        <span>All fields are required unless marked optional</span>
+                        <span>{% trans "All fields are required unless marked optional" %}</span>
                     </div>
                     <div class="flex items-center">
                         <div class="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mr-3">
                             <i class="fas fa-calendar-alt text-sm"></i>
                         </div>
-                        <span>Dates should be in YYYY-MM-DD format</span>
+                        <span>{% trans "Dates should be in YYYY-MM-DD format" %}</span>
                     </div>
                 </div>
             </div>
