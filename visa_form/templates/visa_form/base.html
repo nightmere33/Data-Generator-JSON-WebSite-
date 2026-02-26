@@ -511,20 +511,32 @@
                     });
                     
                     if (!valid) {
-                        e.preventDefault();
-                        
-                        // Show simple alert
-                        alert('{% trans "Please fill in all required fields." %}');
-                        
-                        // Scroll to first invalid field
-                        if (firstInvalid) {
-                            firstInvalid.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'center'
-                            });
-                            firstInvalid.focus();
+                    e.preventDefault();
+
+                    // Collect names of missing fields
+                    const missingFields = [];
+                    requiredFields.forEach(field => {
+                        if (!field.value.trim()) {
+                            // Try to find a label
+                            const label = field.closest('.field-group')?.querySelector('.form-label') ||
+                                        field.previousElementSibling?.tagName === 'LABEL' ? field.previousElementSibling : null;
+                            const fieldName = label ? label.innerText.replace('*', '').trim() : field.name || 'Field';
+                            missingFields.push(fieldName);
                         }
+                    });
+
+                    // Show toast with appropriate message
+                    const message = missingFields.length === 1
+                        ? `Please fill in the required field: ${missingFields[0]}.`
+                        : 'Please fill in all required fields.';
+                    showToast(message, 'error');
+
+                    // Scroll to first invalid field
+                    if (firstInvalid) {
+                        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        firstInvalid.focus();
                     }
+                }
                 });
             });
             
@@ -547,6 +559,32 @@
                 });
             }
         });
+
+
+
+
+        function showToast(message, type = 'info') {
+            // remove existing toasts
+            document.querySelectorAll('.custom-toast').forEach(t => t.remove());
+            const toast = document.createElement('div');
+            toast.className = `custom-toast ${
+                type === 'success' ? 'bg-gradient-to-r from-green-500 to-emerald-500' :
+                type === 'warning' ? 'bg-gradient-to-r from-yellow-500 to-amber-500' :
+                type === 'error' ? 'bg-gradient-to-r from-red-500 to-rose-500' : 
+                'bg-gradient-to-r from-blue-500 to-indigo-500'
+            } text-white`;
+            const icons = { success: 'check-circle', warning: 'exclamation-triangle', error: 'times-circle', info: 'info-circle' };
+            toast.innerHTML = `
+                <div class="flex items-center">
+                    <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-${icons[type] || 'info-circle'} text-sm"></i>
+                    </div>
+                    <div class="font-medium">${message}</div>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
     </script>
 </body>
 </html>

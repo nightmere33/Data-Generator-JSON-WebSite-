@@ -1,5 +1,7 @@
 {% extends 'visa_form/base.html' %}
 {% load i18n %}
+{% load widget_tweaks %}
+
 {% block title %}Create Visa Data - Mosaic Visa Generator{% endblock %}
 
 {% block extra_head %}
@@ -74,6 +76,25 @@
         margin-left: 2px;
     }
     
+    /* Error styling */
+    .error-message {
+        color: #dc2626;
+        font-size: 12px;
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .error-message i {
+        font-size: 12px;
+    }
+    
+    .field-error {
+        border-color: #dc2626 !important;
+        background-color: #fef2f2;
+    }
+    
     /* Mobile optimizations */
     @media (max-width: 768px) {
         .mobile-form-group {
@@ -82,7 +103,7 @@
         
         .form-input, .form-select, .form-textarea {
             padding: 14px 16px;
-            font-size: 16px; /* Better for mobile */
+            font-size: 16px;
         }
         
         .applicant-card {
@@ -282,12 +303,18 @@
     .text-muted {
         color: #6b7280;
     }
+    
+    /* Add applicant button at bottom */
+    .add-applicant-container {
+        margin-top: 24px;
+        text-align: center;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="max-w-7xl mx-auto">
-    <!-- Simple Progress Bar -->
+    <!-- Progress bar (unchanged) -->
     <div class="mb-10">
         <div class="progress-steps">
             <div class="step active">
@@ -306,10 +333,10 @@
     </div>
 
     <!-- Form -->
-    <form method="post" class="space-y-8" id="visaForm">
+    <form method="post" class="space-y-8" id="visaForm" autocomplete="off" novalidate>
         {% csrf_token %}
         
-        <!-- Common Information -->
+        <!-- Common Information (unchanged) -->
         <div class="form-section">
             <div class="section-header">
                 <div class="section-icon">
@@ -331,7 +358,7 @@
                                 <i class="fas fa-calendar-day mr-2 text-blue-500"></i>{% trans "Minimum Desired Date" %}
                                 <span class="required-star">*</span>
                             </label>
-                            {{ visa_form.start_date }}
+                            {{ visa_form.start_date|add_class:"form-input"|attr:"required" }}
                             <p class="form-help">{% trans "Earliest acceptable appointment date" %}</p>
                         </div>
                         
@@ -340,7 +367,7 @@
                                 <i class="fas fa-calendar-times mr-2 text-blue-500"></i>{% trans "Maximum Allowed Date" %}
                                 <span class="required-star">*</span>
                             </label>
-                            {{ visa_form.max_date }}
+                            {{ visa_form.max_date|add_class:"form-input"|attr:"required" }}
                             <p class="form-help">{% trans "Latest acceptable appointment date" %}</p>
                         </div>
                         
@@ -349,7 +376,7 @@
                                 <i class="fas fa-envelope mr-2 text-blue-500"></i>Email
                                 <span class="required-star">*</span>
                             </label>
-                            {{ visa_form.email }}
+                            {{ visa_form.email|add_class:"form-input"|attr:"required" }}
                         </div>
                         
                         <div class="field-group">
@@ -357,7 +384,7 @@
                                 <i class="fas fa-phone mr-2 text-blue-500"></i>{% trans "Phone" %}
                                 <span class="required-star">*</span>
                             </label>
-                            {{ visa_form.phone_local }}
+                            {{ visa_form.phone_local|add_class:"form-input"|attr:"required" }}
                         </div>
                     </div>
                     
@@ -368,7 +395,7 @@
                                 <i class="fas fa-file-alt mr-2 text-blue-500"></i>{% trans "Visa Type" %}
                                 <span class="required-star">*</span>
                             </label>
-                            {{ visa_form.visa }}
+                            {{ visa_form.visa|add_class:"form-select"|attr:"required" }}
                         </div>
                         
                         <div class="field-group">
@@ -376,35 +403,27 @@
                                 <i class="fas fa-flag mr-2 text-blue-500"></i>{% trans "Nationality" %}
                                 <span class="required-star">*</span>
                             </label>
-                            {{ visa_form.nationality }}
+                            {{ visa_form.nationality|add_class:"form-select"|attr:"required" }}
                         </div>
                         
                         <div class="field-group">
                             <label class="form-label">
-                                <i class="fas fa-id-card mr-2 text-blue-500"></i>{% trans "Passport numbers" %}
+                                <i class="fas fa-users mr-2 text-blue-500"></i>{% trans "Relation" %}
                             </label>
-                            {{ visa_form.passports }}
-                            <p class="form-help">{% trans "One per line" %}</p>
-                        </div>
-                        
-                        <div class="field-group">
-                            <label class="form-label">
-                                <i class="fas fa-users mr-2 text-blue-500"></i>{% trans "Relations" %}
-                            </label>
-                            {{ visa_form.relations }}
-                            <p class="form-help">{% trans "Comma separated, e.g., Wife, Father, Mother" %}</p>
+                            {{ visa_form.relations|add_class:"form-select" }}
+                            <p class="form-help">{% trans "Select the relationship to the main applicant" %}</p>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Full-width fields below the two columns -->
+                <!-- Full-width fields -->
                 <div class="mt-6 space-y-6">
                     <div class="field-group">
                         <label class="form-label">
                             <i class="fas fa-home mr-2 text-blue-500"></i>{% trans "Contact Address" %}
                             <span class="required-star">*</span>
                         </label>
-                        {{ visa_form.contact_address }}
+                        {{ visa_form.contact_address|add_class:"form-textarea"|attr:"required" }}
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -413,14 +432,14 @@
                                 City
                                 <span class="required-star">*</span>
                             </label>
-                            {{ visa_form.contact_city }}
+                            {{ visa_form.contact_city|add_class:"form-input"|attr:"required" }}
                         </div>
                         <div class="field-group">
                             <label class="form-label">
                                 Postal Code
                                 <span class="required-star">*</span>
                             </label>
-                            {{ visa_form.contact_postcode }}
+                            {{ visa_form.contact_postcode|add_class:"form-input"|attr:"required" }}
                         </div>
                     </div>
                     
@@ -430,36 +449,30 @@
                                 <i class="fas fa-plane-departure mr-2 text-blue-500"></i>{% trans "Departure Date" %}
                                 <span class="required-star">*</span>
                             </label>
-                            {{ visa_form.departure_date }}
+                            {{ visa_form.departure_date|add_class:"form-input"|attr:"required" }}
                         </div>
                         <div class="field-group">
                             <label class="form-label">
                                 <i class="fas fa-plane-arrival mr-2 text-blue-500"></i>{% trans "Return Date" %}
                                 <span class="required-star">*</span>
                             </label>
-                            {{ visa_form.return_date }}
+                            {{ visa_form.return_date|add_class:"form-input"|attr:"required" }}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Applicants Section (unchanged) -->
+        <!-- Applicants Section -->
         <div class="form-section">
             <div class="section-header">
                 <div class="section-icon">
                     <i class="fas fa-users"></i>
                 </div>
                 <div class="flex-1">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        <div>
-                            <h2 class="text-xl md:text-2xl font-bold text-gray-900">{% trans "Applicants Information" %}</h2>
-                            <p class="text-sm text-gray-600 mt-1">{% trans "Add details for each applicant (maximum 5)" %}</p>
-                        </div>
-                        <button type="button" id="add-applicant" 
-                                class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center">
-                            <i class="fas fa-user-plus mr-2"></i> {% trans "Add Applicant" %}
-                        </button>
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-bold text-gray-900">{% trans "Applicants Information" %}</h2>
+                        <p class="text-sm text-gray-600 mt-1">{% trans "Add details for each applicant (maximum 5)" %}</p>
                     </div>
                 </div>
             </div>
@@ -470,7 +483,7 @@
                     
                     {% for form in applicant_formset %}
                     <div class="applicant-card p-6 md:p-8" data-index="{{ forloop.counter0 }}">
-                        <!-- Remove button - always visible but hidden for first applicant -->
+                        <!-- Remove button -->
                         {% if forloop.counter > 1 %}
                         <button type="button" class="remove-applicant" title="Remove Applicant">
                             <i class="fas fa-trash-alt"></i>
@@ -500,74 +513,115 @@
                                             {% trans "First Name" %}
                                             <span class="required-star">*</span>
                                         </label>
-                                        {{ form.name }}
+                                        {{ form.name|add_class:"form-input"|attr:"required" }}
                                     </div>
                                     <div class="field-group">
                                         <label class="form-label">
                                             {% trans "Last Name" %}
                                             <span class="required-star">*</span>
                                         </label>
-                                        {{ form.surname }}
+                                        {{ form.surname|add_class:"form-input"|attr:"required" }}
                                     </div>
                                 </div>
                                 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div class="field-group">
-                                        <label class="form-label">{% trans "Gender" %}</label>
-                                        {{ form.gender }}
+                                        <label class="form-label">
+                                            {% trans "Gender" %}
+                                            <span class="required-star">*</span>
+                                        </label>
+                                        {{ form.gender|add_class:"form-select"|attr:"required" }}
                                     </div>
                                     <div class="field-group">
-                                        <label class="form-label">{% trans "Marital Status" %}</label>
-                                        {{ form.marital_status }}
+                                        <label class="form-label">
+                                            {% trans "Marital Status" %}
+                                            <span class="required-star">*</span>
+                                        </label>
+                                        {{ form.marital_status|add_class:"form-select"|attr:"required" }}
                                     </div>
                                 </div>
                                 
                                 <div class="field-group">
-                                    <label class="form-label">{% trans "Date of Birth" %}</label>
-                                    {{ form.birthday }}
+                                    <label class="form-label">
+                                        {% trans "Date of Birth" %}
+                                        <span class="required-star">*</span>
+                                    </label>
+                                    {{ form.birthday|add_class:"form-input"|attr:"required"|attr:"type:date" }}
                                 </div>
                                 
                                 <div class="field-group">
-                                    <label class="form-label">{% trans "Place of Birth" %}</label>
-                                    {{ form.birth_place }}
+                                    <label class="form-label">
+                                        {% trans "Place of Birth" %}
+                                        <span class="required-star">*</span>
+                                    </label>
+                                    {{ form.birth_place|add_class:"form-input"|attr:"required" }}
                                 </div>
-                                
+
                                 <div class="field-group">
-                                    <label class="form-label">{% trans "Occupation" %}</label>
-                                    {{ form.occupation }}
+                                    <label class="form-label">
+                                        {% trans "Passport Number" %}
+                                        <span class="required-star">*</span>
+                                    </label>
+                                    {{ form.passport_number|add_class:"form-input"|attr:"required" }}
+                                </div>
+
+                                <div class="field-group">
+                                    <label class="form-label">
+                                        {% trans "Occupation" %}
+                                        <span class="required-star">*</span>
+                                    </label>
+                                    {{ form.occupation|add_class:"form-select"|attr:"required" }}
                                 </div>
                             </div>
                             
                             <!-- Right Column -->
                             <div class="space-y-6">
                                 <div class="field-group">
-                                    <label class="form-label">{% trans "Father's Full Name" %}</label>
-                                    {{ form.father_name }}
+                                    <label class="form-label">
+                                        {% trans "Father's Full Name" %}
+                                        <span class="required-star">*</span>
+                                    </label>
+                                    {{ form.father_name|add_class:"form-input"|attr:"required" }}
                                 </div>
                                 
                                 <div class="field-group">
-                                    <label class="form-label">{% trans "Mother's Full Name" %}</label>
-                                    {{ form.mother_name }}
+                                    <label class="form-label">
+                                        {% trans "Mother's Full Name" %}
+                                        <span class="required-star">*</span>
+                                    </label>
+                                    {{ form.mother_name|add_class:"form-input"|attr:"required" }}
                                 </div>
                                 
                                 <div class="field-group">
-                                    <label class="form-label">{% trans "Travel Document Type" %}</label>
-                                    {{ form.travel_document }}
+                                    <label class="form-label">
+                                        {% trans "Travel Document Type" %}
+                                        <span class="required-star">*</span>
+                                    </label>
+                                    {{ form.travel_document|add_class:"form-select"|attr:"required" }}
                                 </div>
                                 
                                 <div class="field-group">
-                                    <label class="form-label">{% trans "Passport Issued By" %}</label>
-                                    {{ form.passport_issued_by }}
+                                    <label class="form-label">
+                                        {% trans "Passport Issued By" %}
+                                        <span class="required-star">*</span>
+                                    </label>
+                                    {{ form.passport_issued_by|add_class:"form-input"|attr:"required" }}
                                 </div>
                                 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div class="field-group">
-                                        <label class="form-label">{% trans "Issue Date" %}</label>
-                                        {{ form.passport_issue_date }}
+                                        <label class="form-label">
+                                            {% trans "Issue Date" %}
+                                            <span class="required-star">*</span>
+                                        </label>
+                                        {{ form.passport_issue_date|add_class:"form-input"|attr:"required"|attr:"type:date" }}
                                     </div>
                                     <div class="field-group">
-                                        <label class="form-label">{% trans "Expiry Date" %}</label>
-                                        {{ form.passport_expiry }}
+                                        <label class="form-label">
+                                            {% trans "Expiry Date" %}
+                                            <span class="required-star">*</span>
+                                        </label>
+                                        {{ form.passport_expiry|add_class:"form-input"|attr:"required"|attr:"type:date" }}
                                     </div>
                                 </div>
                             </div>
@@ -575,10 +629,18 @@
                     </div>
                     {% endfor %}
                 </div>
+                
+                <!-- Add Applicant button -->
+                <div class="add-applicant-container">
+                    <button type="button" id="add-applicant" 
+                            class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center mx-auto">
+                        <i class="fas fa-user-plus mr-2"></i> {% trans "Add Another Applicant" %}
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Form Actions (unchanged) -->
+        <!-- Form Actions -->
         <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
             <div class="flex flex-col lg:flex-row justify-between items-center gap-8">
                 <div class="text-center lg:text-left">
@@ -631,20 +693,15 @@
         const addBtn = document.getElementById('add-applicant');
         let formCount = parseInt(totalForms.value);
         
-        // Initialize remove buttons for existing forms
+        // Initialize remove buttons
         function initializeRemoveButtons() {
             document.querySelectorAll('.remove-applicant').forEach((btn, index) => {
-                // First applicant's remove button should be hidden
-                if (index === 0) {
-                    btn.style.display = 'none';
-                }
-                
+                if (index === 0) btn.style.display = 'none';
                 btn.addEventListener('click', function() {
                     const card = this.closest('.applicant-card');
                     if (formCount > 1) {
                         card.style.opacity = '0';
                         card.style.transform = 'translateX(100px)';
-                        
                         setTimeout(() => {
                             card.remove();
                             formCount--;
@@ -656,8 +713,6 @@
                 });
             });
         }
-        
-        // Call initialization
         initializeRemoveButtons();
         
         // Add new applicant
@@ -666,38 +721,25 @@
                 if (formCount < 5) {
                     const template = document.querySelector('.applicant-card');
                     const newForm = template.cloneNode(true);
-                    
-                    // Update indices
                     newForm.dataset.index = formCount;
                     
-                    // Update form field names and IDs
                     const inputs = newForm.querySelectorAll('input, select, textarea');
                     inputs.forEach(input => {
-                        if (input.name) {
-                            input.name = input.name.replace(/-\d+-/, `-${formCount}-`);
-                        }
-                        if (input.id) {
-                            input.id = input.id.replace(/-\d+-/, `-${formCount}-`);
-                        }
-                        // Clear values
+                        if (input.name) input.name = input.name.replace(/-\d+-/, `-${formCount}-`);
+                        if (input.id) input.id = input.id.replace(/-\d+-/, `-${formCount}-`);
                         if (input.type !== 'hidden' && !input.classList.contains('form-select')) {
                             input.value = '';
                         }
                     });
                     
-                    // Update title
                     const title = newForm.querySelector('h3');
-                    if (title) {
-                        title.textContent = `Applicant ${formCount + 1}`;
-                    }
+                    if (title) title.textContent = `Applicant ${formCount + 1}`;
                     
-                    // Update number in user icon
                     const userIcon = newForm.querySelector('.fa-user');
                     if (userIcon) {
                         userIcon.parentElement.innerHTML = `<i class="fas fa-user text-lg"></i><span class="text-xs absolute -top-1 -right-1 bg-white text-indigo-600 rounded-full w-5 h-5 flex items-center justify-center font-bold">${formCount + 1}</span>`;
                     }
                     
-                    // Show remove button for new form
                     const removeBtn = newForm.querySelector('.remove-applicant');
                     if (removeBtn) {
                         removeBtn.style.display = 'flex';
@@ -706,7 +748,6 @@
                             if (formCount > 1) {
                                 card.style.opacity = '0';
                                 card.style.transform = 'translateX(100px)';
-                                
                                 setTimeout(() => {
                                     card.remove();
                                     formCount--;
@@ -718,12 +759,10 @@
                         });
                     }
                     
-                    // Add animation for new form
                     newForm.style.opacity = '0';
                     newForm.style.transform = 'translateY(20px)';
                     formset.appendChild(newForm);
                     
-                    // Animate in
                     setTimeout(() => {
                         newForm.style.opacity = '1';
                         newForm.style.transform = 'translateY(0)';
@@ -733,22 +772,15 @@
                     formCount++;
                     totalForms.value = formCount;
                     
-                    // Scroll to new form
                     setTimeout(() => {
-                        newForm.scrollIntoView({ 
-                            behavior: 'smooth', 
-                            block: 'center',
-                            inline: 'nearest' 
-                        });
+                        newForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }, 100);
                     
-                    // Show success message
                     showToast(`Applicant ${formCount} added successfully!`, 'success');
                 } else {
                     showToast('Maximum of 5 applicants allowed', 'warning');
                     addBtn.disabled = true;
                     addBtn.innerHTML = '<i class="fas fa-ban mr-2"></i> Maximum Reached';
-                    addBtn.classList.remove('hover:from-indigo-700', 'hover:to-purple-700', 'hover:shadow-xl', 'hover:-translate-y-1');
                     addBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
                 }
             });
@@ -758,50 +790,34 @@
             const forms = document.querySelectorAll('.applicant-card');
             forms.forEach((form, index) => {
                 form.dataset.index = index;
-                
-                // Update title
                 const title = form.querySelector('h3');
-                if (title) {
-                    title.textContent = `Applicant ${index + 1}`;
-                }
+                if (title) title.textContent = `Applicant ${index + 1}`;
                 
-                // Update number in user icon
                 const userIconContainer = form.querySelector('.fa-user')?.parentElement;
                 if (userIconContainer) {
                     userIconContainer.innerHTML = `<i class="fas fa-user text-lg"></i><span class="text-xs absolute -top-1 -right-1 bg-white text-indigo-600 rounded-full w-5 h-5 flex items-center justify-center font-bold">${index + 1}</span>`;
                 }
                 
-                // Update form field names and IDs
                 const inputs = form.querySelectorAll('input, select, textarea');
                 inputs.forEach(input => {
-                    if (input.name) {
-                        input.name = input.name.replace(/-\d+-/, `-${index}-`);
-                    }
-                    if (input.id) {
-                        input.id = input.id.replace(/-\d+-/, `-${index}-`);
-                    }
+                    if (input.name) input.name = input.name.replace(/-\d+-/, `-${index}-`);
+                    if (input.id) input.id = input.id.replace(/-\d+-/, `-${index}-`);
                 });
                 
-                // Show/hide remove button based on index
                 const removeBtn = form.querySelector('.remove-applicant');
-                if (removeBtn) {
-                    removeBtn.style.display = index === 0 ? 'none' : 'flex';
-                }
+                if (removeBtn) removeBtn.style.display = index === 0 ? 'none' : 'flex';
             });
             
-            // Re-enable add button if needed
             if (formCount < 5 && addBtn) {
                 addBtn.disabled = false;
-                addBtn.innerHTML = '<i class="fas fa-user-plus mr-2"></i> Add Applicant';
+                addBtn.innerHTML = '<i class="fas fa-user-plus mr-2"></i> Add Another Applicant';
                 addBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
                 addBtn.classList.add('bg-gradient-to-r', 'from-indigo-600', 'to-purple-600', 'hover:from-indigo-700', 'hover:to-purple-700', 'hover:shadow-xl', 'hover:-translate-y-1');
             }
         }
         
         function showToast(message, type = 'info') {
-            // Remove existing toasts
-            document.querySelectorAll('.custom-toast').forEach(toast => toast.remove());
-            
+            document.querySelectorAll('.custom-toast').forEach(t => t.remove());
             const toast = document.createElement('div');
             toast.className = `custom-toast fixed top-6 right-6 px-6 py-4 rounded-xl shadow-2xl z-50 transform transition-all duration-300 translate-x-full ${
                 type === 'success' ? 'bg-gradient-to-r from-green-500 to-emerald-500' :
@@ -809,14 +825,7 @@
                 type === 'error' ? 'bg-gradient-to-r from-red-500 to-rose-500' : 
                 'bg-gradient-to-r from-blue-500 to-indigo-500'
             } text-white`;
-            
-            const icons = {
-                success: 'check-circle',
-                warning: 'exclamation-triangle',
-                error: 'times-circle',
-                info: 'info-circle'
-            };
-            
+            const icons = { success: 'check-circle', warning: 'exclamation-triangle', error: 'times-circle', info: 'info-circle' };
             toast.innerHTML = `
                 <div class="flex items-center">
                     <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mr-4">
@@ -828,126 +837,154 @@
                     </div>
                 </div>
             `;
-            
             document.body.appendChild(toast);
-            
-            // Animate in
+            setTimeout(() => toast.classList.remove('translate-x-full'), 10);
             setTimeout(() => {
-                toast.classList.remove('translate-x-full');
-                toast.classList.add('translate-x-0');
-            }, 10);
-            
-            // Remove after 4 seconds
-            setTimeout(() => {
-                toast.classList.remove('translate-x-0');
                 toast.classList.add('translate-x-full');
-                setTimeout(() => {
-                    if (toast.parentNode) {
-                        toast.parentNode.removeChild(toast);
-                    }
-                }, 300);
+                setTimeout(() => toast.remove(), 300);
             }, 4000);
         }
         
-        // Form validation with better UX
-        const form = document.getElementById('visaForm');
-        form.addEventListener('submit', function(e) {
+        // Field validation (inline)
+        function validateField(field) {
+            const value = field.value.trim();
             let isValid = true;
-            const firstInvalidField = document.createElement('div');
+            let errorMessage = '';
             
-            // Check required fields
-            const requiredFields = form.querySelectorAll('[required]');
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    isValid = false;
-                    field.classList.add('border-red-500', 'bg-red-50');
-                    field.classList.remove('border-gray-300');
-                    
-                    // Scroll to first invalid field
-                    if (!firstInvalidField.hasChildNodes()) {
-                        firstInvalidField.appendChild(field);
-                    }
-                } else {
-                    field.classList.remove('border-red-500', 'bg-red-50');
-                    field.classList.add('border-gray-300');
-                }
-            });
+            const existingError = field.parentElement.querySelector('.error-message');
+            if (existingError) existingError.remove();
+            field.classList.remove('field-error');
             
-            // Date validation
-            const dateFields = form.querySelectorAll('input[type="date"]');
-            dateFields.forEach(field => {
-                if (field.value) {
-                    const date = new Date(field.value);
-                    if (isNaN(date.getTime())) {
-                        isValid = false;
-                        field.classList.add('border-red-500', 'bg-red-50');
-                        showToast('Please enter valid dates', 'error');
-                    }
-                }
-            });
+            if (field.hasAttribute('required') && !value) {
+                isValid = false;
+                errorMessage = 'This field is required.';
+            }
+            
+            if (field.name.includes('passport_number') && value && !/^\d{9}$/.test(value)) {
+                isValid = false;
+                errorMessage = 'Passport number must be exactly 9 digits.';
+            }
             
             if (!isValid) {
+                field.classList.add('field-error');
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message';
+                errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${errorMessage}`;
+                field.parentElement.appendChild(errorDiv);
+            }
+            return isValid;
+        }
+        
+        // Overall form validation
+        function validateForm() {
+            let isValid = true;
+            let errorFields = [];
+            document.querySelectorAll('.error-message').forEach(el => el.remove());
+            document.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
+            
+            const fields = document.querySelectorAll('#visaForm input, #visaForm select, #visaForm textarea');
+            fields.forEach(field => {
+                if (!validateField(field) && field.hasAttribute('required')) {
+                    errorFields.push(field);
+                }
+            });
+            
+            // Date comparisons
+            const departure = document.querySelector('[name="departure_date"]');
+            const returnDate = document.querySelector('[name="return_date"]');
+            if (departure && returnDate && departure.value && returnDate.value) {
+                const dep = new Date(departure.value);
+                const ret = new Date(returnDate.value);
+                if (dep >= ret) {
+                    isValid = false;
+                    returnDate.classList.add('field-error');
+                    let err = document.createElement('div');
+                    err.className = 'error-message';
+                    err.innerHTML = '<i class="fas fa-exclamation-circle"></i> Return date must be after departure date.';
+                    returnDate.parentElement.appendChild(err);
+                    errorFields.push(returnDate);
+                }
+            }
+            
+            const start = document.querySelector('[name="start_date"]');
+            const max = document.querySelector('[name="max_date"]');
+            if (start && max && start.value && max.value) {
+                const s = new Date(start.value);
+                const m = new Date(max.value);
+                if (s > m) {
+                    isValid = false;
+                    max.classList.add('field-error');
+                    let err = document.createElement('div');
+                    err.className = 'error-message';
+                    err.innerHTML = '<i class="fas fa-exclamation-circle"></i> Maximum date must be after minimum date.';
+                    max.parentElement.appendChild(err);
+                    errorFields.push(max);
+                }
+            }
+            
+            document.querySelectorAll('.applicant-card').forEach(card => {
+                const issue = card.querySelector('[name$="passport_issue_date"]');
+                const expiry = card.querySelector('[name$="passport_expiry"]');
+                if (issue && expiry && issue.value && expiry.value) {
+                    const i = new Date(issue.value);
+                    const e = new Date(expiry.value);
+                    if (i >= e) {
+                        isValid = false;
+                        expiry.classList.add('field-error');
+                        let err = document.createElement('div');
+                        err.className = 'error-message';
+                        err.innerHTML = '<i class="fas fa-exclamation-circle"></i> Expiry date must be after issue date.';
+                        expiry.parentElement.appendChild(err);
+                        errorFields.push(expiry);
+                    }
+                }
+            });
+            
+            return { isValid, errorFields };
+        }
+        
+        const form = document.getElementById('visaForm');
+        form.addEventListener('submit', function(e) {
+            const { isValid, errorFields } = validateForm();
+            if (!isValid) {
                 e.preventDefault();
-                showToast('Please fill in all required fields correctly', 'error');
-                
-                // Scroll to first invalid field
-                if (firstInvalidField.firstChild) {
-                    firstInvalidField.firstChild.scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'center' 
-                    });
-                    firstInvalidField.firstChild.focus();
+                showToast('Please correct the highlighted errors.', 'error');
+                if (errorFields.length > 0) {
+                    errorFields[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    errorFields[0].focus();
                 }
             }
         });
         
-        // Clear form button functionality
+        form.querySelectorAll('input, select, textarea').forEach(field => {
+            field.addEventListener('blur', function() { validateField(this); });
+        });
+        
         const resetBtn = form.querySelector('button[type="reset"]');
         if (resetBtn) {
-            resetBtn.addEventListener('click', function() {
-                if (confirm('Are you sure you want to clear all form data? This action cannot be undone.')) {
-                    // Reset to initial state (1 applicant)
-                    const forms = document.querySelectorAll('.applicant-card');
-                    forms.forEach((form, index) => {
-                        if (index > 0) {
-                            form.remove();
-                        }
+            resetBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('Clear all form data? This cannot be undone.')) {
+                    document.querySelectorAll('.applicant-card').forEach((f, idx) => { if (idx > 0) f.remove(); });
+                    document.querySelectorAll('#visaForm input, #visaForm select, #visaForm textarea').forEach(f => {
+                        if (f.type === 'checkbox' || f.type === 'radio') f.checked = false;
+                        else if (f.tagName === 'SELECT') f.selectedIndex = 0;
+                        else f.value = '';
                     });
-                    
-                    // Reset form count
                     formCount = 1;
                     totalForms.value = 1;
-                    
-                    // Reset remove buttons
-                    const firstRemoveBtn = document.querySelector('.applicant-card .remove-applicant');
-                    if (firstRemoveBtn) {
-                        firstRemoveBtn.style.display = 'none';
-                    }
-                    
-                    // Re-enable add button
+                    document.querySelectorAll('.error-message').forEach(el => el.remove());
+                    document.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
                     if (addBtn) {
                         addBtn.disabled = false;
-                        addBtn.innerHTML = '<i class="fas fa-user-plus mr-2"></i> Add Applicant';
+                        addBtn.innerHTML = '<i class="fas fa-user-plus mr-2"></i> Add Another Applicant';
                         addBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
                         addBtn.classList.add('bg-gradient-to-r', 'from-indigo-600', 'to-purple-600', 'hover:from-indigo-700', 'hover:to-purple-700', 'hover:shadow-xl', 'hover:-translate-y-1');
                     }
-                    
-                    showToast('Form cleared successfully', 'info');
+                    showToast('Form cleared', 'info');
                 }
             });
         }
-        
-        // Add focus styles to form controls
-        const formControls = form.querySelectorAll('.form-input, .form-select, .form-textarea');
-        formControls.forEach(control => {
-            control.addEventListener('focus', function() {
-                this.parentElement.classList.add('field-group-focused');
-            });
-            
-            control.addEventListener('blur', function() {
-                this.parentElement.classList.remove('field-group-focused');
-            });
-        });
     });
 </script>
 {% endblock %}

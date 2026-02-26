@@ -1,58 +1,62 @@
 {% extends 'visa_form/base.html' %}
 {% load i18n %}
-{% block title %}Preview Data - Mosaic Visa Generator{% endblock %}
+{% block title %}{% trans "Preview Data - Mosaic Visa Generator" %}{% endblock %}
 
 {% block extra_head %}
 <style>
-    .json-key { color: #63b3ed; }
-    .json-string { color: #68d391; }
-    .json-number { color: #f6ad55; }
-    .json-boolean { color: #f687b3; }
-    .json-null { color: #cbd5e0; }
-    
-    @media (max-width: 640px) {
-        .mobile-stack {
-            flex-direction: column;
-            gap: 1rem;
-        }
-        .mobile-full {
-            width: 100%;
-        }
-    }
-    
-    /* Simplified styles */
     .preview-container {
-        max-width: 800px;
+        max-width: 1000px;
         margin: 0 auto;
     }
-    
-    .json-container {
-        background: #1a1a1a;
-        border-radius: 8px;
-        position: relative;
-    }
-    
-    .json-controls {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        display: flex;
-        gap: 8px;
-        z-index: 10;
-    }
-    
-    .download-section {
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    .summary-card {
+        background: white;
         border-radius: 12px;
-        padding: 24px;
-        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+    .summary-card h2 {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: white;
+        padding: 12px 20px;
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+    .summary-content {
+        padding: 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 15px;
+    }
+    .data-item {
+        display: flex;
+        flex-direction: column;
+    }
+    .data-label {
+        font-size: 0.85rem;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        margin-bottom: 2px;
+    }
+    .data-value {
+        font-weight: 500;
+        color: #1f2937;
+        font-size: 1rem;
+        word-break: break-word;
+    }
+    @media (max-width: 640px) {
+        .summary-content {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="preview-container">
-    <!-- Simple Progress -->
+    <!-- Progress Bar -->
     <div class="flex items-center justify-center mb-8">
         <div class="flex items-center space-x-4">
             <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center">
@@ -69,16 +73,16 @@
         </div>
     </div>
 
-    <!-- Simple Header -->
+    <!-- Header -->
     <div class="text-center mb-8">
         <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
             <i class="fas fa-check text-2xl"></i>
         </div>
-        <h1 class="text-2xl font-bold text-gray-900 mb-2">{% trans "Data Ready for Download" %}</h1>
-        <p class="text-gray-600">{% trans "Your data has been generated successfully" %}</p>
+        <h1 class="text-2xl font-bold text-gray-900 mb-2">{% trans "Data Ready for Review" %}</h1>
+        <p class="text-gray-600">{% trans "Please verify all information before downloading." %}</p>
     </div>
 
-    <!-- Simple Stats -->
+    <!-- Stats -->
     <div class="grid grid-cols-2 gap-4 mb-8">
         <div class="bg-white p-4 rounded-lg border text-center">
             <div class="text-xl font-bold text-blue-600">{{ data.applicants|length }}</div>
@@ -92,201 +96,69 @@
         </div>
     </div>
 
-    <!-- JSON Preview (Simplified) -->
-    <div class="json-container p-4 mb-8">
-        <div class="json-controls">
-            <button onclick="copyToClipboard()" 
-                   class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-2 rounded flex items-center">
-                <i class="far fa-copy mr-2"></i> {% trans "Copy" %}
-            </button>
-            <button onclick="toggleSyntaxHighlighting()" 
-                   class="bg-gray-700 hover:bg-gray-600 text-white text-sm px-3 py-2 rounded flex items-center">
-                <i class="fas fa-highlighter mr-2"></i> <span id="highlight-text">{% trans "Highlight" %}</span>
-            </button>
+    <!-- Common Information Card -->
+    <div class="summary-card">
+        <h2>{% trans "Common Information" %}</h2>
+        <div class="summary-content">
+            <div class="data-item"><span class="data-label">{% trans "Min Desired Date" %}</span><span class="data-value">{{ data.common.start_date }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Max Allowed Date" %}</span><span class="data-value">{{ data.common.max_date }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Email" %}</span><span class="data-value">{{ data.common.email }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Phone" %}</span><span class="data-value">{{ data.common.phone_local }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Visa Type" %}</span><span class="data-value">{{ data.common.visa }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Nationality" %}</span><span class="data-value">{{ data.common.nationality }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Relation" %}</span><span class="data-value">{{ data.common.relations|default:"-" }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Address" %}</span><span class="data-value">{{ data.common.contact_address }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "City" %}</span><span class="data-value">{{ data.common.contact_city }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Postal Code" %}</span><span class="data-value">{{ data.common.contact_postcode }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Departure" %}</span><span class="data-value">{{ data.common.departure_date }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Return" %}</span><span class="data-value">{{ data.common.return_date }}</span></div>
         </div>
-        
-        <pre id="json-output" class="text-gray-200 text-sm whitespace-pre-wrap overflow-x-auto max-h-[400px] overflow-y-auto p-2">{{ json_data|safe }}</pre>
     </div>
 
-    <!-- Download Section (Simplified) -->
-    <div class="download-section">
-        <div class="mb-6">
-            <h3 class="text-xl font-bold text-gray-900 mb-2">{% trans "Download Your Data" %}</h3>
-            <p class="text-gray-600 mb-4">{% trans "Click below to download your data file" %}</p>
-            
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="{% url 'form' %}" 
-                   class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-6 rounded-lg transition inline-flex items-center justify-center">
-                    <i class="fas fa-edit mr-2"></i> {% trans "Edit Data" %}
-                </a>
-                
-                <a href="{% url 'download_json' %}" 
-                   class="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-8 rounded-lg shadow hover:shadow-lg transition-all duration-300 inline-flex items-center justify-center">
-                    <i class="fas fa-download mr-3"></i> {% trans "Download File" %}
-                    <i class="fas fa-arrow-right ml-2"></i>
-                </a>
-            </div>
+    <!-- Applicants Cards -->
+    {% for applicant in data.applicants %}
+    <div class="summary-card">
+        <h2>{% trans "Applicant" %} {{ forloop.counter }}</h2>
+        <div class="summary-content">
+            <div class="data-item"><span class="data-label">{% trans "First Name" %}</span><span class="data-value">{{ applicant.name }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Last Name" %}</span><span class="data-value">{{ applicant.surname }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Gender" %}</span><span class="data-value">{{ applicant.gender }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Marital Status" %}</span><span class="data-value">{{ applicant.marital_status }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Date of Birth" %}</span><span class="data-value">{{ applicant.birthday }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Place of Birth" %}</span><span class="data-value">{{ applicant.birth_place }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Passport Number" %}</span><span class="data-value">{{ applicant.passport_number|default:"-" }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Occupation" %}</span><span class="data-value">{{ applicant.occupation }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Father's Name" %}</span><span class="data-value">{{ applicant.father_name|default:"-" }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Mother's Name" %}</span><span class="data-value">{{ applicant.mother_name|default:"-" }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Travel Document" %}</span><span class="data-value">{{ applicant.travel_document }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Issued By" %}</span><span class="data-value">{{ applicant.passport_issued_by }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Issue Date" %}</span><span class="data-value">{{ applicant.passport_issue_date }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Expiry Date" %}</span><span class="data-value">{{ applicant.passport_expiry }}</span></div>
         </div>
-        
-        <div class="text-sm text-gray-500">
+    </div>
+    {% endfor %}
+
+    <!-- Action Buttons -->
+    <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 mt-8">
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="{% url 'form' %}?edit=1" 
+               class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-6 rounded-lg transition inline-flex items-center justify-center">
+                <i class="fas fa-edit mr-2"></i> {% trans "Edit Data" %}
+            </a>
+            <button onclick="window.open('{% url 'preview_print' %}', '_blank')" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition inline-flex items-center justify-center">
+                <i class="fas fa-print mr-2"></i> {% trans "Print / PDF" %}
+            </button>
+            <a href="{% url 'download_json' %}" 
+               class="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-8 rounded-lg shadow hover:shadow-lg transition-all duration-300 inline-flex items-center justify-center">
+                <i class="fas fa-download mr-3"></i> {% trans "Download JSON" %}
+                <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+        <p class="text-sm text-gray-500 text-center mt-4">
             <i class="fas fa-info-circle mr-2"></i>
-            {% trans "The file includes Tampermonkey integration code and JSON data" %}
-        </div>
-    </div>
-
-    <!-- What's Included (Very Simple) -->
-    <div class="mt-8 p-4 bg-blue-50 rounded-lg">
-        <div class="flex items-center mb-2">
-            <i class="fas fa-file-code text-blue-600 mr-3"></i>
-            <h4 class="font-medium text-gray-900">{% trans "File Includes:" %}</h4>
-        </div>
-        <ul class="text-sm text-gray-600 space-y-1">
-            <li>• {% trans "Tampermonkey integration code (ready to paste)" %}</li>
-            <li>• {% trans "Raw JSON data for reference" %}</li>
-            <li>• {% trans "All applicant and common information" %}</li>
-        </ul>
+            {% trans "The JSON file is ready for Tampermonkey auto-filling." %}
+        </p>
     </div>
 </div>
-{% endblock %}
-
-{% block extra_scripts %}
-<script>
-    // Store original JSON text
-    let originalJsonText = '';
-    let isHighlighted = false;
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        const jsonElement = document.getElementById('json-output');
-        originalJsonText = jsonElement.textContent;
-        
-        // Apply highlighting on load
-        highlightJSON();
-        isHighlighted = true;
-        updateHighlightButton();
-    });
-    
-    function highlightJSON() {
-        const jsonElement = document.getElementById('json-output');
-        let jsonText = originalJsonText;
-        
-        // Try to parse and pretty print if needed
-        try {
-            const parsed = JSON.parse(jsonText);
-            jsonText = JSON.stringify(parsed, null, 2);
-        } catch(e) {
-            // Already formatted
-        }
-        
-        // Apply syntax highlighting
-        jsonText = jsonText
-            .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?)/g, function(match) {
-                let cls = 'json-string';
-                if (match.endsWith(':')) {
-                    cls = 'json-key';
-                }
-                return '<span class="' + cls + '">' + match + '</span>';
-            })
-            .replace(/\b(true|false)\b/g, '<span class="json-boolean">$&</span>')
-            .replace(/\bnull\b/g, '<span class="json-null">$&</span>')
-            .replace(/\b-?\d+(\.\d+)?([eE][+-]?\d+)?\b/g, '<span class="json-number">$&</span>');
-        
-        jsonElement.innerHTML = jsonText;
-    }
-    
-    function toggleSyntaxHighlighting() {
-        const jsonElement = document.getElementById('json-output');
-        
-        if (isHighlighted) {
-            // Remove highlighting
-            jsonElement.textContent = originalJsonText;
-            isHighlighted = false;
-        } else {
-            // Apply highlighting
-            highlightJSON();
-            isHighlighted = true;
-        }
-        updateHighlightButton();
-    }
-    
-    function updateHighlightButton() {
-        const buttonText = document.getElementById('highlight-text');
-        if (buttonText) {
-            buttonText.textContent = isHighlighted ? 'Plain Text' : 'Highlight';
-        }
-    }
-    
-    function copyToClipboard() {
-        const jsonElement = document.getElementById('json-output');
-        let textToCopy = originalJsonText;
-        
-        // If we're in highlighted mode, we need to extract text from HTML
-        if (isHighlighted) {
-            // Create a temporary element to get the text
-            const temp = document.createElement('div');
-            temp.innerHTML = jsonElement.innerHTML;
-            
-            // Replace span elements with their text content
-            const spans = temp.querySelectorAll('span');
-            spans.forEach(span => {
-                const text = document.createTextNode(span.textContent);
-                span.parentNode.replaceChild(text, span);
-            });
-            textToCopy = temp.textContent || temp.innerText;
-        }
-        
-        // Use modern clipboard API
-        if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                showToast('JSON copied to clipboard!', 'success');
-            }).catch(err => {
-                fallbackCopyText(textToCopy);
-            });
-        } else {
-            fallbackCopyText(textToCopy);
-        }
-    }
-    
-    function fallbackCopyText(text) {
-        const textArea = document.createElement("textarea");
-        textArea.value = text;
-        textArea.style.position = "fixed";
-        textArea.style.opacity = "0";
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        
-        try {
-            document.execCommand('copy');
-            showToast('Copied to clipboard!', 'success');
-        } catch (err) {
-            showToast('Failed to copy', 'error');
-        }
-        
-        document.body.removeChild(textArea);
-    }
-    
-    function showToast(message, type = 'info') {
-        // Remove existing toasts
-        document.querySelectorAll('.toast-message').forEach(toast => toast.remove());
-        
-        const toast = document.createElement('div');
-        toast.className = `toast-message fixed bottom-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 ${
-            type === 'success' ? 'bg-green-500' :
-            type === 'error' ? 'bg-red-500' : 'bg-blue-500'
-        } text-white`;
-        toast.innerHTML = `
-            <div class="flex items-center">
-                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : 'info-circle'} mr-2"></i>
-                <span>${message}</span>
-            </div>
-        `;
-        document.body.appendChild(toast);
-        
-        setTimeout(() => {
-            if (toast.parentNode) {
-                toast.parentNode.removeChild(toast);
-            }
-        }, 3000);
-    }
-</script>
 {% endblock %}

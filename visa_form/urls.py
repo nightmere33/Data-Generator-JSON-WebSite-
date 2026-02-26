@@ -9,4 +9,5 @@ urlpatterns = [
     path('register/<uuid:token>/', views.register_with_invite, name='register_with_invite'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
+    path('preview-print/', views.preview_print, name='preview_print'),
 ]

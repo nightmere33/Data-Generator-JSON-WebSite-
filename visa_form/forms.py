@@ -21,7 +21,7 @@ class VisaApplicationForm(forms.Form):
             ('40', _('Transit Double')),
             ('77', _('Transit Simple')),
         ],
-        initial='1',
+        initial='',
         label=_('Visa Type'),
         widget=forms.Select(attrs={'class': 'form-select rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'})
     )
@@ -77,7 +77,7 @@ class VisaApplicationForm(forms.Form):
             'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full',
             'type': 'date'
         }),
-        initial=date.today() + timedelta(days=30)
+        
     )
     
     return_date = forms.DateField(
@@ -86,18 +86,18 @@ class VisaApplicationForm(forms.Form):
             'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full',
             'type': 'date'
         }),
-        initial=date.today() + timedelta(days=45)
+        
     )
 
     start_date = forms.DateField(
         label=_("Minimum desired date"),
         widget=forms.DateInput(attrs={'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full', 'type': 'date'}),
-        initial=date.today() + timedelta(days=30)
+        
     )
     max_date = forms.DateField(
         label=_("Maximum allowed date"),
         widget=forms.DateInput(attrs={'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full', 'type': 'date'}),
-        initial=date.today() + timedelta(days=45)
+        
     )
     email = forms.EmailField(
         label=_("Email"),
@@ -107,17 +107,32 @@ class VisaApplicationForm(forms.Form):
         label=_("Phone"),
         widget=forms.TextInput(attrs={'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'})
     )
-    passports = forms.CharField(
+    '''passports = forms.CharField(
         label=_("Passport numbers (one per line)"),
         widget=forms.Textarea(attrs={'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full', 'rows': 3, 'placeholder': _('314690857\n187204660\n...')}),
         required=False,
         help_text=_("Enter each passport number on a new line")
-    )
-    relations = forms.CharField(
-        label=_("Relations (comma separated)"),
-        widget=forms.TextInput(attrs={'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full', 'placeholder': _('Wife, Father, Mother, Child')}),
+    )'''
+    RELATION_CHOICES = [
+    ('', _('Select relation')),
+    ('Wife', _('Wife')),
+    ('Husband', _('Husband')),
+    ('Father', _('Father')),
+    ('Mother', _('Mother')),
+    ('Son', _('Son')),
+    ('Daughter', _('Daughter')),
+    ('Brother', _('Brother')),
+    ('Sister', _('Sister')),
+    ('Other', _('Other')),
+    ]
+
+    relations = forms.ChoiceField(
+        label=_('Relation'),
+        choices=RELATION_CHOICES,
         required=False,
-        help_text=_("e.g., Wife, Father, Mother, Child")
+        widget=forms.Select(attrs={
+            'class': 'form-select rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'
+        })
     )
 
 
@@ -172,6 +187,7 @@ class ApplicantForm(forms.Form):
     
     father_name = forms.CharField(
         label=_("Father's Full Name"),
+        required=True,
         widget=forms.TextInput(attrs={
             'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full',
             'placeholder': _("Father's Full Name")
@@ -180,12 +196,21 @@ class ApplicantForm(forms.Form):
     
     mother_name = forms.CharField(
         label=_("Mother's Full Name"),
+        required=True,
         widget=forms.TextInput(attrs={
             'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full',
             'placeholder': _("Mother's Full Name")
         })
     )
-    
+    #passport details 
+    passport_number = forms.CharField(
+        label=_('Passport Number'),
+        required=True,  # or True if required
+        widget=forms.TextInput(attrs={
+            'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full',
+            'placeholder': _('Passport Number')
+        })
+    )
     occupation = forms.ChoiceField(
         label=_('Occupation'),
         choices=[

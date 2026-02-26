@@ -1,39 +1,181 @@
-{% load i18n %}
 {% extends 'visa_form/base.html' %}
+{% load i18n %}
+
 {% block title %}{% trans "Register - Mosaic Visa Generator" %}{% endblock %}
+
+{% block extra_head %}
+<style>
+    #particles-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: -1;
+        pointer-events: none;
+        opacity: 0.7;
+    }
+
+    /* Card styling (no hover lift) */
+    .form-card {
+        background: white;
+        border-radius: 1.5rem;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border: 1px solid #f3f4f6;
+    }
+
+    /* Input field improvements */
+    .form-input {
+        width: 100%;
+        border: 2px solid #d1d5db;
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        background-color: white;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+    }
+
+    /* Tooltip container */
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        margin-left: 0.5rem;
+    }
+
+    .tooltip .tooltip-icon {
+        color: #6b7280;
+        cursor: help;
+        font-size: 1rem;
+        transition: color 0.2s;
+    }
+
+    .tooltip:hover .tooltip-icon {
+        color: #4f46e5;
+    }
+
+    .tooltip .tooltip-text {
+        visibility: hidden;
+        width: 220px;
+        background-color: #1f2937;
+        color: #fff;
+        text-align: center;
+        border-radius: 8px;
+        padding: 8px 12px;
+        position: absolute;
+        z-index: 100;
+        bottom: 150%;
+        left: 50%;
+        margin-left: -110px;
+        font-size: 0.85rem;
+        line-height: 1.4;
+        opacity: 0;
+        transition: opacity 0.3s;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        pointer-events: none;
+    }
+
+    .tooltip .tooltip-text::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #1f2937 transparent transparent transparent;
+    }
+
+    .tooltip:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+        #particles-canvas {
+            opacity: 0.4;
+        }
+        .tooltip .tooltip-text {
+            width: 180px;
+            margin-left: -90px;
+            font-size: 0.75rem;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="max-w-md mx-auto">
-    <div class="bg-white rounded-2xl shadow-lg p-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">{% trans "Create Agency Account" %}</h2>
+<!-- Full‑page fixed canvas -->
+<canvas id="particles-canvas"></canvas>
+
+<div class="max-w-md mx-auto relative z-10 px-4 py-8">
+    <div class="form-card p-8">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">{% trans "Create Agency Account" %}</h2>
         
         <form method="post" class="space-y-6">
             {% csrf_token %}
             
+            <!-- Email field -->
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">{% trans "Email" %}</label>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    {% trans "Email" %}
+                </label>
                 {{ form.email }}
                 {% if form.email.errors %}
                     <p class="text-red-500 text-xs mt-1">{{ form.email.errors.0 }}</p>
                 {% endif %}
             </div>
             
+            <!-- Password field with tooltip -->
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">{% trans "Password" %}</label>
+                <div class="flex items-center mb-2">
+                    <label class="block text-sm font-semibold text-gray-700">
+                        {% trans "Password" %}
+                    </label>
+                    <div class="tooltip">
+                        <i class="fas fa-info-circle tooltip-icon"></i>
+                        <span class="tooltip-text">
+                            {% trans "Minimum 8 characters, at least one letter and one number." %}
+                        </span>
+                    </div>
+                </div>
                 {{ form.password }}
             </div>
             
+            <!-- Confirm Password field with tooltip -->
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">{% trans "Confirm Password" %}</label>
+                <div class="flex items-center mb-2">
+                    <label class="block text-sm font-semibold text-gray-700">
+                        {% trans "Confirm Password" %}
+                    </label>
+                    <div class="tooltip">
+                        <i class="fas fa-info-circle tooltip-icon"></i>
+                        <span class="tooltip-text">
+                            {% trans "Must match the password above." %}
+                        </span>
+                    </div>
+                </div>
                 {{ form.confirm_password }}
             </div>
             
+            <!-- Agency Name field -->
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">{% trans "Agency Name" %}</label>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    {% trans "Agency Name" %}
+                </label>
                 {{ form.agency_name }}
             </div>
             
+            <!-- Phone field (optional) -->
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">{% trans "Phone (optional)" %}</label>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    {% trans "Phone (optional)" %}
+                </label>
                 {{ form.phone }}
             </div>
             
@@ -44,10 +186,105 @@
             {% endif %}
             
             <button type="submit"
-                    class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3 px-4 rounded-lg shadow hover:shadow-lg transition-all duration-300">
+                    class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                 {% trans "Register" %}
             </button>
         </form>
     </div>
 </div>
+
+<script>
+    (function() {
+        const canvas = document.getElementById('particles-canvas');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        const isMobile = window.innerWidth <= 768;
+        const PARTICLE_COUNT = isMobile ? 30 : 50;
+        const MAX_SPEED = 0.15;
+        const CONNECT_DISTANCE = isMobile ? 100 : 150;
+        const BASE_OPACITY = 0.3;
+        const LINE_OPACITY = 0.15;
+
+        function init() {
+            resizeCanvas();
+            createParticles();
+            animate();
+        }
+
+        function resizeCanvas() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+
+        function createParticles() {
+            particles = [];
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    vx: (Math.random() - 0.5) * MAX_SPEED,
+                    vy: (Math.random() - 0.5) * MAX_SPEED,
+                });
+            }
+        }
+
+        function animate() {
+            if (width === 0 || height === 0) {
+                requestAnimationFrame(animate);
+                return;
+            }
+
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = `rgba(79, 70, 229, ${BASE_OPACITY})`;
+            ctx.lineWidth = 1;
+
+            for (let i = 0; i < particles.length; i++) {
+                let p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0) p.x = width;
+                if (p.x > width) p.x = 0;
+                if (p.y < 0) p.y = height;
+                if (p.y > height) p.y = 0;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+                ctx.fill();
+
+                for (let j = i + 1; j < particles.length; j++) {
+                    let p2 = particles[j];
+                    let dx = p.x - p2.x;
+                    let dy = p.y - p2.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < CONNECT_DISTANCE) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.strokeStyle = `rgba(79, 70, 229, ${LINE_OPACITY * (1 - distance / CONNECT_DISTANCE)})`;
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            createParticles();
+        });
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    })();
+</script>
 {% endblock %}
