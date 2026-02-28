@@ -58,6 +58,16 @@ def js_object_dumps(obj, level=0, indent=2):
     else:
         return str(obj)
 
+def format_date_dmy(date_str):
+    """Convert YYYY-MM-DD to DD.MM.YYYY"""
+    if date_str:
+        try:
+            d = datetime.strptime(date_str, '%Y-%m-%d')
+            return d.strftime('%d.%m.%Y')
+        except:
+            return date_str
+    return ""
+
 @login_required
 def form_view(request):
     """Main form view (authenticated users only)"""
@@ -69,13 +79,9 @@ def form_view(request):
         applicant_formset = ApplicantFormSet(request.POST)
 
         if visa_form.is_valid() and applicant_formset.is_valid():
-            # Process relations from text field
-            relations_raw = visa_form.cleaned_data.get('relations', '')
-            relations_list = [r.strip() for r in relations_raw.split(',') if r.strip()]
-
+            # Relations is now a single value, no need to split
             common_data = visa_form.cleaned_data.copy()
-            common_data['relations'] = relations_list
-            common_data.pop('relations', None)
+            # No processing of relations needed
 
             # Process applicants
             cleaned_applicants = []
@@ -156,15 +162,21 @@ def download_json(request):
         app_copy.pop('passport_number', None)
         applicants_script.append(app_copy)
 
-    output = {
-        'COMMON_DATA': common_core,
-        'APPLICANT_DATA': data['applicants'],
-        'ADDITIONAL_INFO': additional_info,
-    }
+    # Prepare data for second script
+    num_applicants = len(data['applicants'])
+    passports = [app.get('passport_number', '') for app in data['applicants']]
+    email = data['common'].get('email', '')
+    phone = data['common'].get('phone_local', '')
+    relation = data['common'].get('relations', '')
+    relations_array = [relation]  if relation else [''] 
 
+    # Format dates to DD.MM.YYYY
+    start_date_dmy = format_date_dmy(data['common'].get('start_date', ''))
+    max_date_dmy = format_date_dmy(data['common'].get('max_date', ''))
+
+    # Part 1: Tampermonkey integration
     applicants_js = js_object_dumps(applicants_script, level=1, indent=2)
     common_core_js = js_object_dumps(common_core, level=1, indent=2)
-
     tampermonkey_code = f"""// ============================================
 // TAMPERMONKEY INTEGRATION CODE
 // ============================================
@@ -177,8 +189,24 @@ const APPLICANT_DATA = {applicants_js};
 
 """
 
-    json_data = json.dumps(output, indent=2, ensure_ascii=False)
-    full_content = tampermonkey_code + "\n\n// ============================================\n// RAW JSON DATA (for reference)\n// ============================================\n" + json_data
+    # Part 2: Second script configuration
+    second_script = f"""// ============================================
+// SCRIPT 2 CONFIGURATION
+// ============================================
+const START_DATE_FORMATTED = "{start_date_dmy}";
+const MAX_DATE_FORMATTED   = "{max_date_dmy}";
+
+const CONFIG = {{
+    defaultApplicants: {num_applicants},
+    passports: {json.dumps(passports, indent=2)},
+    email: "{email}",
+    phoneLocal: "{phone}",
+    relations: {json.dumps(relations_array, indent=2)}
+}};
+
+"""
+
+    full_content = tampermonkey_code + "\n" + second_script
 
     # Generate filename
     if data['applicants']:
@@ -190,6 +218,12 @@ const APPLICANT_DATA = {applicants_js};
     else:
         filename = f"mosaic_visa_data_{uuid.uuid4().hex[:8]}.txt"
 
+    # Save submission (store the structured output for admin)
+    output = {
+        'COMMON_DATA': common_core,
+        'APPLICANT_DATA': data['applicants'],
+        'ADDITIONAL_INFO': additional_info,
+    }
     Submission.objects.create(
         user=request.user,
         data=output,

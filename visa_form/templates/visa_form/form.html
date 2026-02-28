@@ -360,6 +360,11 @@
                             </label>
                             {{ visa_form.start_date|add_class:"form-input"|attr:"required" }}
                             <p class="form-help">{% trans "Earliest acceptable appointment date" %}</p>
+                            {% if visa_form.start_date.errors %}
+                                    {% for error in visa_form.start_date.errors %}
+                                        <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                    {% endfor %}
+                            {% endif %}
                         </div>
                         
                         <div class="field-group">
@@ -409,8 +414,9 @@
                         <div class="field-group">
                             <label class="form-label">
                                 <i class="fas fa-users mr-2 text-blue-500"></i>{% trans "Relation" %}
+                                <span class="required-star">*</span>
                             </label>
-                            {{ visa_form.relations|add_class:"form-select" }}
+                            {{ visa_form.relations|add_class:"form-select"|attr:"required" }}
                             <p class="form-help">{% trans "Select the relationship to the main applicant" %}</p>
                         </div>
                     </div>

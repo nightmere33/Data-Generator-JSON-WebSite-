@@ -7,19 +7,19 @@ from .models import AgencyProfile
 class VisaApplicationForm(forms.Form):
     visa = forms.ChoiceField(
         choices=[
-            ('1', _('Tourisme Simple')),
-            ('2', _('Tourisme Multiple')),
-            ('3', _('Affaires Simple')),
-            ('4', _('Affaires Multiple')),
-            ('5', _('Traitement Simple')),
-            ('6', _('Traitement Multiple')),
-            ('32', _('Étudiant Simple')),
-            ('34', _('Accompagnement Simple')),
-            ('35', _('Accompagnement Multiple')),
-            ('38', _('Permis de Travail Simple')),
-            ('39', _('Permis de Travail Multiple')),
-            ('40', _('Transit Double')),
-            ('77', _('Transit Simple')),
+            ('88', _('Business Multiple')),
+            ('87', _('Business Single')),
+            ('95', _('Double Transit')),
+            ('96', _('Family Reunion')),
+            ('94', _('Single Transit')),
+            ('125', _('Sport & Cultural Single')),
+            ('93', _('Student Single')),
+            ('86', _('Tourism Multiple')),
+            ('85', _('Tourism Single')),
+            ('90', _('Treatment Multiple')),
+            ('89', _('Treatment Single')),
+            ('92', _('Work Permit Multiple')),
+            ('91', _('Work Permit Single')),
         ],
         initial='',
         label=_('Visa Type'),
@@ -107,33 +107,43 @@ class VisaApplicationForm(forms.Form):
         label=_("Phone"),
         widget=forms.TextInput(attrs={'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'})
     )
-    '''passports = forms.CharField(
-        label=_("Passport numbers (one per line)"),
-        widget=forms.Textarea(attrs={'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full', 'rows': 3, 'placeholder': _('314690857\n187204660\n...')}),
-        required=False,
-        help_text=_("Enter each passport number on a new line")
-    )'''
+
     RELATION_CHOICES = [
-    ('', _('Select relation')),
-    ('Wife', _('Wife')),
-    ('Husband', _('Husband')),
-    ('Father', _('Father')),
-    ('Mother', _('Mother')),
-    ('Son', _('Son')),
-    ('Daughter', _('Daughter')),
-    ('Brother', _('Brother')),
-    ('Sister', _('Sister')),
-    ('Other', _('Other')),
+        ('', _('Select relation')),
+        ('Wife', _('Wife')),
+        ('Husband', _('Husband')),
+        ('Father', _('Father')),
+        ('Mother', _('Mother')),
+        ('Child', _('Child')),
+        ('Other', _('Other')),
     ]
 
     relations = forms.ChoiceField(
         label=_('Relation'),
         choices=RELATION_CHOICES,
-        required=False,
+        required=True,
         widget=forms.Select(attrs={
             'class': 'form-select rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'
         })
     )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get('start_date')
+        max_date = cleaned_data.get('max_date')
+        today = date.today()
+
+        if start_date:
+            if start_date < today:
+                self.add_error('start_date', _("Minimum desired date cannot be in the past."))
+            if max_date and start_date >= max_date:
+                self.add_error('start_date', _("Minimum desired date must be before maximum allowed date."))
+        
+        if max_date and max_date < today:
+            self.add_error('max_date', _("Maximum allowed date cannot be in the past."))
+
+        # Also validate departure/return? Already done in JS, but we can add server-side if needed.
+        return cleaned_data
 
 
 class ApplicantForm(forms.Form):
@@ -202,15 +212,16 @@ class ApplicantForm(forms.Form):
             'placeholder': _("Mother's Full Name")
         })
     )
-    #passport details 
+    
     passport_number = forms.CharField(
         label=_('Passport Number'),
-        required=True,  # or True if required
+        required=True,
         widget=forms.TextInput(attrs={
             'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full',
             'placeholder': _('Passport Number')
         })
     )
+    
     occupation = forms.ChoiceField(
         label=_('Occupation'),
         choices=[

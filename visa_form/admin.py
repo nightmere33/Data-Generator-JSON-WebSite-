@@ -11,6 +11,7 @@ import uuid
 from django.utils.timezone import now
 import zipfile
 from io import BytesIO
+from datetime import datetime
 
 def js_object_dumps(obj, level=0, indent=2):
     """Convert Python object to JavaScript object literal string with unquoted keys."""
@@ -43,6 +44,16 @@ def js_object_dumps(obj, level=0, indent=2):
         return str(obj)
     else:
         return str(obj)
+
+def format_date_dmy(date_str):
+    """Convert YYYY-MM-DD to DD.MM.YYYY"""
+    if date_str:
+        try:
+            d = datetime.strptime(date_str, '%Y-%m-%d')
+            return d.strftime('%d.%m.%Y')
+        except:
+            return date_str
+    return ""
 
 class AgencyProfileInline(admin.StackedInline):
     model = AgencyProfile
@@ -148,43 +159,75 @@ class SubmissionAdmin(admin.ModelAdmin):
         return custom_urls + urls
 
     def download_single(self, request, submission_id):
-        from django.shortcuts import get_object_or_404
-        obj = get_object_or_404(Submission, pk=submission_id)
-        data = obj.data  # this already contains COMMON_DATA, APPLICANT_DATA, ADDITIONAL_INFO
+            from django.shortcuts import get_object_or_404
+            obj = get_object_or_404(Submission, pk=submission_id)
+            data = obj.data  # this contains COMMON_DATA, APPLICANT_DATA, ADDITIONAL_INFO
 
-        # Ensure slot is empty string
-        data['COMMON_DATA']['slot'] = ""
+            # Ensure slot is empty string
+            if 'COMMON_DATA' in data:
+                data['COMMON_DATA']['slot'] = ""
 
-        # Prepare applicants for Tampermonkey (without passport_number)
-        full_applicants = data.get('APPLICANT_DATA', [])
-        applicants_script = []
-        for app in full_applicants:
-            app_copy = app.copy()
-            app_copy.pop('passport_number', None)
-            applicants_script.append(app_copy)
+            # Prepare applicants for Tampermonkey (without passport_number)
+            full_applicants = data.get('APPLICANT_DATA', [])
+            applicants_script = []
+            for app in full_applicants:
+                app_copy = app.copy()
+                app_copy.pop('passport_number', None)
+                applicants_script.append(app_copy)
 
-        common_core = data.get('COMMON_DATA', {})
+            common_core = data.get('COMMON_DATA', {})
 
-        applicants_js = js_object_dumps(applicants_script, level=1, indent=2)
-        common_core_js = js_object_dumps(common_core, level=1, indent=2)
+            # Prepare data for second script
+            num_applicants = len(full_applicants)
+            passports = [app.get('passport_number', '') for app in full_applicants]
+            additional = data.get('ADDITIONAL_INFO', {})
+            email = additional.get('email', '')
+            phone = additional.get('phone_local', '')
+            relation = additional.get('relations', '')
+            relations_array = [relation] * num_applicants if relation else [''] * num_applicants
 
-        tampermonkey_code = f"""// ============================================
-// TAMPERMONKEY INTEGRATION CODE
-// ============================================
-const COMMON_DATA = {common_core_js};
+            start_date = additional.get('start_date', '')
+            max_date = additional.get('max_date', '')
+            start_date_dmy = format_date_dmy(start_date)
+            max_date_dmy = format_date_dmy(max_date)
 
-const APPLICANT_DATA = {applicants_js};
+            # Part 1: Tampermonkey code
+            applicants_js = js_object_dumps(applicants_script, level=1, indent=2)
+            common_core_js = js_object_dumps(common_core, level=1, indent=2)
+            tampermonkey_code = f"""// ============================================
+    // TAMPERMONKEY INTEGRATION CODE
+    // ============================================
+    const COMMON_DATA = {common_core_js};
 
-// That's it! Your script is ready to auto-fill.
-// ============================================
+    const APPLICANT_DATA = {applicants_js};
 
-"""
-        json_data = json.dumps(data, indent=2, ensure_ascii=False)
-        full_content = tampermonkey_code + "\n\n// ============================================\n// RAW JSON DATA (for reference)\n// ============================================\n" + json_data
+    // That's it! Your script is ready to auto-fill.
+    // ============================================
 
-        response = HttpResponse(full_content, content_type='text/plain')
-        response['Content-Disposition'] = f'attachment; filename="{obj.filename}"'
-        return response
+    """
+
+            # Part 2: Second script configuration
+            second_script = f"""// ============================================
+    // SCRIPT 2 CONFIGURATION
+    // ============================================
+    const START_DATE_FORMATTED = "{start_date_dmy}";
+    const MAX_DATE_FORMATTED   = "{max_date_dmy}";
+
+    const CONFIG = {{
+        defaultApplicants: {num_applicants},
+        passports: {json.dumps(passports, indent=2)},
+        email: "{email}",
+        phoneLocal: "{phone}",
+        relations: {json.dumps(relations_array, indent=2)}
+    }};
+
+    """
+
+            full_content = tampermonkey_code + "\n" + second_script
+
+            response = HttpResponse(full_content, content_type='text/plain')
+            response['Content-Disposition'] = f'attachment; filename="{obj.filename}"'
+            return response
 
     def download_selected_submissions(self, request, queryset):
         if queryset.count() == 1:
@@ -195,7 +238,8 @@ const APPLICANT_DATA = {applicants_js};
             with zipfile.ZipFile(buffer, 'w') as zip_file:
                 for obj in queryset:
                     data = obj.data
-                    data['COMMON_DATA']['slot'] = ""
+                    if 'COMMON_DATA' in data:
+                        data['COMMON_DATA']['slot'] = ""
 
                     full_applicants = data.get('APPLICANT_DATA', [])
                     applicants_script = []
@@ -205,6 +249,19 @@ const APPLICANT_DATA = {applicants_js};
                         applicants_script.append(app_copy)
 
                     common_core = data.get('COMMON_DATA', {})
+                    additional = data.get('ADDITIONAL_INFO', {})
+
+                    num_applicants = len(full_applicants)
+                    passports = [app.get('passport_number', '') for app in full_applicants]
+                    email = additional.get('email', '')
+                    phone = additional.get('phone_local', '')
+                    relation = additional.get('relations', '')
+                    relations_array = [relation] * num_applicants if relation else [''] * num_applicants
+
+                    start_date = additional.get('start_date', '')
+                    max_date = additional.get('max_date', '')
+                    start_date_dmy = format_date_dmy(start_date)
+                    max_date_dmy = format_date_dmy(max_date)
 
                     applicants_js = js_object_dumps(applicants_script, level=1, indent=2)
                     common_core_js = js_object_dumps(common_core, level=1, indent=2)
@@ -220,8 +277,24 @@ const APPLICANT_DATA = {applicants_js};
 // ============================================
 
 """
-                    json_data = json.dumps(data, indent=2, ensure_ascii=False)
-                    full_content = tampermonkey_code + "\n\n// ============================================\n// RAW JSON DATA (for reference)\n// ============================================\n" + json_data
+
+                    second_script = f"""// ============================================
+// SCRIPT 2 CONFIGURATION
+// ============================================
+const START_DATE_FORMATTED = "{start_date_dmy}";
+const MAX_DATE_FORMATTED   = "{max_date_dmy}";
+
+const CONFIG = {{
+    defaultApplicants: {num_applicants},
+    passports: {json.dumps(passports, indent=2)},
+    email: "{email}",
+    phoneLocal: "{phone}",
+    relations: {json.dumps(relations_array, indent=2)}
+}};
+
+"""
+
+                    full_content = tampermonkey_code + "\n" + second_script
                     zip_file.writestr(obj.filename, full_content)
             buffer.seek(0)
             response = HttpResponse(buffer, content_type='application/zip')
