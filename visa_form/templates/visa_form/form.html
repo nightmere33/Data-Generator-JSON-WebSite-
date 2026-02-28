@@ -3,357 +3,539 @@
 {% block title %}Create Visa Data - Mosaic Visa Generator{% endblock %}
 
 {% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-    /* Enhanced form styling */
+    :root {
+        --navy:     #0f2240;
+        --navy-mid: #1a3a6c;
+        --blue:     #4f46e5;
+        --blue-lt:  #eef2ff;
+        --gold:     #c9a84c;
+        --border:   #e2e6ed;
+        --muted:    #6b7a94;
+        --text:     #0f1f35;
+        --bg:       #f6f7f9;
+        --surface:  #ffffff;
+        --red:      #d0342c;
+        --green:    #1a7a4a;
+        --radius:   10px;
+    }
+
+    body { font-family: 'DM Sans', sans-serif; }
+
+    /* ── Form section card ── */
     .form-section {
-        background: linear-gradient(145deg, #ffffff, #f8fafc);
+        background: var(--surface);
+        border: 1px solid var(--border);
         border-radius: 16px;
-        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 2px 8px rgba(0,0,0,.05);
         overflow: hidden;
     }
-    
-    .applicant-card {
-        background: linear-gradient(145deg, #ffffff, #f9fafb);
-        border-radius: 14px;
-        border-left: 5px solid #4f46e5;
-        border-top: 1px solid #e5e7eb;
-        border-right: 1px solid #e5e7eb;
-        border-bottom: 1px solid #e5e7eb;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-    }
-    
-    .applicant-card:hover {
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
-        transform: translateY(-4px);
-        border-left-color: #7c3aed;
-    }
-    
-    /* Enhanced form controls */
-    .form-input, .form-select, .form-textarea {
-        border: 2px solid #e5e7eb;
-        border-radius: 10px;
-        padding: 12px 16px;
-        font-size: 15px;
-        transition: all 0.2s ease;
-        background: white;
-        width: 100%;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
-    
-    .form-input:focus, .form-select:focus, .form-textarea:focus {
-        outline: none;
-        border-color: #4f46e5;
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        background: white;
-    }
-    
-    .form-input:hover, .form-select:hover, .form-textarea:hover {
-        border-color: #9ca3af;
-    }
-    
-    .form-label {
-        font-weight: 600;
-        color: #374151;
-        margin-bottom: 8px;
-        display: block;
-        font-size: 14px;
-        letter-spacing: 0.3px;
-    }
-    
-    .form-help {
-        font-size: 12px;
-        color: #6b7280;
-        margin-top: 4px;
-        display: flex;
-        align-items: center;
-    }
-    
-    .required-star {
-        color: #ef4444;
-        margin-left: 2px;
-    }
-    
-    /* Mobile optimizations */
-    @media (max-width: 768px) {
-        .mobile-form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-input, .form-select, .form-textarea {
-            padding: 14px 16px;
-            font-size: 16px; /* Better for mobile */
-        }
-        
-        .applicant-card {
-            padding: 20px;
-        }
-    }
-    
-    /* Better remove button */
-    .remove-applicant {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        background: linear-gradient(135deg, #f87171, #ef4444);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 10px 14px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 5px rgba(239, 68, 68, 0.2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10;
-    }
-    
-    .remove-applicant:hover {
-        background: linear-gradient(135deg, #ef4444, #dc2626);
-        transform: scale(1.05);
-        box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
-    }
-    
-    .remove-applicant:active {
-        transform: scale(0.98);
-    }
-    
-    .remove-applicant i {
-        font-size: 14px;
-    }
-    
-    /* Section headers */
+
+    /* ── Section header ── */
     .section-header {
         display: flex;
         align-items: center;
-        padding-bottom: 20px;
-        border-bottom: 2px solid #f3f4f6;
-        margin-bottom: 24px;
-        background: linear-gradient(to right, #f8fafc, transparent);
-        padding: 20px;
-        border-radius: 12px 12px 0 0;
+        padding: 22px 28px;
+        border-bottom: 1px solid var(--border);
+        background: linear-gradient(to right, #eef2fa, var(--surface));
+        margin: 0;
+        border-radius: 0;
     }
-    
+
     .section-icon {
-        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        background: var(--navy);
         color: white;
-        width: 50px;
-        height: 50px;
-        border-radius: 12px;
+        width: 46px;
+        height: 46px;
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
         margin-right: 16px;
-        font-size: 20px;
+        font-size: 18px;
+        flex-shrink: 0;
     }
-    
-    /* Progress bar enhancement */
+
+    .section-header h2 {
+        font-family: 'Syne', sans-serif;
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--navy);
+        margin: 0;
+    }
+
+    .section-header p {
+        font-size: 12px;
+        color: var(--muted);
+        margin: 3px 0 0;
+    }
+
+    /* ── Form controls ── */
+    .form-input, .form-select, .form-textarea {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 14px;
+        color: var(--text);
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius);
+        padding: 11px 14px;
+        width: 100%;
+        outline: none;
+        box-shadow: none;
+        transition: border-color .2s, background .2s, box-shadow .2s;
+        appearance: none;
+        -webkit-appearance: none;
+    }
+
+    .form-select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7a94' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        padding-right: 36px;
+    }
+
+    .form-textarea { resize: vertical; min-height: 88px; }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+        border-color: var(--navy);
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(15,34,64,.08);
+    }
+
+    .form-input:hover, .form-select:hover, .form-textarea:hover {
+        border-color: #9ca3af;
+    }
+
+    .form-input::placeholder, .form-textarea::placeholder {
+        color: #b0bac8;
+    }
+
+    /* ── Labels ── */
+    .form-label {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 7px;
+        display: block;
+    }
+
+    .required-star { color: var(--red); margin-left: 2px; }
+
+    .form-help {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    /* ── Field group — flat, no nested card ── */
+    .field-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .field-group:focus-within .form-label {
+        color: var(--navy);
+    }
+
+    /* ── Error state ── */
+    .field-group.has-error .form-input,
+    .field-group.has-error .form-select,
+    .field-group.has-error .form-textarea {
+        border-color: var(--red);
+        background: #fff5f5;
+    }
+
+    /* ── Gold divider ── */
+    .section-divider {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 24px 0 20px;
+    }
+    .section-divider::before, .section-divider::after {
+        content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    .section-divider span {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        color: var(--gold);
+        white-space: nowrap;
+    }
+
+    /* ── Applicant card ── */
+    .applicant-card {
+        background: var(--surface);
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        transition: box-shadow .3s, transform .3s, opacity .3s;
+        position: relative;
+    }
+
+    .applicant-card:hover {
+        box-shadow: 0 6px 24px rgba(0,0,0,.09);
+    }
+
+    .applicant-card-header {
+        display: flex;
+        align-items: center;
+        padding: 16px 20px;
+        background: linear-gradient(to right, #eef2fa, var(--surface));
+        border-bottom: 1px solid var(--border);
+    }
+
+    .applicant-num {
+        width: 36px; height: 36px;
+        border-radius: 8px;
+        background: var(--navy);
+        color: #fff;
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'Syne', sans-serif;
+        font-size: 15px; font-weight: 700;
+        flex-shrink: 0;
+        margin-right: 12px;
+    }
+
+    .applicant-card h3 {
+        font-family: 'Syne', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--navy);
+        margin: 0;
+    }
+
+    .applicant-card .applicant-sub {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    /* ── Remove button ── */
+    .remove-applicant {
+        position: absolute;
+        top: 12px;
+        right: 16px;
+        background: #fff0f0;
+        border: 1.5px solid #fecdcd;
+        color: var(--red);
+        border-radius: 8px;
+        padding: 7px 12px;
+        cursor: pointer;
+        transition: all .2s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        z-index: 10;
+    }
+
+    .remove-applicant:hover {
+        background: var(--red);
+        color: #fff;
+        border-color: var(--red);
+    }
+
+    /* ── Progress bar ── */
     .progress-step {
         display: flex;
         align-items: center;
         position: relative;
         flex: 1;
     }
-    
-    .progress-step:not(:last-child):after {
+
+    .progress-step:not(:last-child)::after {
         content: '';
         position: absolute;
-        left: 30px;
-        right: 0;
-        height: 3px;
-        background: #e5e7eb;
-        top: 50%;
-        transform: translateY(-50%);
+        left: 38px; right: 0;
+        height: 2px;
+        background: var(--border);
+        top: 50%; transform: translateY(-50%);
         z-index: 1;
     }
-    
+
     .step-indicator {
-        width: 36px;
-        height: 36px;
+        width: 36px; height: 36px;
         border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 600;
-        z-index: 2;
-        position: relative;
-        background: #e5e7eb;
-        color: #6b7280;
-        transition: all 0.3s ease;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: 14px;
+        z-index: 2; position: relative;
+        background: var(--bg);
+        border: 2px solid var(--border);
+        color: var(--muted);
+        transition: all .3s;
+        flex-shrink: 0;
     }
-    
+
     .step-indicator.active {
-        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        background: var(--navy);
+        border-color: var(--navy);
         color: white;
-        box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        box-shadow: 0 4px 12px rgba(15,34,64,.25);
     }
-    
+
     .step-indicator.completed {
-        background: linear-gradient(135deg, #10b981, #34d399);
+        background: var(--green);
+        border-color: var(--green);
         color: white;
     }
-    
+
     .step-label {
-        margin-left: 12px;
+        margin-left: 10px;
+        font-size: 13px;
         font-weight: 600;
-        color: #6b7280;
-        transition: all 0.3s ease;
+        color: var(--muted);
         white-space: nowrap;
     }
-    
-    .step-label.active {
-        color: #4f46e5;
+
+    .step-label.active { color: var(--navy); }
+    .step-label.completed { color: var(--green); }
+
+    @media(max-width: 560px) {
+        .step-label { display: none; }
     }
-    
-    .step-label.completed {
-        color: #10b981;
-    }
-    
-    /* Form grid improvements */
+
+    /* ── Form grid ── */
     .form-grid {
         display: grid;
         grid-template-columns: repeat(1, 1fr);
-        gap: 24px;
+        gap: 20px;
     }
-    
-    @media (min-width: 768px) {
-        .form-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
+
+    @media(min-width: 768px) {
+        .form-grid { grid-template-columns: repeat(2, 1fr); }
     }
-    
-    /* Field group styling */
-    .field-group {
-        background: white;
+
+    /* ── Add applicant button ── */
+    #add-applicant {
+        background: var(--navy);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 18px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: background .2s;
+        flex-shrink: 0;
+    }
+
+    #add-applicant:hover { background: var(--navy-mid); }
+    #add-applicant:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+
+    /* ── Submit section ── */
+    .submit-section {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px 28px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    }
+
+    .btn-reset {
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        color: var(--muted);
+        border-radius: var(--radius);
+        padding: 13px 24px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all .2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-reset:hover { background: #eef0f4; color: var(--text); }
+
+    .btn-submit {
+        flex: 1;
+        background: var(--navy);
+        color: #fff;
+        border: none;
+        border-radius: var(--radius);
+        padding: 13px 32px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all .2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .btn-submit:hover {
+        background: var(--navy-mid);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(15,34,64,.25);
+    }
+
+    .btn-submit:active { transform: none; }
+
+    /* ── Toast ── */
+    .custom-toast {
+        position: fixed;
+        top: 80px; right: 20px;
+        padding: 14px 18px;
         border-radius: 12px;
-        padding: 20px;
-        border: 1px solid #e5e7eb;
-        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        z-index: 9999;
+        min-width: 260px;
+        box-shadow: 0 8px 30px rgba(0,0,0,.12);
+        transform: translateX(120%);
+        transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+        font-family: 'DM Sans', sans-serif;
     }
-    
-    .field-group:focus-within {
-        border-color: #4f46e5;
-        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.1);
+
+    .custom-toast.show { transform: translateX(0); }
+
+    .custom-toast.success { background: #f0fdf6; border: 1.5px solid #a7f3c8; color: #166534; }
+    .custom-toast.warning { background: #fffbeb; border: 1.5px solid #fde68a; color: #92400e; }
+    .custom-toast.error   { background: #fff5f5; border: 1.5px solid #fecdcd; color: #9b1c1c; }
+    .custom-toast.info    { background: #eff6ff; border: 1.5px solid #bfdbfe; color: #1e40af; }
+
+    /* ── Mobile ── */
+    @media(max-width: 768px) {
+        .section-header { padding: 16px; }
+        .form-section > div:last-child { padding: 18px 16px; }
+        .applicant-card { padding: 0; }
+        .submit-section { padding: 18px 16px; }
+
+        .form-input, .form-select, .form-textarea {
+            font-size: 16px; /* prevent iOS zoom */
+            padding: 13px 14px;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto">
-    <!-- Enhanced Progress Bar -->
-    <div class="mb-12">
+<div class="max-w-4xl mx-auto">
+
+    <!-- Page Heading -->
+    <div class="mb-8">
+        <h1 style="font-family:'Syne',sans-serif;font-size:clamp(22px,4vw,30px);font-weight:800;color:var(--navy);letter-spacing:-.02em">
+            Visa Application Form
+        </h1>
+        <p style="color:var(--muted);font-size:14px;margin-top:4px">
+            Fill in all required details to generate your JSON data file
+        </p>
+    </div>
+
+    <!-- Progress Bar -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 24px;margin-bottom:32px;box-shadow:0 1px 4px rgba(0,0,0,.04)">
         <div class="flex items-center justify-between">
             <div class="progress-step">
-                <div class="step-indicator active">
-                    <i class="fas fa-edit"></i>
-                </div>
+                <div class="step-indicator active"><i class="fas fa-edit"></i></div>
                 <span class="step-label active">Fill Form</span>
             </div>
-            
             <div class="progress-step">
-                <div class="step-indicator">
-                    <i class="fas fa-eye"></i>
-                </div>
+                <div class="step-indicator"><i class="fas fa-eye"></i></div>
                 <span class="step-label">Preview JSON</span>
             </div>
-            
             <div class="progress-step">
-                <div class="step-indicator">
-                    <i class="fas fa-download"></i>
-                </div>
+                <div class="step-indicator"><i class="fas fa-download"></i></div>
                 <span class="step-label">Download</span>
             </div>
         </div>
     </div>
 
     <!-- Form -->
-    <form method="post" class="space-y-10" id="visaForm">
+    <form method="post" class="space-y-6" id="visaForm">
         {% csrf_token %}
-        
+
         <!-- Common Information -->
         <div class="form-section">
             <div class="section-header">
-                <div class="section-icon">
-                    <i class="fas fa-globe-americas"></i>
-                </div>
+                <div class="section-icon"><i class="fas fa-globe-americas"></i></div>
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-900">Common Application Information</h2>
-                    <p class="text-gray-600 mt-1">Shared details for all applicants</p>
+                    <h2>Common Application Information</h2>
+                    <p>Shared details for all applicants</p>
                 </div>
             </div>
-            
+
             <div class="p-6 md:p-8">
                 <div class="form-grid">
-                    <!-- Left Column -->
-                    <div class="space-y-6">
+                    <!-- Left -->
+                    <div class="space-y-5">
                         <div class="field-group">
                             <label class="form-label">
-                                <i class="fas fa-clock mr-2 text-blue-500"></i>Time Slot
+                                <i class="fas fa-clock mr-1 text-blue-400"></i> Time Slot
                             </label>
                             {{ visa_form.slot }}
-                            <p class="form-help">
-                                <i class="fas fa-info-circle mr-1"></i> Leave empty for random selection
-                            </p>
+                            <p class="form-help"><i class="fas fa-info-circle"></i> Leave empty for random selection</p>
                         </div>
-                        
+
                         <div class="field-group">
                             <label class="form-label">
-                                <i class="fas fa-file-alt mr-2 text-blue-500"></i>Visa Type
-                                <span class="required-star">*</span>
+                                <i class="fas fa-file-alt mr-1 text-blue-400"></i> Visa Type <span class="required-star">*</span>
                             </label>
                             {{ visa_form.visa }}
                         </div>
-                        
+
                         <div class="field-group">
                             <label class="form-label">
-                                <i class="fas fa-flag mr-2 text-blue-500"></i>Nationality
-                                <span class="required-star">*</span>
+                                <i class="fas fa-flag mr-1 text-blue-400"></i> Nationality <span class="required-star">*</span>
                             </label>
                             {{ visa_form.nationality }}
                         </div>
                     </div>
-                    
-                    <!-- Right Column -->
-                    <div class="space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <!-- Right -->
+                    <div class="space-y-5">
+                        <div class="grid grid-cols-2 gap-4">
                             <div class="field-group">
                                 <label class="form-label">
-                                    <i class="fas fa-plane-departure mr-2 text-blue-500"></i>Departure Date
-                                    <span class="required-star">*</span>
+                                    <i class="fas fa-plane-departure mr-1 text-blue-400"></i> Departure <span class="required-star">*</span>
                                 </label>
                                 {{ visa_form.departure_date }}
                             </div>
                             <div class="field-group">
                                 <label class="form-label">
-                                    <i class="fas fa-plane-arrival mr-2 text-blue-500"></i>Return Date
-                                    <span class="required-star">*</span>
+                                    <i class="fas fa-plane-arrival mr-1 text-blue-400"></i> Return <span class="required-star">*</span>
                                 </label>
                                 {{ visa_form.return_date }}
                             </div>
                         </div>
-                        
+
                         <div class="field-group">
                             <label class="form-label">
-                                <i class="fas fa-home mr-2 text-blue-500"></i>Contact Address
-                                <span class="required-star">*</span>
+                                <i class="fas fa-home mr-1 text-blue-400"></i> Contact Address <span class="required-star">*</span>
                             </label>
                             {{ visa_form.contact_address }}
                         </div>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        <div class="grid grid-cols-2 gap-4">
                             <div class="field-group">
-                                <label class="form-label">
-                                    City
-                                    <span class="required-star">*</span>
-                                </label>
+                                <label class="form-label">City <span class="required-star">*</span></label>
                                 {{ visa_form.contact_city }}
                             </div>
                             <div class="field-group">
-                                <label class="form-label">
-                                    Postal Code
-                                    <span class="required-star">*</span>
-                                </label>
+                                <label class="form-label">Postal Code <span class="required-star">*</span></label>
                                 {{ visa_form.contact_postcode }}
                             </div>
                         </div>
@@ -365,127 +547,114 @@
         <!-- Applicants Section -->
         <div class="form-section">
             <div class="section-header">
-                <div class="section-icon">
-                    <i class="fas fa-users"></i>
-                </div>
+                <div class="section-icon"><i class="fas fa-users"></i></div>
                 <div class="flex-1">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <h2 class="text-2xl font-bold text-gray-900">Applicants Information</h2>
-                            <p class="text-gray-600 mt-1">Add details for each applicant (maximum 5)</p>
+                            <h2>Applicants Information</h2>
+                            <p>Add details for each applicant (maximum 5)</p>
                         </div>
-                        <button type="button" id="add-applicant" 
-                                class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center">
-                            <i class="fas fa-user-plus mr-2"></i> Add Applicant
+                        <button type="button" id="add-applicant">
+                            <i class="fas fa-user-plus"></i> Add Applicant
                         </button>
                     </div>
                 </div>
             </div>
-            
+
             <div class="p-6 md:p-8">
-                <div id="applicant-formset" class="space-y-8">
+                <div id="applicant-formset" class="space-y-6">
                     {{ applicant_formset.management_form }}
-                    
+
                     {% for form in applicant_formset %}
-                    <div class="applicant-card p-6 md:p-8" data-index="{{ forloop.counter0 }}">
-                        <!-- Remove button - always visible but hidden for first applicant -->
-                        {% if forloop.counter > 1 %}
-                        <button type="button" class="remove-applicant" title="Remove Applicant">
-                            <i class="fas fa-trash-alt"></i>
+                    <div class="applicant-card" data-index="{{ forloop.counter0 }}">
+
+                        <button type="button" class="remove-applicant" {% if forloop.first %}style="display:none"{% endif %} title="Remove">
+                            <i class="fas fa-trash-alt"></i> Remove
                         </button>
-                        {% else %}
-                        <button type="button" class="remove-applicant" title="Remove Applicant" style="display: none;">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                        {% endif %}
-                        
-                        <div class="flex items-center mb-8">
-                            <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl flex items-center justify-center mr-4 shadow-lg">
-                                <i class="fas fa-user text-lg"></i>
-                            </div>
+
+                        <div class="applicant-card-header">
+                            <div class="applicant-num">{{ forloop.counter }}</div>
                             <div>
-                                <h3 class="text-xl font-bold text-gray-900">Applicant {{ forloop.counter }}</h3>
-                                <p class="text-gray-600 text-sm mt-1">Personal and passport details</p>
+                                <h3>Applicant {{ forloop.counter }}</h3>
+                                <div class="applicant-sub">Personal and passport details</div>
                             </div>
                         </div>
-                        
-                        <div class="form-grid">
-                            <!-- Left Column -->
-                            <div class="space-y-6">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div class="field-group">
-                                        <label class="form-label">
-                                            First Name
-                                            <span class="required-star">*</span>
-                                        </label>
-                                        {{ form.name }}
+
+                        <div class="p-6">
+                            <div class="form-grid">
+                                <!-- Left -->
+                                <div class="space-y-5">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="field-group">
+                                            <label class="form-label">First Name <span class="required-star">*</span></label>
+                                            {{ form.name }}
+                                        </div>
+                                        <div class="field-group">
+                                            <label class="form-label">Last Name <span class="required-star">*</span></label>
+                                            {{ form.surname }}
+                                        </div>
                                     </div>
+
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="field-group">
+                                            <label class="form-label">Gender</label>
+                                            {{ form.gender }}
+                                        </div>
+                                        <div class="field-group">
+                                            <label class="form-label">Marital Status</label>
+                                            {{ form.marital_status }}
+                                        </div>
+                                    </div>
+
                                     <div class="field-group">
-                                        <label class="form-label">
-                                            Last Name
-                                            <span class="required-star">*</span>
-                                        </label>
-                                        {{ form.surname }}
+                                        <label class="form-label">Date of Birth</label>
+                                        {{ form.birthday }}
+                                    </div>
+
+                                    <div class="field-group">
+                                        <label class="form-label">Place of Birth</label>
+                                        {{ form.birth_place }}
+                                    </div>
+
+                                    <div class="field-group">
+                                        <label class="form-label">Occupation</label>
+                                        {{ form.occupation }}
                                     </div>
                                 </div>
-                                
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                                <!-- Right -->
+                                <div class="space-y-5">
                                     <div class="field-group">
-                                        <label class="form-label">Gender</label>
-                                        {{ form.gender }}
+                                        <label class="form-label">Father's Full Name</label>
+                                        {{ form.father_name }}
                                     </div>
+
                                     <div class="field-group">
-                                        <label class="form-label">Marital Status</label>
-                                        {{ form.marital_status }}
+                                        <label class="form-label">Mother's Full Name</label>
+                                        {{ form.mother_name }}
                                     </div>
-                                </div>
-                                
-                                <div class="field-group">
-                                    <label class="form-label">Date of Birth</label>
-                                    {{ form.birthday }}
-                                </div>
-                                
-                                <div class="field-group">
-                                    <label class="form-label">Place of Birth</label>
-                                    {{ form.birth_place }}
-                                </div>
-                                
-                                <div class="field-group">
-                                    <label class="form-label">Occupation</label>
-                                    {{ form.occupation }}
-                                </div>
-                            </div>
-                            
-                            <!-- Right Column -->
-                            <div class="space-y-6">
-                                <div class="field-group">
-                                    <label class="form-label">Father's Full Name</label>
-                                    {{ form.father_name }}
-                                </div>
-                                
-                                <div class="field-group">
-                                    <label class="form-label">Mother's Full Name</label>
-                                    {{ form.mother_name }}
-                                </div>
-                                
-                                <div class="field-group">
-                                    <label class="form-label">Travel Document Type</label>
-                                    {{ form.travel_document }}
-                                </div>
-                                
-                                <div class="field-group">
-                                    <label class="form-label">Passport Issued By</label>
-                                    {{ form.passport_issued_by }}
-                                </div>
-                                
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                                    <div class="section-divider"><span>Travel Document</span></div>
+
                                     <div class="field-group">
-                                        <label class="form-label">Issue Date</label>
-                                        {{ form.passport_issue_date }}
+                                        <label class="form-label">Document Type</label>
+                                        {{ form.travel_document }}
                                     </div>
+
                                     <div class="field-group">
-                                        <label class="form-label">Expiry Date</label>
-                                        {{ form.passport_expiry }}
+                                        <label class="form-label">Passport Issued By</label>
+                                        {{ form.passport_issued_by }}
+                                    </div>
+
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="field-group">
+                                            <label class="form-label">Issue Date</label>
+                                            {{ form.passport_issue_date }}
+                                        </div>
+                                        <div class="field-group">
+                                            <label class="form-label">Expiry Date</label>
+                                            {{ form.passport_expiry }}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -496,47 +665,34 @@
             </div>
         </div>
 
-        <!-- Form Actions -->
-        <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-            <div class="flex flex-col lg:flex-row justify-between items-center gap-8">
-                <div class="text-center lg:text-left">
-                    <h3 class="text-lg font-bold text-gray-900 mb-2">Ready to Generate JSON?</h3>
-                    <p class="text-gray-600 text-sm">
-                        <i class="fas fa-shield-alt mr-1 text-green-500"></i>
-                        Your data is processed locally and not stored on our servers
-                    </p>
-                </div>
-                
-                <div class="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-                    <button type="reset" 
-                            class="bg-gray-50 hover:bg-gray-100 text-gray-700 font-semibold py-4 px-8 rounded-xl border border-gray-200 transition-all duration-300 flex items-center justify-center order-2 sm:order-1">
-                        <i class="fas fa-redo mr-3"></i> Clear Form
-                    </button>
-                    <button type="submit" 
-                            class="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center order-1 sm:order-2">
-                        <i class="fas fa-eye mr-3"></i> Preview & Generate JSON
-                        <i class="fas fa-arrow-right ml-3"></i>
-                    </button>
-                </div>
+        <!-- Submit -->
+        <div class="submit-section">
+            <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                <button type="reset" class="btn-reset">
+                    <i class="fas fa-redo"></i> Clear Form
+                </button>
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-eye"></i>
+                    Preview &amp; Generate JSON
+                    <i class="fas fa-arrow-right"></i>
+                </button>
             </div>
-            
-            <div class="mt-8 pt-8 border-t border-gray-100">
-                <div class="flex flex-col md:flex-row items-center justify-center gap-6 text-sm text-gray-600">
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-3">
-                            <i class="fas fa-info-circle text-sm"></i>
-                        </div>
-                        <span>All fields are required unless marked optional</span>
-                    </div>
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mr-3">
-                            <i class="fas fa-calendar-alt text-sm"></i>
-                        </div>
-                        <span>Dates should be in YYYY-MM-DD format</span>
-                    </div>
+            <div class="flex flex-wrap gap-6 pt-5 border-t border-gray-100">
+                <div class="flex items-center gap-2 text-sm" style="color:var(--muted)">
+                    <i class="fas fa-shield-alt" style="color:var(--navy)"></i>
+                    Data processed locally, never stored
+                </div>
+                <div class="flex items-center gap-2 text-sm" style="color:var(--muted)">
+                    <i class="fas fa-calendar-alt" style="color:var(--navy)"></i>
+                    Dates in YYYY-MM-DD format
+                </div>
+                <div class="flex items-center gap-2 text-sm" style="color:var(--muted)">
+                    <i class="fas fa-asterisk" style="color:var(--red);font-size:9px"></i>
+                    Fields marked * are required
                 </div>
             </div>
         </div>
+
     </form>
 </div>
 {% endblock %}
@@ -544,326 +700,180 @@
 {% block extra_scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const formset = document.getElementById('applicant-formset');
+        const formset    = document.getElementById('applicant-formset');
         const totalForms = document.getElementById('id_form-TOTAL_FORMS');
-        const addBtn = document.getElementById('add-applicant');
-        let formCount = parseInt(totalForms.value);
-        
-        // Initialize remove buttons for existing forms
-        function initializeRemoveButtons() {
+        const addBtn     = document.getElementById('add-applicant');
+        let formCount    = parseInt(totalForms.value);
+
+        /* ── Toast ── */
+        function showToast(message, type = 'info') {
+            document.querySelectorAll('.custom-toast').forEach(t => t.remove());
+            const icons = { success:'check-circle', warning:'exclamation-triangle', error:'times-circle', info:'info-circle' };
+            const toast = document.createElement('div');
+            toast.className = `custom-toast ${type}`;
+            toast.innerHTML = `<i class="fas fa-${icons[type]}" style="font-size:18px;flex-shrink:0"></i><span>${message}</span>`;
+            document.body.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add('show'));
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 350);
+            }, 4000);
+        }
+
+        /* ── Remove button ── */
+        function initRemoveButtons() {
             document.querySelectorAll('.remove-applicant').forEach((btn, index) => {
-                // First applicant's remove button should be hidden
-                if (index === 0) {
-                    btn.style.display = 'none';
-                }
-                
+                if (index === 0) btn.style.display = 'none';
                 btn.addEventListener('click', function() {
                     const card = this.closest('.applicant-card');
                     if (formCount > 1) {
                         card.style.opacity = '0';
-                        card.style.transform = 'translateX(100px)';
-                        
+                        card.style.transform = 'translateX(60px)';
                         setTimeout(() => {
                             card.remove();
                             formCount--;
                             totalForms.value = formCount;
                             updateFormIndices();
-                            showToast('Applicant removed successfully', 'info');
-                        }, 300);
+                            showToast('Applicant removed', 'info');
+                        }, 280);
                     }
                 });
             });
         }
-        
-        // Call initialization
-        initializeRemoveButtons();
-        
-        // Add new applicant
+
+        initRemoveButtons();
+
+        /* ── Add applicant ── */
         if (addBtn) {
             addBtn.addEventListener('click', function() {
-                if (formCount < 5) {
-                    const template = document.querySelector('.applicant-card');
-                    const newForm = template.cloneNode(true);
-                    
-                    // Update indices
-                    newForm.dataset.index = formCount;
-                    
-                    // Update form field names and IDs
-                    const inputs = newForm.querySelectorAll('input, select, textarea');
-                    inputs.forEach(input => {
-                        if (input.name) {
-                            input.name = input.name.replace(/-\d+-/, `-${formCount}-`);
-                        }
-                        if (input.id) {
-                            input.id = input.id.replace(/-\d+-/, `-${formCount}-`);
-                        }
-                        // Clear values
-                        if (input.type !== 'hidden' && !input.classList.contains('form-select')) {
-                            input.value = '';
+                if (formCount >= 5) {
+                    showToast('Maximum of 5 applicants allowed', 'warning');
+                    return;
+                }
+
+                const template = document.querySelector('.applicant-card');
+                const newForm  = template.cloneNode(true);
+
+                newForm.dataset.index = formCount;
+
+                // Update field names/IDs and clear values
+                newForm.querySelectorAll('input, select, textarea').forEach(input => {
+                    if (input.name) input.name = input.name.replace(/-\d+-/, `-${formCount}-`);
+                    if (input.id)   input.id   = input.id.replace(/-\d+-/, `-${formCount}-`);
+                    if (input.type !== 'hidden') input.value = '';
+                });
+
+                // Update number and title
+                const num = newForm.querySelector('.applicant-num');
+                if (num) num.textContent = formCount + 1;
+                const title = newForm.querySelector('h3');
+                if (title) title.textContent = `Applicant ${formCount + 1}`;
+
+                // Show remove button
+                const removeBtn = newForm.querySelector('.remove-applicant');
+                if (removeBtn) {
+                    removeBtn.style.display = 'flex';
+                    removeBtn.addEventListener('click', function() {
+                        const card = this.closest('.applicant-card');
+                        if (formCount > 1) {
+                            card.style.opacity = '0';
+                            card.style.transform = 'translateX(60px)';
+                            setTimeout(() => {
+                                card.remove();
+                                formCount--;
+                                totalForms.value = formCount;
+                                updateFormIndices();
+                                showToast('Applicant removed', 'info');
+                            }, 280);
                         }
                     });
-                    
-                    // Update title
-                    const title = newForm.querySelector('h3');
-                    if (title) {
-                        title.textContent = `Applicant ${formCount + 1}`;
-                    }
-                    
-                    // Update number in user icon
-                    const userIcon = newForm.querySelector('.fa-user');
-                    if (userIcon) {
-                        userIcon.parentElement.innerHTML = `<i class="fas fa-user text-lg"></i><span class="text-xs absolute -top-1 -right-1 bg-white text-indigo-600 rounded-full w-5 h-5 flex items-center justify-center font-bold">${formCount + 1}</span>`;
-                    }
-                    
-                    // Show remove button for new form
-                    const removeBtn = newForm.querySelector('.remove-applicant');
-                    if (removeBtn) {
-                        removeBtn.style.display = 'flex';
-                        removeBtn.addEventListener('click', function() {
-                            const card = this.closest('.applicant-card');
-                            if (formCount > 1) {
-                                card.style.opacity = '0';
-                                card.style.transform = 'translateX(100px)';
-                                
-                                setTimeout(() => {
-                                    card.remove();
-                                    formCount--;
-                                    totalForms.value = formCount;
-                                    updateFormIndices();
-                                    showToast('Applicant removed successfully', 'info');
-                                }, 300);
-                            }
-                        });
-                    }
-                    
-                    // Add animation for new form
-                    newForm.style.opacity = '0';
-                    newForm.style.transform = 'translateY(20px)';
-                    formset.appendChild(newForm);
-                    
-                    // Animate in
-                    setTimeout(() => {
-                        newForm.style.opacity = '1';
-                        newForm.style.transform = 'translateY(0)';
-                        newForm.style.transition = 'all 0.4s ease';
-                    }, 10);
-                    
-                    formCount++;
-                    totalForms.value = formCount;
-                    
-                    // Scroll to new form
-                    setTimeout(() => {
-                        newForm.scrollIntoView({ 
-                            behavior: 'smooth', 
-                            block: 'center',
-                            inline: 'nearest' 
-                        });
-                    }, 100);
-                    
-                    // Show success message
-                    showToast(`Applicant ${formCount} added successfully!`, 'success');
-                } else {
-                    showToast('Maximum of 5 applicants allowed', 'warning');
+                }
+
+                // Animate in
+                newForm.style.opacity = '0';
+                newForm.style.transform = 'translateY(16px)';
+                newForm.style.transition = 'opacity .3s, transform .3s';
+                formset.appendChild(newForm);
+                requestAnimationFrame(() => {
+                    newForm.style.opacity = '1';
+                    newForm.style.transform = 'translateY(0)';
+                });
+
+                formCount++;
+                totalForms.value = formCount;
+
+                setTimeout(() => newForm.scrollIntoView({ behavior: 'smooth', block: 'center' }), 120);
+                showToast(`Applicant ${formCount} added!`, 'success');
+
+                if (formCount >= 5) {
                     addBtn.disabled = true;
-                    addBtn.innerHTML = '<i class="fas fa-ban mr-2"></i> Maximum Reached';
-                    addBtn.classList.remove('hover:from-indigo-700', 'hover:to-purple-700', 'hover:shadow-xl', 'hover:-translate-y-1');
-                    addBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
+                    addBtn.innerHTML = '<i class="fas fa-ban"></i> Maximum Reached';
                 }
             });
         }
-        
+
+        /* ── Reindex ── */
         function updateFormIndices() {
-            const forms = document.querySelectorAll('.applicant-card');
-            forms.forEach((form, index) => {
-                form.dataset.index = index;
-                
-                // Update title
-                const title = form.querySelector('h3');
-                if (title) {
-                    title.textContent = `Applicant ${index + 1}`;
-                }
-                
-                // Update number in user icon
-                const userIconContainer = form.querySelector('.fa-user')?.parentElement;
-                if (userIconContainer) {
-                    userIconContainer.innerHTML = `<i class="fas fa-user text-lg"></i><span class="text-xs absolute -top-1 -right-1 bg-white text-indigo-600 rounded-full w-5 h-5 flex items-center justify-center font-bold">${index + 1}</span>`;
-                }
-                
-                // Update form field names and IDs
-                const inputs = form.querySelectorAll('input, select, textarea');
-                inputs.forEach(input => {
-                    if (input.name) {
-                        input.name = input.name.replace(/-\d+-/, `-${index}-`);
-                    }
-                    if (input.id) {
-                        input.id = input.id.replace(/-\d+-/, `-${index}-`);
-                    }
+            document.querySelectorAll('.applicant-card').forEach((card, index) => {
+                card.dataset.index = index;
+                const num = card.querySelector('.applicant-num');
+                if (num) num.textContent = index + 1;
+                const title = card.querySelector('h3');
+                if (title) title.textContent = `Applicant ${index + 1}`;
+                card.querySelectorAll('input, select, textarea').forEach(input => {
+                    if (input.name) input.name = input.name.replace(/-\d+-/, `-${index}-`);
+                    if (input.id)   input.id   = input.id.replace(/-\d+-/, `-${index}-`);
                 });
-                
-                // Show/hide remove button based on index
-                const removeBtn = form.querySelector('.remove-applicant');
-                if (removeBtn) {
-                    removeBtn.style.display = index === 0 ? 'none' : 'flex';
-                }
+                const rm = card.querySelector('.remove-applicant');
+                if (rm) rm.style.display = index === 0 ? 'none' : 'flex';
             });
-            
-            // Re-enable add button if needed
+
             if (formCount < 5 && addBtn) {
                 addBtn.disabled = false;
-                addBtn.innerHTML = '<i class="fas fa-user-plus mr-2"></i> Add Applicant';
-                addBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
-                addBtn.classList.add('bg-gradient-to-r', 'from-indigo-600', 'to-purple-600', 'hover:from-indigo-700', 'hover:to-purple-700', 'hover:shadow-xl', 'hover:-translate-y-1');
+                addBtn.innerHTML = '<i class="fas fa-user-plus"></i> Add Applicant';
             }
         }
-        
-        function showToast(message, type = 'info') {
-            // Remove existing toasts
-            document.querySelectorAll('.custom-toast').forEach(toast => toast.remove());
-            
-            const toast = document.createElement('div');
-            toast.className = `custom-toast fixed top-6 right-6 px-6 py-4 rounded-xl shadow-2xl z-50 transform transition-all duration-300 translate-x-full ${
-                type === 'success' ? 'bg-gradient-to-r from-green-500 to-emerald-500' :
-                type === 'warning' ? 'bg-gradient-to-r from-yellow-500 to-amber-500' :
-                type === 'error' ? 'bg-gradient-to-r from-red-500 to-rose-500' : 
-                'bg-gradient-to-r from-blue-500 to-indigo-500'
-            } text-white`;
-            
-            const icons = {
-                success: 'check-circle',
-                warning: 'exclamation-triangle',
-                error: 'times-circle',
-                info: 'info-circle'
-            };
-            
-            toast.innerHTML = `
-                <div class="flex items-center">
-                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mr-4">
-                        <i class="fas fa-${icons[type]} text-lg"></i>
-                    </div>
-                    <div>
-                        <div class="font-semibold">${message}</div>
-                        <div class="text-sm opacity-90 mt-1">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(toast);
-            
-            // Animate in
-            setTimeout(() => {
-                toast.classList.remove('translate-x-full');
-                toast.classList.add('translate-x-0');
-            }, 10);
-            
-            // Remove after 4 seconds
-            setTimeout(() => {
-                toast.classList.remove('translate-x-0');
-                toast.classList.add('translate-x-full');
-                setTimeout(() => {
-                    if (toast.parentNode) {
-                        toast.parentNode.removeChild(toast);
-                    }
-                }, 300);
-            }, 4000);
-        }
-        
-        // Form validation with better UX
-        const form = document.getElementById('visaForm');
-        form.addEventListener('submit', function(e) {
-            let isValid = true;
-            const firstInvalidField = document.createElement('div');
-            
-            // Check required fields
-            const requiredFields = form.querySelectorAll('[required]');
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    isValid = false;
-                    field.classList.add('border-red-500', 'bg-red-50');
-                    field.classList.remove('border-gray-300');
-                    
-                    // Scroll to first invalid field
-                    if (!firstInvalidField.hasChildNodes()) {
-                        firstInvalidField.appendChild(field);
-                    }
-                } else {
-                    field.classList.remove('border-red-500', 'bg-red-50');
-                    field.classList.add('border-gray-300');
-                }
-            });
-            
-            // Date validation
-            const dateFields = form.querySelectorAll('input[type="date"]');
-            dateFields.forEach(field => {
-                if (field.value) {
-                    const date = new Date(field.value);
-                    if (isNaN(date.getTime())) {
-                        isValid = false;
-                        field.classList.add('border-red-500', 'bg-red-50');
-                        showToast('Please enter valid dates', 'error');
-                    }
-                }
-            });
-            
-            if (!isValid) {
+
+        /* ── Reset ── */
+        const resetBtn = document.querySelector('button[type="reset"]');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                showToast('Please fill in all required fields correctly', 'error');
-                
-                // Scroll to first invalid field
-                if (firstInvalidField.firstChild) {
-                    firstInvalidField.firstChild.scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'center' 
-                    });
-                    firstInvalidField.firstChild.focus();
+                if (!confirm('Clear all form data? This cannot be undone.')) return;
+                document.querySelectorAll('.applicant-card').forEach((c, i) => { if (i > 0) c.remove(); });
+                formCount = 1;
+                totalForms.value = 1;
+                updateFormIndices();
+                document.getElementById('visaForm').reset();
+                showToast('Form cleared', 'info');
+            });
+        }
+
+        /* ── Validation ── */
+        document.getElementById('visaForm').addEventListener('submit', function(e) {
+            let valid = true, first = null;
+            this.querySelectorAll('[required]').forEach(field => {
+                const wrap = field.closest('.field-group');
+                if (!field.value.trim()) {
+                    valid = false;
+                    if (wrap) wrap.classList.add('has-error');
+                    if (!first) first = field;
+                } else {
+                    if (wrap) wrap.classList.remove('has-error');
                 }
+            });
+            if (!valid) {
+                e.preventDefault();
+                showToast('Please fill in all required fields', 'error');
+                if (first) { first.scrollIntoView({ behavior: 'smooth', block: 'center' }); first.focus(); }
             }
         });
-        
-        // Clear form button functionality
-        const resetBtn = form.querySelector('button[type="reset"]');
-        if (resetBtn) {
-            resetBtn.addEventListener('click', function() {
-                if (confirm('Are you sure you want to clear all form data? This action cannot be undone.')) {
-                    // Reset to initial state (1 applicant)
-                    const forms = document.querySelectorAll('.applicant-card');
-                    forms.forEach((form, index) => {
-                        if (index > 0) {
-                            form.remove();
-                        }
-                    });
-                    
-                    // Reset form count
-                    formCount = 1;
-                    totalForms.value = 1;
-                    
-                    // Reset remove buttons
-                    const firstRemoveBtn = document.querySelector('.applicant-card .remove-applicant');
-                    if (firstRemoveBtn) {
-                        firstRemoveBtn.style.display = 'none';
-                    }
-                    
-                    // Re-enable add button
-                    if (addBtn) {
-                        addBtn.disabled = false;
-                        addBtn.innerHTML = '<i class="fas fa-user-plus mr-2"></i> Add Applicant';
-                        addBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
-                        addBtn.classList.add('bg-gradient-to-r', 'from-indigo-600', 'to-purple-600', 'hover:from-indigo-700', 'hover:to-purple-700', 'hover:shadow-xl', 'hover:-translate-y-1');
-                    }
-                    
-                    showToast('Form cleared successfully', 'info');
-                }
-            });
-        }
-        
-        // Add focus styles to form controls
-        const formControls = form.querySelectorAll('.form-input, .form-select, .form-textarea');
-        formControls.forEach(control => {
-            control.addEventListener('focus', function() {
-                this.parentElement.classList.add('field-group-focused');
-            });
-            
-            control.addEventListener('blur', function() {
-                this.parentElement.classList.remove('field-group-focused');
+
+        // Remove error state on input
+        document.querySelectorAll('input, select, textarea').forEach(el => {
+            el.addEventListener('input', function() {
+                const wrap = this.closest('.field-group');
+                if (wrap && this.value.trim()) wrap.classList.remove('has-error');
             });
         });
     });

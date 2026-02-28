@@ -2,156 +2,474 @@
 
 {% block title %}Mosaic Visa Generator - Create JSON Data{% endblock %}
 
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --navy:    #0f2240;
+        --navy-mid:#1a3a6c;
+        --gold:    #c9a84c;
+        --gold-lt: #fdf6e3;
+        --border:  #e2e6ed;
+        --muted:   #6b7a94;
+        --text:    #0f1f35;
+        --bg:      #f6f7f9;
+        --surface: #ffffff;
+    }
+
+    body { font-family: 'DM Sans', sans-serif; }
+
+    /* ── Hero ── */
+    .hero {
+        text-align: center;
+        padding: 60px 20px 48px;
+        position: relative;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--gold-lt);
+        border: 1px solid #f0dfa0;
+        color: #7a5c00;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        padding: 7px 16px;
+        border-radius: 20px;
+        margin-bottom: 24px;
+    }
+
+    .hero-icon {
+        width: 80px; height: 80px;
+        background: var(--navy);
+        border-radius: 20px;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 28px;
+        box-shadow: 0 8px 32px rgba(15,34,64,.25);
+    }
+
+    .hero h1 {
+        font-family: 'Syne', sans-serif;
+        font-size: clamp(28px, 5vw, 44px);
+        font-weight: 800;
+        color: var(--navy);
+        letter-spacing: -.02em;
+        margin-bottom: 16px;
+        line-height: 1.15;
+    }
+
+    .hero p {
+        font-size: 16px;
+        color: var(--muted);
+        max-width: 520px;
+        margin: 0 auto 36px;
+        line-height: 1.7;
+    }
+
+    .hero-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--navy);
+        color: #fff;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        padding: 15px 32px;
+        border-radius: 12px;
+        text-decoration: none;
+        transition: all .2s;
+        box-shadow: 0 4px 20px rgba(15,34,64,.3);
+    }
+
+    .hero-cta:hover {
+        background: var(--navy-mid);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 28px rgba(15,34,64,.35);
+        color: #fff;
+    }
+
+    .hero-note {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    /* ── Steps ── */
+    .steps {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+
+    @media(max-width: 640px) {
+        .steps { grid-template-columns: 1fr; }
+    }
+
+    .step-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 28px 20px;
+        text-align: center;
+        position: relative;
+        transition: box-shadow .2s, transform .2s;
+    }
+
+    .step-card:hover {
+        box-shadow: 0 8px 24px rgba(0,0,0,.08);
+        transform: translateY(-3px);
+    }
+
+    .step-number {
+        position: absolute;
+        top: -12px; left: 50%;
+        transform: translateX(-50%);
+        width: 26px; height: 26px;
+        background: var(--navy);
+        color: #fff;
+        border-radius: 50%;
+        font-family: 'Syne', sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        display: flex; align-items: center; justify-content: center;
+        border: 2px solid var(--bg);
+    }
+
+    .step-icon {
+        width: 52px; height: 52px;
+        background: var(--bg);
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 16px;
+        font-size: 20px;
+        color: var(--navy);
+    }
+
+    .step-card h3 {
+        font-family: 'Syne', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--navy);
+        margin-bottom: 8px;
+    }
+
+    .step-card p {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+
+    /* ── Features ── */
+    .features-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 36px;
+        margin-bottom: 32px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    }
+
+    .features-card h2 {
+        font-family: 'Syne', sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--navy);
+        margin-bottom: 28px;
+        text-align: center;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+    }
+
+    @media(max-width: 640px) {
+        .features-grid { grid-template-columns: 1fr; }
+        .features-card { padding: 24px 20px; }
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    .feature-icon {
+        width: 40px; height: 40px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 16px;
+        color: var(--navy);
+        flex-shrink: 0;
+    }
+
+    .feature-item h3 {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 4px;
+    }
+
+    .feature-item p {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.5;
+    }
+
+    /* ── How it works ── */
+    .how-card {
+        background: var(--navy);
+        border-radius: 16px;
+        padding: 36px;
+        margin-bottom: 32px;
+        color: #fff;
+    }
+
+    .how-card h2 {
+        font-family: 'Syne', sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 28px;
+        text-align: center;
+    }
+
+    .how-step {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 20px 0;
+        border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+
+    .how-step:last-child { border-bottom: none; padding-bottom: 0; }
+    .how-step:first-of-type { padding-top: 0; }
+
+    .how-num {
+        width: 36px; height: 36px;
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.2);
+        border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'Syne', sans-serif;
+        font-size: 15px; font-weight: 700;
+        color: var(--gold);
+        flex-shrink: 0;
+    }
+
+    .how-step h3 {
+        font-size: 14px;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 4px;
+    }
+
+    .how-step p {
+        font-size: 13px;
+        color: rgba(255,255,255,.65);
+        line-height: 1.6;
+    }
+
+    /* ── CTA ── */
+    .cta-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 48px 36px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    }
+
+    .cta-card h3 {
+        font-family: 'Syne', sans-serif;
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--navy);
+        margin-bottom: 12px;
+    }
+
+    .cta-card p {
+        font-size: 15px;
+        color: var(--muted);
+        max-width: 420px;
+        margin: 0 auto 28px;
+        line-height: 1.6;
+    }
+
+    .cta-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--navy);
+        color: #fff;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        padding: 15px 36px;
+        border-radius: 12px;
+        text-decoration: none;
+        transition: all .2s;
+        box-shadow: 0 4px 20px rgba(15,34,64,.25);
+    }
+
+    .cta-btn:hover {
+        background: var(--navy-mid);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 28px rgba(15,34,64,.3);
+        color: #fff;
+    }
+
+    .cta-note {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    @media(max-width: 640px) {
+        .cta-card { padding: 32px 20px; }
+        .how-card { padding: 24px 20px; }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="max-w-4xl mx-auto">
-    <!-- Hero Section -->
-    <div class="text-center mb-12">
-        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 mb-6">
-            <i class="fas fa-passport text-4xl text-white"></i>
+
+    <!-- Hero -->
+    <div class="hero">
+        <div class="hero-badge">
+            <i class="fas fa-passport"></i>
+            Mosaic Visa JSON Generator
         </div>
-        <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Mosaic Visa Data Generator
-        </h1>
-        <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-            Create JSON data for your Mosaic Visa appointments in minutes. 
-            Simple, fast, and mobile-friendly.
-        </p>
-        <a href="{% url 'form' %}" 
-           class="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-10 rounded-xl text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-            <i class="fas fa-plus-circle mr-3"></i> Start Creating Your Data
-            <i class="fas fa-arrow-right ml-3"></i>
+        <div class="hero-icon">
+            <i class="fas fa-passport text-white text-3xl"></i>
+        </div>
+        <h1>Mosaic Visa<br>Data Generator</h1>
+        <p>Create JSON data for your Mosaic Visa appointments in minutes. Simple, fast, and mobile-friendly.</p>
+        <a href="{% url 'form' %}" class="hero-cta">
+            <i class="fas fa-plus-circle"></i>
+            Start Creating Your Data
+            <i class="fas fa-arrow-right"></i>
         </a>
-    </div>
-
-    <!-- Simple Steps -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        <div class="text-center">
-            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-edit text-2xl"></i>
-            </div>
-            <h3 class="font-bold text-gray-800 mb-2">1. Fill Form</h3>
-            <p class="text-gray-600 text-sm">Enter your visa application details</p>
-        </div>
-        
-        <div class="text-center">
-            <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-check-circle text-2xl"></i>
-            </div>
-            <h3 class="font-bold text-gray-800 mb-2">2. Download</h3>
-            <p class="text-gray-600 text-sm">Get your JSON data file</p>
-        </div>
-        
-        <div class="text-center">
-            <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-paper-plane text-2xl"></i>
-            </div>
-            <h3 class="font-bold text-gray-800 mb-2">3. Share</h3>
-            <p class="text-gray-600 text-sm">Send to administrator for auto-filling</p>
+        <div class="hero-note">
+            <i class="fas fa-lock"></i>
+            Free to use · Data never stored · Takes 2 minutes
         </div>
     </div>
 
-    <!-- Simple Features -->
-    <div class="bg-white rounded-2xl shadow-lg p-8 mb-12 border border-gray-100">
-        <div class="grid md:grid-cols-2 gap-8">
+    <!-- Steps -->
+    <div class="steps">
+        <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-icon"><i class="fas fa-edit"></i></div>
+            <h3>Fill Form</h3>
+            <p>Enter your visa application details for all applicants</p>
+        </div>
+        <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-icon"><i class="fas fa-download"></i></div>
+            <h3>Download</h3>
+            <p>Get your JSON data file instantly</p>
+        </div>
+        <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="step-icon"><i class="fas fa-paper-plane"></i></div>
+            <h3>Share</h3>
+            <p>Send to your administrator for auto-filling</p>
+        </div>
+    </div>
+
+    <!-- Features -->
+    <div class="features-card">
+        <h2>Why Use Our Generator</h2>
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+                <div>
+                    <h3>Mobile-Friendly</h3>
+                    <p>Works perfectly on all devices — phone, tablet, or desktop</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                <div>
+                    <h3>Secure & Private</h3>
+                    <p>No data stored on our servers — processed locally</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                <div>
+                    <h3>Fast & Easy</h3>
+                    <p>Generate your complete JSON data in seconds</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fas fa-code"></i></div>
+                <div>
+                    <h3>Tampermonkey Ready</h3>
+                    <p>Perfect JSON format ready for automation scripts</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- How it works -->
+    <div class="how-card">
+        <h2>Simple 3-Step Process</h2>
+        <div class="how-step">
+            <div class="how-num">1</div>
             <div>
-                <div class="flex items-start mb-6">
-                    <div class="bg-blue-100 p-3 rounded-lg mr-4">
-                        <i class="fas fa-mobile-alt text-blue-600"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-gray-800 mb-2">Mobile-Friendly</h3>
-                        <p class="text-gray-600 text-sm">Works perfectly on all devices</p>
-                    </div>
-                </div>
-                
-                <div class="flex items-start mb-6">
-                    <div class="bg-green-100 p-3 rounded-lg mr-4">
-                        <i class="fas fa-shield-alt text-green-600"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-gray-800 mb-2">Secure & Private</h3>
-                        <p class="text-gray-600 text-sm">No data stored on our servers</p>
-                    </div>
-                </div>
+                <h3>Fill the Form</h3>
+                <p>Enter your visa application details for you and your family members.</p>
             </div>
-            
+        </div>
+        <div class="how-step">
+            <div class="how-num">2</div>
             <div>
-                <div class="flex items-start mb-6">
-                    <div class="bg-purple-100 p-3 rounded-lg mr-4">
-                        <i class="fas fa-bolt text-purple-600"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-gray-800 mb-2">Fast & Easy</h3>
-                        <p class="text-gray-600 text-sm">Generate data in seconds</p>
-                    </div>
-                </div>
-                
-                <div class="flex items-start mb-6">
-                    <div class="bg-indigo-100 p-3 rounded-lg mr-4">
-                        <i class="fas fa-code text-indigo-600"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-gray-800 mb-2">Tampermonkey Ready</h3>
-                        <p class="text-gray-600 text-sm">Perfect JSON format for automation</p>
-                    </div>
-                </div>
+                <h3>Download Your Data</h3>
+                <p>Get a JSON file with Tampermonkey integration code and your data.</p>
+            </div>
+        </div>
+        <div class="how-step">
+            <div class="how-num">3</div>
+            <div>
+                <h3>Send to Administrator</h3>
+                <p>Share the file with your administrator via WhatsApp or email.</p>
             </div>
         </div>
     </div>
 
-    <!-- Simple How It Works -->
-    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 mb-12">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Simple Process</h2>
-        
-        <div class="space-y-6">
-            <div class="flex items-start">
-                <div class="bg-white text-blue-600 rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 font-bold">
-                    1
-                </div>
-                <div>
-                    <h3 class="font-bold text-gray-800 mb-2">Fill the Form</h3>
-                    <p class="text-gray-600">Enter your visa application details for you and your family members.</p>
-                </div>
-            </div>
-            
-            <div class="flex items-start">
-                <div class="bg-white text-green-600 rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 font-bold">
-                    2
-                </div>
-                <div>
-                    <h3 class="font-bold text-gray-800 mb-2">Download Your Data</h3>
-                    <p class="text-gray-600">Get a JSON file with Tampermonkey integration code and your data.</p>
-                </div>
-            </div>
-            
-            <div class="flex items-start">
-                <div class="bg-white text-purple-600 rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 font-bold">
-                    3
-                </div>
-                <div>
-                    <h3 class="font-bold text-gray-800 mb-2">Send to Administrator</h3>
-                    <p class="text-gray-600">Share the file with your administrator via WhatsApp or email.</p>
-                </div>
-            </div>
+    <!-- CTA -->
+    <div class="cta-card">
+        <h3>Ready to Get Started?</h3>
+        <p>Create your Mosaic Visa JSON data now. It's free and takes just a few minutes.</p>
+        <a href="{% url 'form' %}" class="cta-btn">
+            <i class="fas fa-play-circle"></i>
+            Create Your Visa Data Now
+            <i class="fas fa-arrow-right"></i>
+        </a>
+        <div class="cta-note">
+            <i class="fas fa-lock"></i>
+            Your data is processed locally and never stored
         </div>
     </div>
 
-    <!-- Final CTA -->
-    <div class="text-center">
-        <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-            <h3 class="text-2xl font-bold text-gray-900 mb-4">Ready to Get Started?</h3>
-            <p class="text-gray-600 mb-6 max-w-xl mx-auto">
-                Create your Mosaic Visa JSON data now. It's free and takes just a few minutes.
-            </p>
-            <a href="{% url 'form' %}" 
-               class="inline-flex items-center bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-12 rounded-xl text-lg shadow-xl hover:shadow-2xl transition-all duration-300">
-                <i class="fas fa-play-circle mr-3"></i> Create Your Visa Data Now
-                <i class="fas fa-arrow-right ml-3"></i>
-            </a>
-            <p class="text-gray-500 text-sm mt-4">
-                <i class="fas fa-lock mr-2"></i> Your data is processed locally and never stored
-            </p>
-        </div>
-    </div>
 </div>
 {% endblock %}
