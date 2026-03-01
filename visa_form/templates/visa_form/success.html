@@ -5,26 +5,28 @@
 
 {% block content %}
 <div class="max-w-md mx-auto text-center">
-    <div class="bg-white rounded-2xl shadow-lg p-8">
-        <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+    <div class="rounded-2xl shadow-lg p-8" style="background-color: var(--bg-card); border: 1px solid var(--border-color);">
+        <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6" style="background-color: var(--success-bg); color: var(--success-text);">
             <i class="fas fa-check text-3xl"></i>
         </div>
         
-        <h1 class="text-2xl font-bold text-gray-900 mb-3">{% trans "Download Complete!" %}</h1>
+        <h1 class="text-2xl font-bold mb-3" style="color: var(--text-primary);">{% trans "Download Complete!" %}</h1>
         
-        <p class="text-gray-600 mb-6">
+        <p class="mb-6" style="color: var(--text-secondary);">
             {% trans "Your data file has been downloaded." %}
             {% trans "Send it to your administrator for auto-filling the Mosaic Visa form." %}
         </p>
         
         <div class="space-y-4">
             <a href="{% url 'form' %}" 
-               class="block bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition">
+               class="block text-white font-medium py-3 px-6 rounded-lg transition" 
+               style="background-color: var(--gradient-start);">
                 <i class="fas fa-plus-circle mr-2"></i> {% trans "Create New Data" %}
             </a>
             
             <a href="{% url 'index' %}" 
-               class="block bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-6 rounded-lg transition">
+               class="block font-medium py-3 px-6 rounded-lg transition" 
+               style="background-color: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color);">
                 <i class="fas fa-home mr-2"></i> {% trans "Return to Home" %}
             </a>
         </div>

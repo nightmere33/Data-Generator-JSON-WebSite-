@@ -9,19 +9,21 @@
         margin: 0 auto;
     }
     .summary-card {
-        background: white;
+        background: var(--bg-card);
         border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        box-shadow: var(--card-shadow);
         margin-bottom: 20px;
         overflow: hidden;
+        border: 1px solid var(--border-color);
     }
     .summary-card h2 {
-        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-        color: white;
+        background: linear-gradient(135deg, var(--bg-card) 0%, var(--border-light) 100%);
+        color: var(--text-primary);
         padding: 12px 20px;
         margin: 0;
         font-size: 1.2rem;
         font-weight: 600;
+        border-bottom: 1px solid var(--border-color);
     }
     .summary-content {
         padding: 20px;
@@ -35,14 +37,14 @@
     }
     .data-label {
         font-size: 0.85rem;
-        color: #6b7280;
+        color: var(--text-secondary);
         text-transform: uppercase;
         letter-spacing: 0.3px;
         margin-bottom: 2px;
     }
     .data-value {
         font-weight: 500;
-        color: #1f2937;
+        color: var(--text-primary);
         font-size: 1rem;
         word-break: break-word;
     }
@@ -50,6 +52,33 @@
         .summary-content {
             grid-template-columns: 1fr;
         }
+    }
+
+    /* Stats boxes */
+    .stat-box {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        text-align: center;
+    }
+    .stat-number {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--gradient-start);
+    }
+    .stat-label {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+
+    /* Action buttons container */
+    .action-container {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: var(--card-shadow);
     }
 </style>
 {% endblock %}
@@ -66,8 +95,8 @@
             <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center">
                 2
             </div>
-            <div class="h-1 w-16 bg-gray-300"></div>
-            <div class="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center">
+            <div class="h-1 w-16" style="background-color: var(--border-color);"></div>
+            <div class="w-8 h-8" style="background-color: var(--border-color); color: var(--text-secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                 <i class="fas fa-download text-sm"></i>
             </div>
         </div>
@@ -75,24 +104,24 @@
 
     <!-- Header -->
     <div class="text-center mb-8">
-        <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4" style="background-color: var(--success-bg); color: var(--success-text);">
             <i class="fas fa-check text-2xl"></i>
         </div>
-        <h1 class="text-2xl font-bold text-gray-900 mb-2">{% trans "Data Ready for Review" %}</h1>
-        <p class="text-gray-600">{% trans "Please verify all information before downloading." %}</p>
+        <h1 class="text-2xl font-bold mb-2" style="color: var(--text-primary);">{% trans "Data Ready for Review" %}</h1>
+        <p style="color: var(--text-secondary);">{% trans "Please verify all information before downloading." %}</p>
     </div>
 
     <!-- Stats -->
     <div class="grid grid-cols-2 gap-4 mb-8">
-        <div class="bg-white p-4 rounded-lg border text-center">
-            <div class="text-xl font-bold text-blue-600">{{ data.applicants|length }}</div>
-            <div class="text-sm text-gray-600">{% trans "Applicants" %}</div>
+        <div class="stat-box">
+            <div class="stat-number">{{ data.applicants|length }}</div>
+            <div class="stat-label">{% trans "Applicants" %}</div>
         </div>
-        <div class="bg-white p-4 rounded-lg border text-center">
-            <div class="text-xl font-bold text-purple-600">
+        <div class="stat-box">
+            <div class="stat-number">
                 {% if data.common.slot %}{{ data.common.slot }}{% else %}{% trans "Random" %}{% endif %}
             </div>
-            <div class="text-sm text-gray-600">{% trans "Time Slot" %}</div>
+            <div class="stat-label">{% trans "Time Slot" %}</div>
         </div>
     </div>
 
@@ -139,10 +168,11 @@
     {% endfor %}
 
     <!-- Action Buttons -->
-    <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 mt-8">
+    <div class="action-container mt-8">
         <div class="flex flex-col sm:flex-row justify-center gap-4">
             <a href="{% url 'form' %}?edit=1" 
-               class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-6 rounded-lg transition inline-flex items-center justify-center">
+               class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-6 rounded-lg transition inline-flex items-center justify-center"
+               style="background-color: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color);">
                 <i class="fas fa-edit mr-2"></i> {% trans "Edit Data" %}
             </a>
             <button onclick="window.open('{% url 'preview_print' %}', '_blank')" 
@@ -155,7 +185,7 @@
                 <i class="fas fa-arrow-right ml-2"></i>
             </a>
         </div>
-        <p class="text-sm text-gray-500 text-center mt-4">
+        <p class="text-sm text-center mt-4" style="color: var(--text-secondary);">
             <i class="fas fa-info-circle mr-2"></i>
             {% trans "The JSON file is ready for Tampermonkey auto-filling." %}
         </p>

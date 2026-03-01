@@ -8,19 +8,20 @@
 <style>
     /* Enhanced form styling */
     .form-section {
-        background: linear-gradient(145deg, #ffffff, #f8fafc);
+        background: var(--bg-card);
         border-radius: 16px;
-        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+        box-shadow: var(--card-shadow);
         overflow: hidden;
+        border: 1px solid var(--border-color);
     }
     
     .applicant-card {
-        background: linear-gradient(145deg, #ffffff, #f9fafb);
+        background: var(--bg-card);
         border-radius: 14px;
         border-left: 5px solid #4f46e5;
-        border-top: 1px solid #e5e7eb;
-        border-right: 1px solid #e5e7eb;
-        border-bottom: 1px solid #e5e7eb;
+        border-top: 1px solid var(--border-color);
+        border-right: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
     }
@@ -33,21 +34,22 @@
     
     /* Enhanced form controls */
     .form-input, .form-select, .form-textarea {
-        border: 2px solid #e5e7eb;
+        border: 2px solid var(--input-border);
         border-radius: 10px;
         padding: 12px 16px;
         font-size: 15px;
         transition: all 0.2s ease;
-        background: white;
+        background: var(--input-bg);
         width: 100%;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        color: var(--text-primary);
     }
     
     .form-input:focus, .form-select:focus, .form-textarea:focus {
         outline: none;
-        border-color: #4f46e5;
+        border-color: var(--input-focus-border);
         box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        background: white;
+        background: var(--input-bg);
     }
     
     .form-input:hover, .form-select:hover, .form-textarea:hover {
@@ -56,7 +58,7 @@
     
     .form-label {
         font-weight: 600;
-        color: #374151;
+        color: var(--text-primary);
         margin-bottom: 8px;
         display: block;
         font-size: 14px;
@@ -65,7 +67,7 @@
     
     .form-help {
         font-size: 12px;
-        color: #6b7280;
+        color: var(--text-secondary);
         margin-top: 4px;
         display: flex;
         align-items: center;
@@ -93,6 +95,9 @@
     .field-error {
         border-color: #dc2626 !important;
         background-color: #fef2f2;
+    }
+    .dark .field-error {
+        background-color: #3b1e1e;
     }
     
     /* Mobile optimizations */
@@ -149,8 +154,8 @@
         display: flex;
         align-items: center;
         padding: 20px;
-        border-bottom: 2px solid #f3f4f6;
-        background: linear-gradient(to right, #f8fafc, transparent);
+        border-bottom: 2px solid var(--border-color);
+        background: linear-gradient(to right, var(--bg-card), transparent);
     }
     
     .section-icon {
@@ -172,10 +177,11 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background: white;
+        background: var(--bg-card);
         padding: 20px;
         border-radius: 50px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--border-color);
     }
     
     .step {
@@ -193,12 +199,12 @@
         right: -50%;
         width: 100%;
         height: 2px;
-        background: #e5e7eb;
+        background: var(--border-color);
         z-index: 0;
     }
     
     .step.active:not(:last-child)::after {
-        background: linear-gradient(90deg, #4f46e5 50%, #e5e7eb 50%);
+        background: linear-gradient(90deg, #4f46e5 50%, var(--border-color) 50%);
     }
     
     .step.completed:not(:last-child)::after {
@@ -213,9 +219,9 @@
         align-items: center;
         justify-content: center;
         font-weight: 600;
-        background: white;
-        border: 2px solid #e5e7eb;
-        color: #9ca3af;
+        background: var(--bg-card);
+        border: 2px solid var(--border-color);
+        color: var(--text-secondary);
         z-index: 1;
         margin-bottom: 8px;
     }
@@ -235,7 +241,7 @@
     .step-label {
         font-size: 12px;
         font-weight: 500;
-        color: #9ca3af;
+        color: var(--text-secondary);
         text-align: center;
     }
     
@@ -277,16 +283,16 @@
     
     /* Field group styling */
     .field-group {
-        background: white;
+        background: var(--bg-card);
         border-radius: 12px;
         padding: 20px;
-        border: 1px solid #e5e7eb;
+        border: 1px solid var(--border-color);
         transition: all 0.2s ease;
         margin-bottom: 20px;
     }
     
     .field-group:focus-within {
-        border-color: #4f46e5;
+        border-color: var(--input-focus-border);
         box-shadow: 0 4px 15px rgba(79, 70, 229, 0.1);
     }
     
@@ -301,13 +307,19 @@
     
     /* Small adjustments */
     .text-muted {
-        color: #6b7280;
+        color: var(--text-secondary);
     }
     
     /* Add applicant button at bottom */
     .add-applicant-container {
         margin-top: 24px;
         text-align: center;
+    }
+
+    /* Form Actions container */
+    .bg-white.rounded-2xl.shadow-lg.p-8.border {
+        background-color: var(--bg-card);
+        border-color: var(--border-color);
     }
 </style>
 {% endblock %}
@@ -343,8 +355,8 @@
                     <i class="fas fa-globe-americas"></i>
                 </div>
                 <div>
-                    <h2 class="text-xl md:text-2xl font-bold text-gray-900">{% trans "Common Application Information" %}</h2>
-                    <p class="text-sm text-gray-600 mt-1">{% trans "Shared details for all applicants" %}</p>
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-900" style="color: var(--text-primary);">{% trans "Common Application Information" %}</h2>
+                    <p class="text-sm text-gray-600 mt-1" style="color: var(--text-secondary);">{% trans "Shared details for all applicants" %}</p>
                 </div>
             </div>
             
@@ -532,8 +544,8 @@
                 </div>
                 <div class="flex-1">
                     <div>
-                        <h2 class="text-xl md:text-2xl font-bold text-gray-900">{% trans "Applicants Information" %}</h2>
-                        <p class="text-sm text-gray-600 mt-1">{% trans "Add details for each applicant (maximum 5)" %}</p>
+                        <h2 class="text-xl md:text-2xl font-bold text-gray-900" style="color: var(--text-primary);">{% trans "Applicants Information" %}</h2>
+                        <p class="text-sm text-gray-600 mt-1" style="color: var(--text-secondary);">{% trans "Add details for each applicant (maximum 5)" %}</p>
                     </div>
                 </div>
             </div>
@@ -560,8 +572,8 @@
                                 <i class="fas fa-user text-lg"></i>
                             </div>
                             <div>
-                                <h3 class="text-xl font-bold text-gray-900">{% trans "Applicant" %} {{ forloop.counter }}</h3>
-                                <p class="text-gray-600 text-sm mt-1">{% trans "Personal and passport details" %}</p>
+                                <h3 class="text-xl font-bold text-gray-900" style="color: var(--text-primary);">{% trans "Applicant" %} {{ forloop.counter }}</h3>
+                                <p class="text-gray-600 text-sm mt-1" style="color: var(--text-secondary);">{% trans "Personal and passport details" %}</p>
                             </div>
                         </div>
                         
@@ -772,11 +784,11 @@
         </div>
 
         <!-- Form Actions -->
-        <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+        <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100" style="background-color: var(--bg-card); border-color: var(--border-color);">
             <div class="flex flex-col lg:flex-row justify-between items-center gap-8">
                 <div class="text-center lg:text-left">
-                    <h3 class="text-lg font-bold text-gray-900 mb-2">{% trans "Ready to Generate JSON?" %}</h3>
-                    <p class="text-gray-600 text-sm">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2" style="color: var(--text-primary);">{% trans "Ready to Generate JSON?" %}</h3>
+                    <p class="text-gray-600 text-sm" style="color: var(--text-secondary);">
                         <i class="fas fa-shield-alt mr-1 text-green-500"></i>
                         {% trans "Your data is processed locally and not stored on our servers" %}
                     </p>
@@ -784,7 +796,7 @@
                 
                 <div class="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
                     <button type="reset" 
-                            class="bg-gray-50 hover:bg-gray-100 text-gray-700 font-semibold py-4 px-8 rounded-xl border border-gray-200 transition-all duration-300 flex items-center justify-center order-2 sm:order-1">
+                            class="bg-gray-50 hover:bg-gray-100 text-gray-700 font-semibold py-4 px-8 rounded-xl border border-gray-200 transition-all duration-300 flex items-center justify-center order-2 sm:order-1" style="background-color: var(--bg-card); color: var(--text-primary); border-color: var(--border-color);">
                         <i class="fas fa-redo mr-3"></i> {% trans "Clear Form" %}
                     </button>
                     <button type="submit" 
@@ -795,16 +807,16 @@
                 </div>
             </div>
             
-            <div class="mt-8 pt-8 border-t border-gray-100">
-                <div class="flex flex-col md:flex-row items-center justify-center gap-6 text-sm text-gray-600">
+            <div class="mt-8 pt-8 border-t border-gray-100" style="border-top-color: var(--border-color);">
+                <div class="flex flex-col md:flex-row items-center justify-center gap-6 text-sm text-gray-600" style="color: var(--text-secondary);">
                     <div class="flex items-center">
-                        <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-3">
+                        <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-3" style="background-color: rgba(79, 70, 229, 0.1); color: var(--gradient-start);">
                             <i class="fas fa-info-circle text-sm"></i>
                         </div>
                         <span>{% trans "All fields are required unless marked optional" %}</span>
                     </div>
                     <div class="flex items-center">
-                        <div class="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mr-3">
+                        <div class="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mr-3" style="background-color: rgba(124, 58, 237, 0.1); color: var(--gradient-end);">
                             <i class="fas fa-calendar-alt text-sm"></i>
                         </div>
                         <span>{% trans "Dates should be in YYYY-MM-DD format" %}</span>
@@ -969,14 +981,19 @@
         }
 
         function showToast(message, type = 'info') {
+            // Use global showToast from base
+            if (window.showToast) {
+                window.showToast(message, type);
+                return;
+            }
+            // Fallback
             document.querySelectorAll('.custom-toast').forEach(t => t.remove());
             const toast = document.createElement('div');
-            toast.className = `custom-toast fixed top-6 right-6 px-6 py-4 rounded-xl shadow-2xl z-50 transform transition-all duration-300 translate-x-full ${
-                type === 'success' ? 'bg-gradient-to-r from-green-500 to-emerald-500' :
-                type === 'warning' ? 'bg-gradient-to-r from-yellow-500 to-amber-500' :
-                type === 'error' ? 'bg-gradient-to-r from-red-500 to-rose-500' : 
-                'bg-gradient-to-r from-blue-500 to-indigo-500'
-            } text-white`;
+            toast.className = `custom-toast fixed top-6 right-6 px-6 py-4 rounded-xl shadow-2xl z-50 transform transition-all duration-300 translate-x-full`;
+            toast.style.backgroundColor = type === 'error' ? 'var(--error-bg)' : type === 'success' ? 'var(--success-bg)' : 'var(--bg-card)';
+            toast.style.color = type === 'error' ? 'var(--error-text)' : type === 'success' ? 'var(--success-text)' : 'var(--text-primary)';
+            toast.style.border = `1px solid ${type === 'error' ? 'var(--error-border)' : type === 'success' ? 'var(--success-border)' : 'var(--border-color)'}`;
+            
             const icons = { success: 'check-circle', warning: 'exclamation-triangle', error: 'times-circle', info: 'info-circle' };
             toast.innerHTML = `
                 <div class="flex items-center">

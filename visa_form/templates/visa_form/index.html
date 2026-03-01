@@ -13,7 +13,10 @@
         height: 100vh;
         z-index: -1;
         pointer-events: none;
-        opacity: 0.7; /* Slightly more visible on desktop */
+        opacity: 0.7;
+    }
+    .dark #particles-canvas {
+        opacity: 0.3;
     }
 
     /* Floating cards effect */
@@ -32,13 +35,110 @@
         z-index: 1;
     }
 
+    /* Card backgrounds – use theme variables */
+    .card-bg {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 1rem;
+    }
+
+    .feature-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 1rem;
+        padding: 1.5rem;
+    }
+
+    /* Step numbers – fix dark mode visibility */
+    .step-circle {
+        width: 5rem;
+        height: 5rem;
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 1.875rem;
+        font-weight: bold;
+    }
+    .step-circle.step1 {
+        background-color: #dbeafe; /* blue-100 */
+        color: #2563eb; /* blue-600 */
+    }
+    .step-circle.step2 {
+        background-color: #dcfce7; /* green-100 */
+        color: #16a34a; /* green-600 */
+    }
+    .step-circle.step3 {
+        background-color: #f3e8ff; /* purple-100 */
+        color: #9333ea; /* purple-600 */
+    }
+    .dark .step-circle.step1 {
+        background-color: #1e3a8a; /* dark blue */
+        color: #bfdbfe;
+    }
+    .dark .step-circle.step2 {
+        background-color: #14532d; /* dark green */
+        color: #bbf7d0;
+    }
+    .dark .step-circle.step3 {
+        background-color: #581c87; /* dark purple */
+        color: #e9d5ff;
+    }
+
+    /* Feature icon backgrounds – ensure visibility in dark mode */
+    .feature-icon {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+    .feature-icon.blue {
+        background-color: #dbeafe;
+        color: #2563eb;
+    }
+    .feature-icon.green {
+        background-color: #dcfce7;
+        color: #16a34a;
+    }
+    .feature-icon.purple {
+        background-color: #f3e8ff;
+        color: #9333ea;
+    }
+    .feature-icon.indigo {
+        background-color: #e0e7ff;
+        color: #4f46e5;
+    }
+    .dark .feature-icon.blue {
+        background-color: #1e3a8a;
+        color: #bfdbfe;
+    }
+    .dark .feature-icon.green {
+        background-color: #14532d;
+        color: #bbf7d0;
+    }
+    .dark .feature-icon.purple {
+        background-color: #581c87;
+        color: #e9d5ff;
+    }
+    .dark .feature-icon.indigo {
+        background-color: #312e81;
+        color: #c7d2fe;
+    }
+
     /* Mobile adjustments */
     @media (max-width: 768px) {
         #particles-canvas {
-            opacity: 0.4; /* More subtle on mobile */
+            opacity: 0.4;
+        }
+        .dark #particles-canvas {
+            opacity: 0.2;
         }
         .floating-card:hover {
-            transform: translateY(-4px) scale(1.01); /* Smaller lift on touch */
+            transform: translateY(-4px) scale(1.01);
         }
     }
 </style>
@@ -51,7 +151,7 @@
     
     <!-- Hero Section -->
     <div class="relative text-center mb-16 pt-8">
-        <!-- Decorative blurred circles -->
+        <!-- Decorative blurred circles (keep as is – light background elements) -->
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
             <div class="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
             <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
@@ -61,10 +161,10 @@
             <div class="inline-flex items-center justify-center w-28 h-28 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 mb-8 shadow-xl floating-card">
                 <i class="fas fa-passport text-4xl text-white"></i>
             </div>
-            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight" style="color: var(--text-primary);">
                 {% trans "Mosaic Visa Data Generator" %}
             </h1>
-            <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+            <p class="text-xl mb-8 max-w-3xl mx-auto leading-relaxed" style="color: var(--text-secondary);">
                 {% trans "Create JSON data for your Mosaic Visa appointments in minutes. Simple, fast, and mobile-friendly." %}
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
@@ -74,7 +174,8 @@
                     <i class="fas fa-arrow-right ml-3"></i>
                 </a>
                 <a href="#how-it-works" 
-                   class="inline-flex items-center justify-center bg-white border-2 border-gray-300 hover:border-gray-400 text-gray-700 font-bold py-4 px-10 rounded-xl text-lg shadow hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 floating-card">
+                   class="inline-flex items-center justify-center border-2 hover:border-gray-400 font-bold py-4 px-10 rounded-xl text-lg shadow hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 floating-card"
+                   style="background-color: var(--bg-card); color: var(--text-primary); border-color: var(--border-color);">
                     <i class="fas fa-info-circle mr-3"></i> {% trans "Learn More" %}
                 </a>
             </div>
@@ -83,81 +184,81 @@
 
     <!-- Simple Steps -->
     <div id="how-it-works" class="mb-20">
-        <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">{% trans "How It Works" %}</h2>
+        <h2 class="text-3xl font-bold text-center mb-12" style="color: var(--text-primary);">{% trans "How It Works" %}</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="bg-white rounded-2xl shadow-lg p-8 text-center border border-gray-100 floating-card">
-                <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div class="card-bg p-8 text-center floating-card">
+                <div class="step-circle step1">
                     <span class="text-3xl font-bold">1</span>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-3">{% trans "Fill Form" %}</h3>
-                <p class="text-gray-600">{% trans "Enter your visa application details" %}</p>
+                <h3 class="text-xl font-bold mb-3" style="color: var(--text-primary);">{% trans "Fill Form" %}</h3>
+                <p class="text-gray-600" style="color: var(--text-secondary);">{% trans "Enter your visa application details" %}</p>
                 <div class="mt-6 text-blue-600">
                     <i class="fas fa-arrow-down text-2xl"></i>
                 </div>
             </div>
             
-            <div class="bg-white rounded-2xl shadow-lg p-8 text-center border border-gray-100 floating-card">
-                <div class="w-20 h-20 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div class="card-bg p-8 text-center floating-card">
+                <div class="step-circle step2">
                     <span class="text-3xl font-bold">2</span>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-3">{% trans "Download" %}</h3>
-                <p class="text-gray-600">{% trans "Get your JSON data file" %}</p>
+                <h3 class="text-xl font-bold mb-3" style="color: var(--text-primary);">{% trans "Download" %}</h3>
+                <p class="text-gray-600" style="color: var(--text-secondary);">{% trans "Get your JSON data file" %}</p>
                 <div class="mt-6 text-green-600">
                     <i class="fas fa-arrow-down text-2xl"></i>
                 </div>
             </div>
             
-            <div class="bg-white rounded-2xl shadow-lg p-8 text-center border border-gray-100 floating-card">
-                <div class="w-20 h-20 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div class="card-bg p-8 text-center floating-card">
+                <div class="step-circle step3">
                     <span class="text-3xl font-bold">3</span>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-3">{% trans "Share" %}</h3>
-                <p class="text-gray-600">{% trans "Send to administrator for auto-filling" %}</p>
+                <h3 class="text-xl font-bold mb-3" style="color: var(--text-primary);">{% trans "Share" %}</h3>
+                <p class="text-gray-600" style="color: var(--text-secondary);">{% trans "Send to administrator for auto-filling" %}</p>
             </div>
         </div>
     </div>
 
     <!-- Features Grid -->
     <div class="mb-20">
-        <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">{% trans "Why Choose Our Generator" %}</h2>
+        <h2 class="text-3xl font-bold text-center mb-12" style="color: var(--text-primary);">{% trans "Why Choose Our Generator" %}</h2>
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="bg-gradient-to-br from-blue-50 to-white p-6 rounded-2xl border border-blue-100 floating-card">
-                <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-4">
+            <div class="feature-card floating-card">
+                <div class="feature-icon blue">
                     <i class="fas fa-mobile-alt text-xl"></i>
                 </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-2">{% trans "Mobile-Friendly" %}</h3>
-                <p class="text-gray-600 text-sm">{% trans "Works perfectly on all devices" %}</p>
+                <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">{% trans "Mobile-Friendly" %}</h3>
+                <p class="text-sm" style="color: var(--text-secondary);">{% trans "Works perfectly on all devices" %}</p>
             </div>
             
-            <div class="bg-gradient-to-br from-green-50 to-white p-6 rounded-2xl border border-green-100 floating-card">
-                <div class="w-12 h-12 bg-green-100 text-green-600 rounded-xl flex items-center justify-center mb-4">
+            <div class="feature-card floating-card">
+                <div class="feature-icon green">
                     <i class="fas fa-shield-alt text-xl"></i>
                 </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-2">{% trans "Secure & Private" %}</h3>
-                <p class="text-gray-600 text-sm">{% trans "No data stored on our servers" %}</p>
+                <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">{% trans "Secure & Private" %}</h3>
+                <p class="text-sm" style="color: var(--text-secondary);">{% trans "No data stored on our servers" %}</p>
             </div>
             
-            <div class="bg-gradient-to-br from-purple-50 to-white p-6 rounded-2xl border border-purple-100 floating-card">
-                <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mb-4">
+            <div class="feature-card floating-card">
+                <div class="feature-icon purple">
                     <i class="fas fa-bolt text-xl"></i>
                 </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-2">{% trans "Fast & Easy" %}</h3>
-                <p class="text-gray-600 text-sm">{% trans "Generate data in seconds" %}</p>
+                <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">{% trans "Fast & Easy" %}</h3>
+                <p class="text-sm" style="color: var(--text-secondary);">{% trans "Generate data in seconds" %}</p>
             </div>
             
-            <div class="bg-gradient-to-br from-indigo-50 to-white p-6 rounded-2xl border border-indigo-100 floating-card">
-                <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
+            <div class="feature-card floating-card">
+                <div class="feature-icon indigo">
                     <i class="fas fa-code text-xl"></i>
                 </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-2">{% trans "Tampermonkey Ready" %}</h3>
-                <p class="text-gray-600 text-sm">{% trans "Perfect JSON format for automation" %}</p>
+                <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">{% trans "Tampermonkey Ready" %}</h3>
+                <p class="text-sm" style="color: var(--text-secondary);">{% trans "Perfect JSON format for automation" %}</p>
             </div>
         </div>
     </div>
 
     <!-- Detailed Process -->
-    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-3xl p-8 md:p-12 mb-20 floating-card">
-        <h2 class="text-3xl font-bold text-gray-900 mb-10 text-center">{% trans "Simple 3-Step Process" %}</h2>
+    <div class="card-bg p-8 md:p-12 mb-20 floating-card">
+        <h2 class="text-3xl font-bold mb-10 text-center" style="color: var(--text-primary);">{% trans "Simple 3-Step Process" %}</h2>
         
         <div class="space-y-8">
             <div class="flex flex-col md:flex-row items-start gap-6">
@@ -165,8 +266,8 @@
                     1
                 </div>
                 <div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">{% trans "Fill the Form" %}</h3>
-                    <p class="text-gray-700 text-lg">{% trans "Enter your visa application details for you and your family members." %}</p>
+                    <h3 class="text-2xl font-bold mb-2" style="color: var(--text-primary);">{% trans "Fill the Form" %}</h3>
+                    <p class="text-lg" style="color: var(--text-secondary);">{% trans "Enter your visa application details for you and your family members." %}</p>
                 </div>
             </div>
             
@@ -175,8 +276,8 @@
                     2
                 </div>
                 <div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">{% trans "Download Your Data" %}</h3>
-                    <p class="text-gray-700 text-lg">{% trans "Get a JSON file with Tampermonkey integration code and your data." %}</p>
+                    <h3 class="text-2xl font-bold mb-2" style="color: var(--text-primary);">{% trans "Download Your Data" %}</h3>
+                    <p class="text-lg" style="color: var(--text-secondary);">{% trans "Get a JSON file with Tampermonkey integration code and your data." %}</p>
                 </div>
             </div>
             
@@ -185,8 +286,8 @@
                     3
                 </div>
                 <div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">{% trans "Send to Administrator" %}</h3>
-                    <p class="text-gray-700 text-lg">{% trans "Share the file with your administrator via WhatsApp or email." %}</p>
+                    <h3 class="text-2xl font-bold mb-2" style="color: var(--text-primary);">{% trans "Send to Administrator" %}</h3>
+                    <p class="text-lg" style="color: var(--text-secondary);">{% trans "Share the file with your administrator via WhatsApp or email." %}</p>
                 </div>
             </div>
         </div>
@@ -194,9 +295,9 @@
 
     <!-- Final CTA -->
     <div class="text-center mb-12">
-        <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-100 floating-card">
-            <h3 class="text-3xl font-bold text-gray-900 mb-4">{% trans "Ready to Get Started?" %}</h3>
-            <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+        <div class="card-bg rounded-3xl shadow-2xl p-8 md:p-12 border floating-card" style="border-color: var(--border-color);">
+            <h3 class="text-3xl font-bold mb-4" style="color: var(--text-primary);">{% trans "Ready to Get Started?" %}</h3>
+            <p class="text-xl mb-8 max-w-2xl mx-auto" style="color: var(--text-secondary);">
                 {% trans "Create your Mosaic Visa JSON data now. It's free and takes just a few minutes." %}
             </p>
             <a href="{% url 'form' %}" 
@@ -204,7 +305,7 @@
                 <i class="fas fa-play-circle mr-3"></i> {% trans "Create Your Visa Data Now" %}
                 <i class="fas fa-arrow-right ml-3"></i>
             </a>
-            <p class="text-gray-500 text-sm mt-6">
+            <p class="text-sm mt-6" style="color: var(--text-secondary);">
                 <i class="fas fa-lock mr-2 text-green-500"></i> {% trans "Your data is processed locally and never stored" %}
             </p>
         </div>
@@ -219,13 +320,17 @@
         const ctx = canvas.getContext('2d');
         let width, height;
         let particles = [];
-        // Adjust particle count based on screen size
         const isMobile = window.innerWidth <= 768;
         const PARTICLE_COUNT = isMobile ? 40 : 70;
         const MAX_SPEED = 0.15;
         const CONNECT_DISTANCE = isMobile ? 120 : 180;
+        
+        // Choose color based on dark mode
+        const isDark = document.documentElement.classList.contains('dark');
         const BASE_OPACITY = 0.35;
         const LINE_OPACITY = 0.2;
+        // Light mode: indigo, dark mode: light gray
+        const color = isDark ? '200,200,200' : '79,70,229';
 
         function init() {
             resizeCanvas();
@@ -259,7 +364,7 @@
             }
 
             ctx.clearRect(0, 0, width, height);
-            ctx.fillStyle = `rgba(79, 70, 229, ${BASE_OPACITY})`;
+            ctx.fillStyle = `rgba(${color}, ${BASE_OPACITY})`;
             ctx.lineWidth = 1;
 
             for (let i = 0; i < particles.length; i++) {
@@ -267,18 +372,15 @@
                 p.x += p.vx;
                 p.y += p.vy;
 
-                // Wrap around edges
                 if (p.x < 0) p.x = width;
                 if (p.x > width) p.x = 0;
                 if (p.y < 0) p.y = height;
                 if (p.y > height) p.y = 0;
 
-                // Draw particle
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Connect nearby particles
                 for (let j = i + 1; j < particles.length; j++) {
                     let p2 = particles[j];
                     let dx = p.x - p2.x;
@@ -288,7 +390,7 @@
                         ctx.beginPath();
                         ctx.moveTo(p.x, p.y);
                         ctx.lineTo(p2.x, p2.y);
-                        ctx.strokeStyle = `rgba(79, 70, 229, ${LINE_OPACITY * (1 - distance / CONNECT_DISTANCE)})`;
+                        ctx.strokeStyle = `rgba(${color}, ${LINE_OPACITY * (1 - distance / CONNECT_DISTANCE)})`;
                         ctx.stroke();
                     }
                 }
@@ -299,7 +401,6 @@
 
         window.addEventListener('resize', () => {
             resizeCanvas();
-            // Re‑create particles to adapt to new dimensions
             createParticles();
         });
 

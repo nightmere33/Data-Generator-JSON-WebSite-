@@ -1,6 +1,6 @@
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}" class="scroll-smooth" dir="{% get_current_language_bidi as lang_bidi %}{% if lang_bidi %}rtl{% else %}ltr{% endif %}">
+<html lang="{{ LANGUAGE_CODE }}" class="scroll-smooth {% if request.COOKIES.theme == 'dark' %}dark{% endif %}" dir="{% get_current_language_bidi as lang_bidi %}{% if lang_bidi %}rtl{% else %}ltr{% endif %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
@@ -59,74 +59,204 @@
     
     <!-- Custom Styles -->
     <style>
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
+        :root {
+            --bg-body: #f9fafb;
+            --bg-card: #ffffff;
+            --bg-header: #ffffff;
+            --bg-footer: #111827;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --border-light: #f3f4f6;
+            --input-bg: #ffffff;
+            --input-border: #d1d5db;
+            --input-focus-border: #4f46e5;
+            --card-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            --gradient-start: #4f46e5;
+            --gradient-end: #7c3aed;
+            --success-bg: #f0fdf4;
+            --success-border: #bbf7d0;
+            --success-text: #166534;
+            --error-bg: #fef2f2;
+            --error-border: #fecaca;
+            --error-text: #b91c1c;
+            
+            /* Hover backgrounds */
+            --hover-bg: #f3f4f6;      /* light gray */
+            --hover-bg-dark: #374151;  /* dark gray for dark mode */
         }
+
+        .dark {
+            --bg-body: #1a1a1a;
+            --bg-card: #2d2d2d;
+            --bg-header: #2d2d2d;
+            --bg-footer: #0a0a0a;
+            --text-primary: #f3f4f6;
+            --text-secondary: #d1d5db;
+            --text-muted: #9ca3af;
+            --border-color: #404040;
+            --border-light: #333333;
+            --input-bg: #3d3d3d;
+            --input-border: #4b5563;
+            --input-focus-border: #818cf8;
+            --card-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            --success-bg: #1e3a2e;
+            --success-border: #2e5a3e;
+            --success-text: #bbf7d0;
+            --error-bg: #3b1e1e;
+            --error-border: #6b2e2e;
+            --error-text: #fecaca;
+            
+            --hover-bg: #374151;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Header & Footer */
+        header, .header {
+            background-color: var(--bg-header);
+            border-bottom-color: var(--border-color);
+        }
+        footer {
+            background-color: var(--bg-footer);
+        }
+
+        /* Cards */
+        .bg-white, .bg-gray-50, .bg-gradient-to-br, .form-card, .summary-card, .applicant-card, .field-group {
+            background-color: var(--bg-card);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        /* Text colors */
+        .text-gray-900, .text-gray-800, .text-gray-700, h1, h2, h3, h4, .font-bold {
+            color: var(--text-primary);
+        }
+        .text-gray-600, .text-gray-500, .text-muted, .form-help, .data-label {
+            color: var(--text-secondary);
+        }
+        .text-gray-400 {
+            color: var(--text-muted);
+        }
+
+        /* Inputs */
+        input, select, textarea, .form-input, .form-select, .form-textarea {
+            background-color: var(--input-bg);
+            border-color: var(--input-border);
+            color: var(--text-primary);
+        }
+        input:focus, select:focus, textarea:focus, .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--input-focus-border);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        /* Borders */
+        .border, .border-gray-100, .border-gray-200, .border-gray-300 {
+            border-color: var(--border-color);
+        }
+
+        /* Buttons (keep gradients as is) */
+        .bg-gradient-to-r {
+            transition: opacity 0.2s;
+        }
+
+        /* Toast (custom) */
+        .custom-toast {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+        }
+
+        /* Particles canvas (adjust opacity only) */
+        #particles-canvas {
+            opacity: 0.7;
+        }
+        .dark #particles-canvas {
+            opacity: 0.3;
+        }
+
+        /* Custom scrollbar (adjust for dark) */
         ::-webkit-scrollbar-track {
-            background: #f1f5f9;
+            background: var(--bg-body);
         }
         ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
+            background: var(--text-muted);
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+            background: var(--text-secondary);
         }
-        
+
         /* Mobile menu styles */
         .mobile-menu {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease-out;
         }
-        
         .mobile-menu.open {
             max-height: 400px;
             transition: max-height 0.3s ease-in;
         }
-        
+        .mobile-menu {
+            background-color: var(--bg-card);
+        }
+        .mobile-menu a, .mobile-menu button {
+            color: var(--text-primary);
+        }
+        .mobile-menu a:hover, .mobile-menu button:hover {
+            background-color: var(--hover-bg);
+        }
+
         /* Language dropdown */
         .lang-dropdown {
             position: absolute;
             right: 0;
             top: 100%;
             min-width: 140px;
-            background: white;
-            border: 1px solid #e5e7eb;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: var(--card-shadow);
             opacity: 0;
             visibility: hidden;
             transform: translateY(-10px);
             transition: all 0.2s ease;
             z-index: 50;
         }
-        
         .lang-dropdown.show {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
         }
-        
         .lang-dropdown a {
             display: block;
             padding: 8px 16px;
-            color: #374151;
+            color: var(--text-primary);
             font-size: 14px;
             transition: background-color 0.2s;
         }
-        
         .lang-dropdown a:hover {
-            background-color: #f3f4f6;
+            background-color: var(--hover-bg);
         }
-        
         .lang-dropdown a.active {
-            background-color: #e0f2fe;
-            color: #0369a1;
-            font-weight: 500;
+            background-color: var(--gradient-start);
+            color: white;
         }
-        
+
+        /* Desktop navigation hover */
+        .nav-hover {
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .nav-hover:hover {
+            background-color: var(--hover-bg) !important;
+            color: var(--text-primary) !important;
+        }
+
         /* Remove tap highlight on mobile */
         button, a {
             -webkit-tap-highlight-color: transparent;
@@ -135,9 +265,8 @@
         /* Better touch targets */
         @media (max-width: 768px) {
             input, select, textarea, button {
-                font-size: 16px !important; /* Prevents iOS zoom */
+                font-size: 16px !important;
             }
-            
             .touch-target {
                 min-height: 44px;
                 min-width: 44px;
@@ -169,10 +298,10 @@
     
     {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-gray-50 font-sans text-gray-800 min-h-screen flex flex-col">
+<body class="font-sans min-h-screen flex flex-col">
     
     <!-- Clean Modern Header -->
-    <header class="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100">
+    <header class="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100" style="background-color: var(--bg-header); border-bottom-color: var(--border-color);">
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo -->
@@ -182,19 +311,25 @@
                             <i class="fas fa-passport text-white text-lg"></i>
                         </div>
                         <div>
-                            <div class="font-bold text-gray-900 text-lg leading-tight">{% trans "Mosaic Visa" %}</div>
-                            <div class="text-xs text-gray-500">{% trans "JSON Generator" %}</div>
+                            <div class="font-bold text-gray-900 text-lg leading-tight" style="color: var(--text-primary);">{% trans "Mosaic Visa" %}</div>
+                            <div class="text-xs text-gray-500" style="color: var(--text-secondary);">{% trans "JSON Generator" %}</div>
                         </div>
                     </a>
                 </div>
                 
                 <!-- Desktop Navigation -->
                 <div class="hidden md:flex items-center space-x-4">
+                    <!-- Theme toggle button -->
+                    <button id="theme-toggle" class="nav-hover flex items-center gap-2 px-3 py-2 rounded-lg transition" style="color: var(--text-primary);">
+                        <i class="fas fa-sun" id="theme-icon-light" style="display: inline;"></i>
+                        <i class="fas fa-moon" id="theme-icon-dark" style="display: none;"></i>
+                    </button>
+
                     <!-- Modern language switcher (desktop) -->
                     <div class="relative">
-                        <button id="desktop-lang-button" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition">
+                        <button id="desktop-lang-button" class="nav-hover flex items-center gap-2 px-3 py-2 rounded-lg transition" style="color: var(--text-primary);">
                             <i class="fas fa-globe text-gray-600"></i>
-                            <span class="text-sm font-medium text-gray-700">
+                            <span class="text-sm font-medium text-gray-700" style="color: var(--text-primary);">
                                 {% get_current_language as LANGUAGE_CODE %}
                                 {% get_language_info for LANGUAGE_CODE as lang %}
                                 {{ lang.name_local }}
@@ -218,7 +353,7 @@
                     </div>
                     
                     {% if user.is_authenticated %}
-                        <span class="text-sm text-gray-600 mr-2">
+                        <span class="text-sm text-gray-600 mr-2" style="color: var(--text-secondary);">
                             {% blocktrans trimmed with name=user.profile.agency_name|default:user.email %}
                                 Welcome, {{ name }}
                             {% endblocktrans %}
@@ -229,29 +364,29 @@
                         </a>
                         <form method="post" action="{% url 'logout' %}" class="inline">
                             {% csrf_token %}
-                            <button type="submit" class="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition">
+                            <button type="submit" class="nav-hover px-4 py-2 rounded-lg font-medium transition" style="color: var(--text-primary);">
                                 <i class="fas fa-sign-out-alt mr-1"></i> {% trans "Logout" %}
                             </button>
                         </form>
                     {% else %}
-                        <a href="{% url 'login' %}" class="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition">{% trans "Login" %}</a>
+                        <a href="{% url 'login' %}" class="nav-hover px-4 py-2 rounded-lg font-medium transition" style="color: var(--text-primary);">{% trans "Login" %}</a>
                     {% endif %}
                 </div>
                 
-                <!-- Mobile Menu Button (includes language in mobile menu) -->
+                <!-- Mobile Menu Button -->
                 <button id="mobile-menu-button" 
-                        class="md:hidden w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition touch-target">
-                    <i class="fas fa-bars text-gray-700 text-xl" id="menu-icon"></i>
+                        class="md:hidden w-10 h-10 flex items-center justify-center rounded-lg nav-hover touch-target" style="color: var(--text-primary);">
+                    <i class="fas fa-bars text-gray-700 text-xl" id="menu-icon" style="color: var(--text-primary);"></i>
                 </button>
             </div>
             
-            <!-- Mobile Menu (Simple Dropdown) -->
+            <!-- Mobile Menu -->
             <div id="mobile-menu" class="mobile-menu md:hidden">
-                <div class="py-3 border-t border-gray-100">
+                <div class="py-3 border-t border-gray-100" style="border-top-color: var(--border-color);">
                     <div class="space-y-1">
-                        <!-- Mobile language switcher as a list -->
-                        <div class="px-4 py-2 border-b border-gray-100 mb-2">
-                            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{% trans "Language" %}</span>
+                        <!-- Mobile language switcher -->
+                        <div class="px-4 py-2 border-b border-gray-100 mb-2" style="border-bottom-color: var(--border-color);">
+                            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider" style="color: var(--text-secondary);">{% trans "Language" %}</span>
                         </div>
                         <form id="mobile-lang-form" action="{% url 'set_language' %}" method="post" style="display: none;">
                             {% csrf_token %}
@@ -261,7 +396,7 @@
                         {% get_available_languages as LANGUAGES %}
                         {% get_language_info_list for LANGUAGES as languages %}
                         {% for language in languages %}
-                            <a href="#" data-lang-code="{{ language.code }}" class="mobile-lang-option flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition touch-target {% if language.code == LANGUAGE_CODE %}bg-blue-50 text-blue-600 font-medium{% endif %}">
+                            <a href="#" data-lang-code="{{ language.code }}" class="mobile-lang-option flex items-center gap-3 px-4 py-3 rounded-lg transition touch-target {% if language.code == LANGUAGE_CODE %}bg-blue-50 text-blue-600 font-medium{% endif %}" style="color: var(--text-primary); background-color: {% if language.code == LANGUAGE_CODE %}var(--hover-bg){% endif %};">
                                 <i class="fas fa-globe w-5"></i>
                                 <span>{{ language.name_local }}</span>
                                 {% if language.code == LANGUAGE_CODE %}
@@ -270,10 +405,18 @@
                             </a>
                         {% endfor %}
                         
-                        <div class="border-t border-gray-100 my-2"></div>
+                        <!-- Theme toggle in mobile menu -->
+                        <div class="px-4 py-2 border-t border-gray-100 mt-2 pt-2" style="border-top-color: var(--border-color);">
+                            <button id="mobile-theme-toggle" class="flex items-center gap-3 w-full text-left rounded-lg px-4 py-3 transition hover:bg-blue-50" style="color: var(--text-primary);">
+                                <i class="fas fa-sun w-5"></i>
+                                <span id="mobile-theme-text">{% trans "Light Mode" %}</span>
+                            </button>
+                        </div>
+                        
+                        <div class="border-t border-gray-100 my-2" style="border-top-color: var(--border-color);"></div>
                         
                         <a href="{% url 'index' %}" 
-                           class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition touch-target">
+                           class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-blue-50 transition touch-target" style="color: var(--text-primary);">
                             <i class="fas fa-home w-5"></i>
                             <span>{% trans "Home" %}</span>
                         </a>
@@ -287,14 +430,14 @@
                             </a>
                             <form method="post" action="{% url 'logout' %}" class="mt-2">
                                 {% csrf_token %}
-                                <button type="submit" class="flex items-center gap-3 px-4 py-3 w-full text-left text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg touch-target">
+                                <button type="submit" class="flex items-center gap-3 px-4 py-3 w-full text-left rounded-lg hover:bg-blue-50 transition touch-target" style="color: var(--text-primary);">
                                     <i class="fas fa-sign-out-alt w-5"></i>
                                     <span>{% trans "Logout" %}</span>
                                 </button>
                             </form>
                         {% else %}
                             <a href="{% url 'login' %}" 
-                               class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition touch-target">
+                               class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-blue-50 transition touch-target" style="color: var(--text-primary);">
                                 <i class="fas fa-sign-in-alt w-5"></i>
                                 <span>{% trans "Login" %}</span>
                             </a>
@@ -310,7 +453,7 @@
         {% if messages %}
         <div class="mb-6">
             {% for message in messages %}
-            <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl flex items-center gap-3">
+            <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl flex items-center gap-3" style="background-color: var(--success-bg); border-color: var(--success-border); color: var(--success-text);">
                 <i class="fas fa-check-circle text-green-500"></i>
                 <span>{{ message }}</span>
             </div>
@@ -322,7 +465,7 @@
     </main>
 
     <!-- Clean Footer -->
-    <footer class="mt-auto bg-gray-900 text-gray-300 py-8">
+    <footer class="mt-auto bg-gray-900 text-gray-300 py-8" style="background-color: var(--bg-footer);">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <!-- Brand -->
@@ -395,6 +538,46 @@
     {% block extra_scripts %}{% endblock %}
     
     <script>
+        // Theme toggle functionality
+        const html = document.documentElement;
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIconLight = document.getElementById('theme-icon-light');
+        const themeIconDark = document.getElementById('theme-icon-dark');
+        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+        const mobileThemeText = document.getElementById('mobile-theme-text');
+
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                html.classList.add('dark');
+                document.cookie = "theme=dark; path=/; max-age=" + 60*60*24*365;
+                if (themeIconLight) themeIconLight.style.display = 'none';
+                if (themeIconDark) themeIconDark.style.display = 'inline';
+                if (mobileThemeText) mobileThemeText.textContent = '{% trans "Dark Mode" %}';
+            } else {
+                html.classList.remove('dark');
+                document.cookie = "theme=light; path=/; max-age=" + 60*60*24*365;
+                if (themeIconLight) themeIconLight.style.display = 'inline';
+                if (themeIconDark) themeIconDark.style.display = 'none';
+                if (mobileThemeText) mobileThemeText.textContent = '{% trans "Light Mode" %}';
+            }
+        }
+
+        const savedTheme = document.cookie.split('; ').find(row => row.startsWith('theme='))?.split('=')[1];
+        setTheme(savedTheme === 'dark' ? 'dark' : 'light');
+
+        if (themeToggle) {
+            themeToggle.addEventListener('click', function() {
+                const isDark = html.classList.contains('dark');
+                setTheme(isDark ? 'light' : 'dark');
+            });
+        }
+        if (mobileThemeToggle) {
+            mobileThemeToggle.addEventListener('click', function() {
+                const isDark = html.classList.contains('dark');
+                setTheme(isDark ? 'light' : 'dark');
+            });
+        }
+
         // Language dropdown for desktop
         const langButton = document.getElementById('desktop-lang-button');
         const langDropdown = document.getElementById('desktop-lang-dropdown');
@@ -403,21 +586,18 @@
         const langOptions = document.querySelectorAll('.lang-option');
         const mobileLangOptions = document.querySelectorAll('.mobile-lang-option');
 
-        // Toggle dropdown on click
         if (langButton && langDropdown) {
             langButton.addEventListener('click', function(e) {
                 e.stopPropagation();
                 langDropdown.classList.toggle('show');
             });
 
-            // Close when clicking outside
             document.addEventListener('click', function(e) {
                 if (!langButton.contains(e.target) && !langDropdown.contains(e.target)) {
                     langDropdown.classList.remove('show');
                 }
             });
 
-            // Handle language selection
             langOptions.forEach(option => {
                 option.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -438,57 +618,48 @@
             });
         });
 
-        // Simple mobile menu toggle without glitches
+        // Mobile menu toggle
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
         const menuIcon = document.getElementById('menu-icon');
-        
+
         if (mobileMenuButton && mobileMenu) {
             let isMenuOpen = false;
-            
+
             mobileMenuButton.addEventListener('click', function(e) {
-                e.stopPropagation(); // Prevent event bubbling
-                
+                e.stopPropagation();
                 if (isMenuOpen) {
-                    // Close menu
                     mobileMenu.classList.remove('open');
                     menuIcon.className = 'fas fa-bars text-gray-700 text-xl';
                 } else {
-                    // Open menu
                     mobileMenu.classList.add('open');
                     menuIcon.className = 'fas fa-times text-gray-700 text-xl';
                 }
-                
                 isMenuOpen = !isMenuOpen;
             });
-            
-            // Close menu when clicking outside
+
             document.addEventListener('click', function(e) {
-                if (isMenuOpen && 
-                    !mobileMenu.contains(e.target) && 
-                    !mobileMenuButton.contains(e.target)) {
+                if (isMenuOpen && !mobileMenu.contains(e.target) && !mobileMenuButton.contains(e.target)) {
                     mobileMenu.classList.remove('open');
                     menuIcon.className = 'fas fa-bars text-gray-700 text-xl';
                     isMenuOpen = false;
                 }
             });
-            
-            // Close menu when clicking a link (for better mobile UX)
+
             mobileMenu.querySelectorAll('a, button').forEach(link => {
-                link.addEventListener('click', () => {
+                link.addEventListener('click', function() {
                     mobileMenu.classList.remove('open');
                     menuIcon.className = 'fas fa-bars text-gray-700 text-xl';
                     isMenuOpen = false;
                 });
             });
-            
-            // Prevent menu from closing when clicking inside it
+
             mobileMenu.addEventListener('click', function(e) {
                 e.stopPropagation();
             });
         }
-        
-        // Form validation enhancement (same as before)
+
+        // Form validation enhancement
         document.addEventListener('DOMContentLoaded', function() {
             const forms = document.querySelectorAll('form');
             forms.forEach(form => {
@@ -496,12 +667,12 @@
                     const requiredFields = form.querySelectorAll('[required]');
                     let valid = true;
                     let firstInvalid = null;
-                    
+
                     requiredFields.forEach(field => {
                         if (!field.value.trim()) {
                             valid = false;
                             field.classList.add('border-red-500', 'ring-2', 'ring-red-200');
-                            
+
                             if (!firstInvalid) {
                                 firstInvalid = field;
                             }
@@ -509,38 +680,33 @@
                             field.classList.remove('border-red-500', 'ring-2', 'ring-red-200');
                         }
                     });
-                    
+
                     if (!valid) {
-                    e.preventDefault();
+                        e.preventDefault();
 
-                    // Collect names of missing fields
-                    const missingFields = [];
-                    requiredFields.forEach(field => {
-                        if (!field.value.trim()) {
-                            // Try to find a label
-                            const label = field.closest('.field-group')?.querySelector('.form-label') ||
-                                        field.previousElementSibling?.tagName === 'LABEL' ? field.previousElementSibling : null;
-                            const fieldName = label ? label.innerText.replace('*', '').trim() : field.name || 'Field';
-                            missingFields.push(fieldName);
+                        const missingFields = [];
+                        requiredFields.forEach(field => {
+                            if (!field.value.trim()) {
+                                const label = field.closest('.field-group')?.querySelector('.form-label') ||
+                                            field.previousElementSibling?.tagName === 'LABEL' ? field.previousElementSibling : null;
+                                const fieldName = label ? label.innerText.replace('*', '').trim() : field.name || 'Field';
+                                missingFields.push(fieldName);
+                            }
+                        });
+
+                        const message = missingFields.length === 1
+                            ? `Please fill in the required field: ${missingFields[0]}.`
+                            : 'Please fill in all required fields.';
+                        showToast(message, 'error');
+
+                        if (firstInvalid) {
+                            firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            firstInvalid.focus();
                         }
-                    });
-
-                    // Show toast with appropriate message
-                    const message = missingFields.length === 1
-                        ? `Please fill in the required field: ${missingFields[0]}.`
-                        : 'Please fill in all required fields.';
-                    showToast(message, 'error');
-
-                    // Scroll to first invalid field
-                    if (firstInvalid) {
-                        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        firstInvalid.focus();
                     }
-                }
                 });
             });
-            
-            // Remove red border when user starts typing
+
             const inputs = document.querySelectorAll('input, select, textarea');
             inputs.forEach(input => {
                 input.addEventListener('input', function() {
@@ -549,30 +715,23 @@
                     }
                 });
             });
-            
-            // Fix iOS date input
+
             if (navigator.userAgent.match(/iPad|iPhone|iPod/)) {
                 const dateInputs = document.querySelectorAll('input[type="date"]');
                 dateInputs.forEach(input => {
-                    // Ensure date inputs are large enough for iOS
                     input.style.minHeight = '44px';
                 });
             }
         });
 
-
-
-
         function showToast(message, type = 'info') {
-            // remove existing toasts
             document.querySelectorAll('.custom-toast').forEach(t => t.remove());
             const toast = document.createElement('div');
-            toast.className = `custom-toast ${
-                type === 'success' ? 'bg-gradient-to-r from-green-500 to-emerald-500' :
-                type === 'warning' ? 'bg-gradient-to-r from-yellow-500 to-amber-500' :
-                type === 'error' ? 'bg-gradient-to-r from-red-500 to-rose-500' : 
-                'bg-gradient-to-r from-blue-500 to-indigo-500'
-            } text-white`;
+            toast.className = 'custom-toast fixed top-6 right-6 px-6 py-4 rounded-xl shadow-2xl z-50 transform transition-all duration-300 translate-x-full';
+            toast.style.backgroundColor = type === 'error' ? 'var(--error-bg)' : type === 'success' ? 'var(--success-bg)' : 'var(--bg-card)';
+            toast.style.color = type === 'error' ? 'var(--error-text)' : type === 'success' ? 'var(--success-text)' : 'var(--text-primary)';
+            toast.style.border = `1px solid ${type === 'error' ? 'var(--error-border)' : type === 'success' ? 'var(--success-border)' : 'var(--border-color)'}`;
+
             const icons = { success: 'check-circle', warning: 'exclamation-triangle', error: 'times-circle', info: 'info-circle' };
             toast.innerHTML = `
                 <div class="flex items-center">
@@ -583,7 +742,11 @@
                 </div>
             `;
             document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 4000);
+            setTimeout(() => toast.classList.remove('translate-x-full'), 10);
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
         }
     </script>
 </body>
