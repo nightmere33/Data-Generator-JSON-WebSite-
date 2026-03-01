@@ -1,5 +1,6 @@
 {% extends 'visa_form/base.html' %}
 {% load i18n %}
+{% load visa_filters %}
 
 {% block title %}{% trans "Data Summary - Mosaic Visa Generator" %}{% endblock %}
 
@@ -204,15 +205,15 @@
             </div>
             <div class="data-item">
                 <span class="data-label">{% trans "Visa Type" %}</span>
-                <span class="data-value">{{ data.common.visa }}</span>
+                <span class="data-value">{{ data.common.visa|visa_label }}</span>
             </div>
             <div class="data-item">
                 <span class="data-label">{% trans "Nationality" %}</span>
-                <span class="data-value">{{ data.common.nationality }}</span>
+                <span class="data-value">{{ data.common.nationality|nationality_label }}</span>
             </div>
             <div class="data-item">
                 <span class="data-label">{% trans "Relation" %}</span>
-                <span class="data-value">{{ data.common.relations|default:"-" }}</span>
+                <span class="data-value">{{ data.common.relations|relation_label|default:"-" }}</span>
             </div>
             <div class="data-item">
                 <span class="data-label">{% trans "Address" %}</span>
@@ -252,11 +253,11 @@
             </div>
             <div class="data-item">
                 <span class="data-label">{% trans "Gender" %}</span>
-                <span class="data-value">{{ applicant.gender }}</span>
+                <span class="data-value">{{ applicant.gender|gender_label }}</span>
             </div>
             <div class="data-item">
                 <span class="data-label">{% trans "Marital Status" %}</span>
-                <span class="data-value">{{ applicant.marital_status }}</span>
+                <span class="data-value">{{ applicant.marital_status|marital_status_label }}</span>
             </div>
             <div class="data-item">
                 <span class="data-label">{% trans "Date of Birth" %}</span>
@@ -272,7 +273,7 @@
             </div>
             <div class="data-item">
                 <span class="data-label">{% trans "Occupation" %}</span>
-                <span class="data-value">{{ applicant.occupation }}</span>
+                <span class="data-value">{{ applicant.occupation|occupation_label }}</span>
             </div>
             <div class="data-item">
                 <span class="data-label">{% trans "Father's Name" %}</span>
@@ -284,7 +285,7 @@
             </div>
             <div class="data-item">
                 <span class="data-label">{% trans "Travel Document" %}</span>
-                <span class="data-value">{{ applicant.travel_document }}</span>
+                <span class="data-value">{{ applicant.travel_document|travel_document_label }}</span>
             </div>
             <div class="data-item">
                 <span class="data-label">{% trans "Issued By" %}</span>

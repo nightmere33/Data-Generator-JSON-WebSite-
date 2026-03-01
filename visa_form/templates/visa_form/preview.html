@@ -1,5 +1,6 @@
 {% extends 'visa_form/base.html' %}
 {% load i18n %}
+{% load visa_filters %}
 {% block title %}{% trans "Preview Data - Mosaic Visa Generator" %}{% endblock %}
 
 {% block extra_head %}
@@ -133,9 +134,9 @@
             <div class="data-item"><span class="data-label">{% trans "Max Allowed Date" %}</span><span class="data-value">{{ data.common.max_date }}</span></div>
             <div class="data-item"><span class="data-label">{% trans "Email" %}</span><span class="data-value">{{ data.common.email }}</span></div>
             <div class="data-item"><span class="data-label">{% trans "Phone" %}</span><span class="data-value">{{ data.common.phone_local }}</span></div>
-            <div class="data-item"><span class="data-label">{% trans "Visa Type" %}</span><span class="data-value">{{ data.common.visa }}</span></div>
-            <div class="data-item"><span class="data-label">{% trans "Nationality" %}</span><span class="data-value">{{ data.common.nationality }}</span></div>
-            <div class="data-item"><span class="data-label">{% trans "Relation" %}</span><span class="data-value">{{ data.common.relations|default:"-" }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Visa Type" %}</span><span class="data-value">{{ data.common.visa|visa_label }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Nationality" %}</span><span class="data-value">{{ data.common.nationality|nationality_label }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Relation" %}</span><span class="data-value">{{ data.common.relations|relation_label|default:"-" }}</span></div>
             <div class="data-item"><span class="data-label">{% trans "Address" %}</span><span class="data-value">{{ data.common.contact_address }}</span></div>
             <div class="data-item"><span class="data-label">{% trans "City" %}</span><span class="data-value">{{ data.common.contact_city }}</span></div>
             <div class="data-item"><span class="data-label">{% trans "Postal Code" %}</span><span class="data-value">{{ data.common.contact_postcode }}</span></div>
@@ -151,15 +152,15 @@
         <div class="summary-content">
             <div class="data-item"><span class="data-label">{% trans "First Name" %}</span><span class="data-value">{{ applicant.name }}</span></div>
             <div class="data-item"><span class="data-label">{% trans "Last Name" %}</span><span class="data-value">{{ applicant.surname }}</span></div>
-            <div class="data-item"><span class="data-label">{% trans "Gender" %}</span><span class="data-value">{{ applicant.gender }}</span></div>
-            <div class="data-item"><span class="data-label">{% trans "Marital Status" %}</span><span class="data-value">{{ applicant.marital_status }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Gender" %}</span><span class="data-value">{{ applicant.gender|gender_label }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Marital Status" %}</span><span class="data-value">{{ applicant.marital_status|marital_status_label }}</span></div>
             <div class="data-item"><span class="data-label">{% trans "Date of Birth" %}</span><span class="data-value">{{ applicant.birthday }}</span></div>
             <div class="data-item"><span class="data-label">{% trans "Place of Birth" %}</span><span class="data-value">{{ applicant.birth_place }}</span></div>
             <div class="data-item"><span class="data-label">{% trans "Passport Number" %}</span><span class="data-value">{{ applicant.passport_number|default:"-" }}</span></div>
-            <div class="data-item"><span class="data-label">{% trans "Occupation" %}</span><span class="data-value">{{ applicant.occupation }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Occupation" %}</span><span class="data-value">{{ applicant.occupation|occupation_label }}</span></div>
             <div class="data-item"><span class="data-label">{% trans "Father's Name" %}</span><span class="data-value">{{ applicant.father_name|default:"-" }}</span></div>
             <div class="data-item"><span class="data-label">{% trans "Mother's Name" %}</span><span class="data-value">{{ applicant.mother_name|default:"-" }}</span></div>
-            <div class="data-item"><span class="data-label">{% trans "Travel Document" %}</span><span class="data-value">{{ applicant.travel_document }}</span></div>
+            <div class="data-item"><span class="data-label">{% trans "Travel Document" %}</span><span class="data-value">{{ applicant.travel_document|travel_document_label }}</span></div>
             <div class="data-item"><span class="data-label">{% trans "Issued By" %}</span><span class="data-value">{{ applicant.passport_issued_by }}</span></div>
             <div class="data-item"><span class="data-label">{% trans "Issue Date" %}</span><span class="data-value">{{ applicant.passport_issue_date }}</span></div>
             <div class="data-item"><span class="data-label">{% trans "Expiry Date" %}</span><span class="data-value">{{ applicant.passport_expiry }}</span></div>

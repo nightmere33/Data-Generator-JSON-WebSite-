@@ -187,7 +187,7 @@ def download_json(request):
     applicants_js = js_object_dumps(applicants_script, level=1, indent=2)
     common_core_js = js_object_dumps(common_core, level=1, indent=2)
     tampermonkey_code = f"""// ============================================
-// TAMPERMONKEY INTEGRATION CODE
+
 // ============================================
 const COMMON_DATA = {common_core_js};
 
@@ -200,7 +200,6 @@ const APPLICANT_DATA = {applicants_js};
 
     # Part 2: Second script configuration
     second_script = f"""// ============================================
-// SCRIPT 2 CONFIGURATION
 // ============================================
 const START_DATE_FORMATTED = "{start_date_dmy}"; // Date minimale souhaitée (DD.MM.YYYY)
 const MAX_DATE_FORMATTED   = "{max_date_dmy}"; // Date maximale autorisée
