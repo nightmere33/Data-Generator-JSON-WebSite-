@@ -5,112 +5,305 @@
 
 {% block extra_head %}
 <style>
+    /* Screen styles – modern, clean, readable */
+    .summary-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .summary-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .summary-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+
+    .summary-header p {
+        font-size: 1rem;
+        color: #64748b;
+    }
+
+    .summary-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.02);
+        margin-bottom: 2rem;
+        overflow: hidden;
+        border: 1px solid #f1f5f9;
+        transition: box-shadow 0.2s;
+    }
+
+    .summary-card:hover {
+        box-shadow: 0 20px 30px -10px rgba(0,0,0,0.1);
+    }
+
+    .summary-card h2 {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        padding: 1rem 1.5rem;
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #0f172a;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .summary-content {
+        padding: 1.5rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .data-item {
+        display: flex;
+        flex-direction: column;
+        padding: 0.75rem;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .data-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        margin-bottom: 0.25rem;
+    }
+
+    .data-value {
+        font-size: 1.125rem;
+        font-weight: 500;
+        color: #0f172a;
+        word-break: break-word;
+    }
+
+    .print-button {
+        text-align: center;
+        margin: 3rem 0;
+    }
+
+    .print-button button {
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        font-size: 1.125rem;
+        font-weight: 600;
+        border-radius: 9999px;
+        cursor: pointer;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        transition: all 0.2s;
+    }
+
+    .print-button button:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    }
+
+    @media (max-width: 640px) {
+        .summary-content {
+            grid-template-columns: 1fr;
+        }
+        .summary-header h1 {
+            font-size: 2rem;
+        }
+    }
+
+    /* Print styles – clean, black and white, no extras */
     @media print {
-        /* Hide navigation, footer, and other screen-only elements */
-        header, footer, .no-print, button, .print\:hidden {
+        header, footer, .no-print, button, .print-button, .print\:hidden {
             display: none !important;
         }
-        /* Ensure white background and black text */
         body {
             background: white !important;
             color: black !important;
-            font-size: 12pt;
+            font-size: 11pt;
             line-height: 1.4;
         }
-        .container, .max-w-4xl {
+        .summary-container {
             max-width: 100% !important;
             padding: 0 !important;
             margin: 0 auto !important;
         }
-        /* Simplify card appearance */
-        .bg-white, .rounded-lg, .shadow-md {
+        .summary-card {
             background: none !important;
             box-shadow: none !important;
-            border: 1px solid #ddd !important;
+            border: 1px solid #aaa !important;
+            border-radius: 4px !important;
             margin-bottom: 15px !important;
             page-break-inside: avoid;
         }
-        h1, h2 {
-            color: black !important;
+        .summary-card h2 {
+            background: none !important;
             border-bottom: 1px solid #333 !important;
+            color: black !important;
+            padding: 0.5rem 1rem !important;
         }
-        .grid {
+        .summary-content {
+            padding: 0.5rem 1rem !important;
             display: block !important;
         }
-        .grid > div {
-            display: inline-block;
-            width: 48%;
-            margin-right: 1%;
-            vertical-align: top;
+        .data-item {
+            background: none !important;
+            border: none !important;
+            padding: 0.25rem 0 !important;
+            display: flex;
+            flex-direction: row;
+            border-bottom: 1px dotted #ccc !important;
         }
-        dt {
+        .data-label {
             font-weight: bold;
-            color: #333 !important;
+            color: black !important;
+            width: 30%;
+            font-size: 10pt;
         }
-        dd {
-            margin-bottom: 0.5rem;
+        .data-value {
+            width: 70%;
+            font-size: 10pt;
+            color: black !important;
         }
-        /* Hide the print button when printing */
-        .print-button {
-            display: none;
-        }
-    }
-    /* Screen styles remain as before, but we can keep them */
-    .print-button {
-        margin-top: 20px;
-        text-align: center;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto py-8">
-    <h1 class="text-3xl font-bold text-center mb-8">{% trans "Visa Application Summary" %}</h1>
-    
-    <!-- Common Information -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">{% trans "Common Information" %}</h2>
-        <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div><dt class="text-sm text-gray-500">{% trans "Minimum Desired Date" %}</dt><dd class="font-medium">{{ data.common.start_date }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Maximum Allowed Date" %}</dt><dd class="font-medium">{{ data.common.max_date }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Email" %}</dt><dd class="font-medium">{{ data.common.email }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Phone" %}</dt><dd class="font-medium">{{ data.common.phone_local }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Visa Type" %}</dt><dd class="font-medium">{{ data.common.visa }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Nationality" %}</dt><dd class="font-medium">{{ data.common.nationality }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Relation" %}</dt><dd class="font-medium">{{ data.common.relations|default:"-" }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Contact Address" %}</dt><dd class="font-medium">{{ data.common.contact_address }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "City" %}</dt><dd class="font-medium">{{ data.common.contact_city }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Postal Code" %}</dt><dd class="font-medium">{{ data.common.contact_postcode }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Departure Date" %}</dt><dd class="font-medium">{{ data.common.departure_date }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Return Date" %}</dt><dd class="font-medium">{{ data.common.return_date }}</dd></div>
-        </dl>
+<div class="summary-container">
+    <div class="summary-header">
+        <h1>{% trans "Visa Application Summary" %}</h1>
+        <p>{% trans "Please review the details below." %}</p>
     </div>
 
-    <!-- Applicants -->
+    <!-- Common Information Card -->
+    <div class="summary-card">
+        <h2>{% trans "Common Information" %}</h2>
+        <div class="summary-content">
+            <div class="data-item">
+                <span class="data-label">{% trans "Min Desired Date" %}</span>
+                <span class="data-value">{{ data.common.start_date }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Max Allowed Date" %}</span>
+                <span class="data-value">{{ data.common.max_date }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Email" %}</span>
+                <span class="data-value">{{ data.common.email }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Phone" %}</span>
+                <span class="data-value">{{ data.common.phone_local }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Visa Type" %}</span>
+                <span class="data-value">{{ data.common.visa }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Nationality" %}</span>
+                <span class="data-value">{{ data.common.nationality }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Relation" %}</span>
+                <span class="data-value">{{ data.common.relations|default:"-" }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Address" %}</span>
+                <span class="data-value">{{ data.common.contact_address }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "City" %}</span>
+                <span class="data-value">{{ data.common.contact_city }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Postal Code" %}</span>
+                <span class="data-value">{{ data.common.contact_postcode }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Departure" %}</span>
+                <span class="data-value">{{ data.common.departure_date }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Return" %}</span>
+                <span class="data-value">{{ data.common.return_date }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Applicants Cards -->
     {% for applicant in data.applicants %}
-    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">{% trans "Applicant" %} {{ forloop.counter }}</h2>
-        <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div><dt class="text-sm text-gray-500">{% trans "First Name" %}</dt><dd class="font-medium">{{ applicant.name }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Last Name" %}</dt><dd class="font-medium">{{ applicant.surname }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Gender" %}</dt><dd class="font-medium">{{ applicant.gender }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Marital Status" %}</dt><dd class="font-medium">{{ applicant.marital_status }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Date of Birth" %}</dt><dd class="font-medium">{{ applicant.birthday }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Place of Birth" %}</dt><dd class="font-medium">{{ applicant.birth_place }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Passport Number" %}</dt><dd class="font-medium">{{ applicant.passport_number|default:"-" }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Occupation" %}</dt><dd class="font-medium">{{ applicant.occupation }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Father's Full Name" %}</dt><dd class="font-medium">{{ applicant.father_name|default:"-" }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Mother's Full Name" %}</dt><dd class="font-medium">{{ applicant.mother_name|default:"-" }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Travel Document Type" %}</dt><dd class="font-medium">{{ applicant.travel_document }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Passport Issued By" %}</dt><dd class="font-medium">{{ applicant.passport_issued_by }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Issue Date" %}</dt><dd class="font-medium">{{ applicant.passport_issue_date }}</dd></div>
-            <div><dt class="text-sm text-gray-500">{% trans "Expiry Date" %}</dt><dd class="font-medium">{{ applicant.passport_expiry }}</dd></div>
-        </dl>
+    <div class="summary-card">
+        <h2>{% trans "Applicant" %} {{ forloop.counter }}</h2>
+        <div class="summary-content">
+            <div class="data-item">
+                <span class="data-label">{% trans "First Name" %}</span>
+                <span class="data-value">{{ applicant.name }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Last Name" %}</span>
+                <span class="data-value">{{ applicant.surname }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Gender" %}</span>
+                <span class="data-value">{{ applicant.gender }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Marital Status" %}</span>
+                <span class="data-value">{{ applicant.marital_status }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Date of Birth" %}</span>
+                <span class="data-value">{{ applicant.birthday }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Place of Birth" %}</span>
+                <span class="data-value">{{ applicant.birth_place }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Passport Number" %}</span>
+                <span class="data-value">{{ applicant.passport_number|default:"-" }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Occupation" %}</span>
+                <span class="data-value">{{ applicant.occupation }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Father's Name" %}</span>
+                <span class="data-value">{{ applicant.father_name|default:"-" }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Mother's Name" %}</span>
+                <span class="data-value">{{ applicant.mother_name|default:"-" }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Travel Document" %}</span>
+                <span class="data-value">{{ applicant.travel_document }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Issued By" %}</span>
+                <span class="data-value">{{ applicant.passport_issued_by }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Issue Date" %}</span>
+                <span class="data-value">{{ applicant.passport_issue_date }}</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">{% trans "Expiry Date" %}</span>
+                <span class="data-value">{{ applicant.passport_expiry }}</span>
+            </div>
+        </div>
     </div>
     {% endfor %}
 
     <div class="print-button">
-        <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow">
+        <button onclick="window.print()">
             <i class="fas fa-print mr-2"></i>{% trans "Print / Save as PDF" %}
         </button>
     </div>
