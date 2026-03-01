@@ -79,23 +79,27 @@ def form_view(request):
         applicant_formset = ApplicantFormSet(request.POST)
 
         if visa_form.is_valid() and applicant_formset.is_valid():
-            # Relations is now a single value, no need to split
-            common_data = visa_form.cleaned_data.copy()
-            # No processing of relations needed
-
-            # Process applicants
+            # Count applicants that have a name (i.e., are filled)
             cleaned_applicants = []
             for form in applicant_formset:
                 if form.cleaned_data and form.cleaned_data.get('name'):
                     cleaned_applicants.append(convert_dates_for_session(form.cleaned_data))
 
-            session_data = {
-                'common': convert_dates_for_session(common_data),
-                'applicants': cleaned_applicants
-            }
-            request.session['visa_data'] = session_data
-            return redirect('preview')
-        # If invalid, fall through to re-render with errors
+            # Conditional validation: if more than one applicant, relation must be selected
+            num_applicants = len(cleaned_applicants)
+            relation_value = visa_form.cleaned_data.get('relations')
+            if num_applicants > 1 and not relation_value:
+                visa_form.add_error('relations', _("Please select a relation when there are multiple applicants."))
+                # fall through to re-render with errors
+            else:
+                common_data = visa_form.cleaned_data.copy()
+                session_data = {
+                    'common': convert_dates_for_session(common_data),
+                    'applicants': cleaned_applicants
+                }
+                request.session['visa_data'] = session_data
+                return redirect('preview')
+        # If invalid (either form errors or conditional), re-render with errors
     else:
         # GET request
         if request.GET.get('edit') == '1' and 'visa_data' in request.session:
@@ -237,8 +241,8 @@ const CONFIG = {{
 
     response = HttpResponse(full_content, content_type='text/plain')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
-
-    del request.session['visa_data']
+    #make it possible to download agian
+    # del request.session['visa_data']
     return response
 
 def register_with_invite(request, token):

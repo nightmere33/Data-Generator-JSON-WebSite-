@@ -823,7 +823,22 @@
         const totalForms = document.getElementById('id_form-TOTAL_FORMS');
         const addBtn = document.getElementById('add-applicant');
         let formCount = parseInt(totalForms.value);
-        
+
+        // Update relation required/disabled based on number of applicants
+        function updateRelationRequired() {
+            const relationField = document.querySelector('[name="relations"]');
+            const relationLabel = document.querySelector('.field-group:has([name="relations"]) .form-label .required-star');
+            if (formCount > 1) {
+                relationField.removeAttribute('disabled');
+                relationField.setAttribute('required', 'required');
+                if (relationLabel) relationLabel.style.display = 'inline';
+            } else {
+                relationField.setAttribute('disabled', 'disabled');
+                relationField.removeAttribute('required');
+                if (relationLabel) relationLabel.style.display = 'none';
+            }
+        }
+
         // Initialize remove buttons
         function initializeRemoveButtons() {
             document.querySelectorAll('.remove-applicant').forEach((btn, index) => {
@@ -838,6 +853,7 @@
                             formCount--;
                             totalForms.value = formCount;
                             updateFormIndices();
+                            updateRelationRequired();
                             showToast('Applicant removed successfully', 'info');
                         }, 300);
                     }
@@ -845,7 +861,10 @@
             });
         }
         initializeRemoveButtons();
-        
+
+        // Initial call
+        updateRelationRequired();
+
         // Add new applicant
         if (addBtn) {
             addBtn.addEventListener('click', function() {
@@ -853,7 +872,7 @@
                     const template = document.querySelector('.applicant-card');
                     const newForm = template.cloneNode(true);
                     newForm.dataset.index = formCount;
-                    
+
                     const inputs = newForm.querySelectorAll('input, select, textarea');
                     inputs.forEach(input => {
                         if (input.name) input.name = input.name.replace(/-\d+-/, `-${formCount}-`);
@@ -862,15 +881,15 @@
                             input.value = '';
                         }
                     });
-                    
+
                     const title = newForm.querySelector('h3');
                     if (title) title.textContent = `Applicant ${formCount + 1}`;
-                    
+
                     const userIcon = newForm.querySelector('.fa-user');
                     if (userIcon) {
                         userIcon.parentElement.innerHTML = `<i class="fas fa-user text-lg"></i><span class="text-xs absolute -top-1 -right-1 bg-white text-indigo-600 rounded-full w-5 h-5 flex items-center justify-center font-bold">${formCount + 1}</span>`;
                     }
-                    
+
                     const removeBtn = newForm.querySelector('.remove-applicant');
                     if (removeBtn) {
                         removeBtn.style.display = 'flex';
@@ -884,29 +903,31 @@
                                     formCount--;
                                     totalForms.value = formCount;
                                     updateFormIndices();
+                                    updateRelationRequired();
                                     showToast('Applicant removed successfully', 'info');
                                 }, 300);
                             }
                         });
                     }
-                    
+
                     newForm.style.opacity = '0';
                     newForm.style.transform = 'translateY(20px)';
                     formset.appendChild(newForm);
-                    
+
                     setTimeout(() => {
                         newForm.style.opacity = '1';
                         newForm.style.transform = 'translateY(0)';
                         newForm.style.transition = 'all 0.4s ease';
                     }, 10);
-                    
+
                     formCount++;
                     totalForms.value = formCount;
-                    
+                    updateRelationRequired();
+
                     setTimeout(() => {
                         newForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }, 100);
-                    
+
                     showToast(`Applicant ${formCount} added successfully!`, 'success');
                 } else {
                     showToast('Maximum of 5 applicants allowed', 'warning');
@@ -916,29 +937,29 @@
                 }
             });
         }
-        
+
         function updateFormIndices() {
             const forms = document.querySelectorAll('.applicant-card');
             forms.forEach((form, index) => {
                 form.dataset.index = index;
                 const title = form.querySelector('h3');
                 if (title) title.textContent = `Applicant ${index + 1}`;
-                
+
                 const userIconContainer = form.querySelector('.fa-user')?.parentElement;
                 if (userIconContainer) {
                     userIconContainer.innerHTML = `<i class="fas fa-user text-lg"></i><span class="text-xs absolute -top-1 -right-1 bg-white text-indigo-600 rounded-full w-5 h-5 flex items-center justify-center font-bold">${index + 1}</span>`;
                 }
-                
+
                 const inputs = form.querySelectorAll('input, select, textarea');
                 inputs.forEach(input => {
                     if (input.name) input.name = input.name.replace(/-\d+-/, `-${index}-`);
                     if (input.id) input.id = input.id.replace(/-\d+-/, `-${index}-`);
                 });
-                
+
                 const removeBtn = form.querySelector('.remove-applicant');
                 if (removeBtn) removeBtn.style.display = index === 0 ? 'none' : 'flex';
             });
-            
+
             if (formCount < 5 && addBtn) {
                 addBtn.disabled = false;
                 addBtn.innerHTML = '<i class="fas fa-user-plus mr-2"></i> Add Another Applicant';
@@ -946,7 +967,7 @@
                 addBtn.classList.add('bg-gradient-to-r', 'from-indigo-600', 'to-purple-600', 'hover:from-indigo-700', 'hover:to-purple-700', 'hover:shadow-xl', 'hover:-translate-y-1');
             }
         }
-        
+
         function showToast(message, type = 'info') {
             document.querySelectorAll('.custom-toast').forEach(t => t.remove());
             const toast = document.createElement('div');
@@ -975,27 +996,27 @@
                 setTimeout(() => toast.remove(), 300);
             }, 4000);
         }
-        
+
         // Field validation (inline)
         function validateField(field) {
             const value = field.value.trim();
             let isValid = true;
             let errorMessage = '';
-            
+
             const existingError = field.parentElement.querySelector('.error-message');
             if (existingError) existingError.remove();
             field.classList.remove('field-error');
-            
+
             if (field.hasAttribute('required') && !value) {
                 isValid = false;
                 errorMessage = 'This field is required.';
             }
-            
+
             if (field.name.includes('passport_number') && value && !/^\d{9}$/.test(value)) {
                 isValid = false;
                 errorMessage = 'Passport number must be exactly 9 digits.';
             }
-            
+
             if (!isValid) {
                 field.classList.add('field-error');
                 const errorDiv = document.createElement('div');
@@ -1005,21 +1026,21 @@
             }
             return isValid;
         }
-        
+
         // Overall form validation
         function validateForm() {
             let isValid = true;
             let errorFields = [];
             document.querySelectorAll('.error-message').forEach(el => el.remove());
             document.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
-            
+
             const fields = document.querySelectorAll('#visaForm input, #visaForm select, #visaForm textarea');
             fields.forEach(field => {
                 if (!validateField(field) && field.hasAttribute('required')) {
                     errorFields.push(field);
                 }
             });
-            
+
             // Date comparisons
             const departure = document.querySelector('[name="departure_date"]');
             const returnDate = document.querySelector('[name="return_date"]');
@@ -1036,7 +1057,7 @@
                     errorFields.push(returnDate);
                 }
             }
-            
+
             const start = document.querySelector('[name="start_date"]');
             const max = document.querySelector('[name="max_date"]');
             if (start && max && start.value && max.value) {
@@ -1052,7 +1073,7 @@
                     errorFields.push(max);
                 }
             }
-            
+
             document.querySelectorAll('.applicant-card').forEach(card => {
                 const issue = card.querySelector('[name$="passport_issue_date"]');
                 const expiry = card.querySelector('[name$="passport_expiry"]');
@@ -1070,10 +1091,10 @@
                     }
                 }
             });
-            
+
             return { isValid, errorFields };
         }
-        
+
         const form = document.getElementById('visaForm');
         form.addEventListener('submit', function(e) {
             const { isValid, errorFields } = validateForm();
@@ -1086,11 +1107,11 @@
                 }
             }
         });
-        
+
         form.querySelectorAll('input, select, textarea').forEach(field => {
             field.addEventListener('blur', function() { validateField(this); });
         });
-        
+
         const resetBtn = form.querySelector('button[type="reset"]');
         if (resetBtn) {
             resetBtn.addEventListener('click', function(e) {
@@ -1106,6 +1127,7 @@
                     totalForms.value = 1;
                     document.querySelectorAll('.error-message').forEach(el => el.remove());
                     document.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
+                    updateRelationRequired();
                     if (addBtn) {
                         addBtn.disabled = false;
                         addBtn.innerHTML = '<i class="fas fa-user-plus mr-2"></i> Add Another Applicant';

@@ -6,7 +6,7 @@ from .models import AgencyProfile
 
 class VisaApplicationForm(forms.Form):
     visa = forms.ChoiceField(
-        choices=[
+        choices=[('', _('Select visa type'))] + [
             ('88', _('Business Multiple')),
             ('87', _('Business Single')),
             ('95', _('Double Transit')),
@@ -27,7 +27,7 @@ class VisaApplicationForm(forms.Form):
     )
     
     nationality = forms.ChoiceField(
-        choices=[
+        choices=[('', _('Select nationality'))] + [
             ('31', _('Algérie')),
             ('1', _('États-Unis d\'Amérique')),
             ('77', _('Royaume-Uni')),
@@ -41,7 +41,7 @@ class VisaApplicationForm(forms.Form):
             ('80', _('Espagne')),
             ('191', _('Turquie')),
         ],
-        initial='31',
+        initial='',
         label=_('Nationality'),
         widget=forms.Select(attrs={'class': 'form-select rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'})
     )
@@ -77,7 +77,6 @@ class VisaApplicationForm(forms.Form):
             'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full',
             'type': 'date'
         }),
-        
     )
     
     return_date = forms.DateField(
@@ -86,18 +85,15 @@ class VisaApplicationForm(forms.Form):
             'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full',
             'type': 'date'
         }),
-        
     )
 
     start_date = forms.DateField(
         label=_("Minimum desired date"),
         widget=forms.DateInput(attrs={'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full', 'type': 'date'}),
-        
     )
     max_date = forms.DateField(
         label=_("Maximum allowed date"),
         widget=forms.DateInput(attrs={'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full', 'type': 'date'}),
-        
     )
     email = forms.EmailField(
         label=_("Email"),
@@ -121,7 +117,7 @@ class VisaApplicationForm(forms.Form):
     relations = forms.ChoiceField(
         label=_('Relation'),
         choices=RELATION_CHOICES,
-        required=True,
+        required=False,
         widget=forms.Select(attrs={
             'class': 'form-select rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'
         })
@@ -139,8 +135,8 @@ class VisaApplicationForm(forms.Form):
         if start_date:
             if start_date < today:
                 self.add_error('start_date', _("Minimum desired date cannot be in the past."))
-            if max_date and start_date >= max_date:
-                self.add_error('start_date', _("Minimum desired date must be before maximum allowed date."))
+            if max_date and start_date > max_date:
+                self.add_error('start_date', _("Minimum desired date must not be after maximum allowed date."))
         
         if max_date and max_date < today:
             self.add_error('max_date', _("Maximum allowed date cannot be in the past."))
@@ -178,7 +174,8 @@ class ApplicantForm(forms.Form):
     
     gender = forms.ChoiceField(
         label=_('Gender'),
-        choices=[('M', _('Male')), ('F', _('Female'))],
+        choices=[('', _('Select gender')), ('M', _('Male')), ('F', _('Female'))],
+        required=True,
         widget=forms.Select(attrs={
             'class': 'form-select rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'
         })
@@ -204,7 +201,7 @@ class ApplicantForm(forms.Form):
     
     marital_status = forms.ChoiceField(
         label=_('Marital Status'),
-        choices=[('0', _('Single')), ('1', _('Married'))],
+        choices=[('', _('Select marital status')), ('0', _('Single')), ('1', _('Married'))],
         required=True,
         widget=forms.Select(attrs={
             'class': 'form-select rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'
@@ -241,7 +238,7 @@ class ApplicantForm(forms.Form):
     occupation = forms.ChoiceField(
         label=_('Occupation'),
         required=True,
-        choices=[
+        choices=[('', _('Select occupation'))] + [
             ('Agriculture', _('Agriculture')),
             ('Armed/Security Force', _('Armed/Security Force')),
             ('Artist/Performer', _('Artist/Performer')),
@@ -304,14 +301,14 @@ class ApplicantForm(forms.Form):
     
     travel_document = forms.ChoiceField(
         label=_('Travel Document Type'),
-        choices=[
+        choices=[('', _('Select document type'))] + [
             ('10', _('Passeport Ordinaire')),
             ('3', _('Passeport Diplomatique')),
             ('2', _('Carte d\'Identité')),
             ('9', _('Autres')),
             ('11', _('Document de Voyage pour Réfugiés')),
         ],
-        initial='10',
+        initial='',
         widget=forms.Select(attrs={
             'class': 'form-select rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'
         })
