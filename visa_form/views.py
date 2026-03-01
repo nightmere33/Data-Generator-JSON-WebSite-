@@ -165,10 +165,15 @@ def download_json(request):
     # Prepare data for second script
     num_applicants = len(data['applicants'])
     passports = [app.get('passport_number', '') for app in data['applicants']]
+    # Pad to 5 with placeholders "2emepersonne", "3emepersonne", ...
+    for i in range(len(passports), 5):
+        passports.append(f"{i+1}emepersonne")
+
+    # Relations: first element = common relation, then fixed list
+    relation = data['common'].get('relations', '')
+    relations_array = [relation, "Wife", "Father", "Mother", "Child"]
     email = data['common'].get('email', '')
     phone = data['common'].get('phone_local', '')
-    relation = data['common'].get('relations', '')
-    relations_array = [relation]  if relation else [''] 
 
     # Format dates to DD.MM.YYYY
     start_date_dmy = format_date_dmy(data['common'].get('start_date', ''))
@@ -193,8 +198,8 @@ const APPLICANT_DATA = {applicants_js};
     second_script = f"""// ============================================
 // SCRIPT 2 CONFIGURATION
 // ============================================
-const START_DATE_FORMATTED = "{start_date_dmy}";
-const MAX_DATE_FORMATTED   = "{max_date_dmy}";
+const START_DATE_FORMATTED = "{start_date_dmy}"; // Date minimale souhaitée (DD.MM.YYYY)
+const MAX_DATE_FORMATTED   = "{max_date_dmy}"; // Date maximale autorisée
 
 const CONFIG = {{
     defaultApplicants: {num_applicants},
@@ -218,7 +223,7 @@ const CONFIG = {{
     else:
         filename = f"mosaic_visa_data_{uuid.uuid4().hex[:8]}.txt"
 
-    # Save submission (store the structured output for admin)
+    # Save submission
     output = {
         'COMMON_DATA': common_core,
         'APPLICANT_DATA': data['applicants'],

@@ -314,7 +314,7 @@
 
 {% block content %}
 <div class="max-w-7xl mx-auto">
-    <!-- Progress bar (unchanged) -->
+    <!-- Progress bar -->
     <div class="mb-10">
         <div class="progress-steps">
             <div class="step active">
@@ -336,7 +336,7 @@
     <form method="post" class="space-y-8" id="visaForm" autocomplete="off" novalidate>
         {% csrf_token %}
         
-        <!-- Common Information (unchanged) -->
+        <!-- Common Information -->
         <div class="form-section">
             <div class="section-header">
                 <div class="section-icon">
@@ -361,9 +361,9 @@
                             {{ visa_form.start_date|add_class:"form-input"|attr:"required" }}
                             <p class="form-help">{% trans "Earliest acceptable appointment date" %}</p>
                             {% if visa_form.start_date.errors %}
-                                    {% for error in visa_form.start_date.errors %}
-                                        <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
-                                    {% endfor %}
+                                {% for error in visa_form.start_date.errors %}
+                                    <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                {% endfor %}
                             {% endif %}
                         </div>
                         
@@ -374,6 +374,11 @@
                             </label>
                             {{ visa_form.max_date|add_class:"form-input"|attr:"required" }}
                             <p class="form-help">{% trans "Latest acceptable appointment date" %}</p>
+                            {% if visa_form.max_date.errors %}
+                                {% for error in visa_form.max_date.errors %}
+                                    <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
                         </div>
                         
                         <div class="field-group">
@@ -382,6 +387,11 @@
                                 <span class="required-star">*</span>
                             </label>
                             {{ visa_form.email|add_class:"form-input"|attr:"required" }}
+                            {% if visa_form.email.errors %}
+                                {% for error in visa_form.email.errors %}
+                                    <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
                         </div>
                         
                         <div class="field-group">
@@ -390,6 +400,11 @@
                                 <span class="required-star">*</span>
                             </label>
                             {{ visa_form.phone_local|add_class:"form-input"|attr:"required" }}
+                            {% if visa_form.phone_local.errors %}
+                                {% for error in visa_form.phone_local.errors %}
+                                    <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
                         </div>
                     </div>
                     
@@ -401,6 +416,11 @@
                                 <span class="required-star">*</span>
                             </label>
                             {{ visa_form.visa|add_class:"form-select"|attr:"required" }}
+                            {% if visa_form.visa.errors %}
+                                {% for error in visa_form.visa.errors %}
+                                    <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
                         </div>
                         
                         <div class="field-group">
@@ -409,6 +429,11 @@
                                 <span class="required-star">*</span>
                             </label>
                             {{ visa_form.nationality|add_class:"form-select"|attr:"required" }}
+                            {% if visa_form.nationality.errors %}
+                                {% for error in visa_form.nationality.errors %}
+                                    <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
                         </div>
                         
                         <div class="field-group">
@@ -418,6 +443,11 @@
                             </label>
                             {{ visa_form.relations|add_class:"form-select"|attr:"required" }}
                             <p class="form-help">{% trans "Select the relationship to the main applicant" %}</p>
+                            {% if visa_form.relations.errors %}
+                                {% for error in visa_form.relations.errors %}
+                                    <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -430,6 +460,11 @@
                             <span class="required-star">*</span>
                         </label>
                         {{ visa_form.contact_address|add_class:"form-textarea"|attr:"required" }}
+                        {% if visa_form.contact_address.errors %}
+                            {% for error in visa_form.contact_address.errors %}
+                                <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -439,6 +474,11 @@
                                 <span class="required-star">*</span>
                             </label>
                             {{ visa_form.contact_city|add_class:"form-input"|attr:"required" }}
+                            {% if visa_form.contact_city.errors %}
+                                {% for error in visa_form.contact_city.errors %}
+                                    <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
                         </div>
                         <div class="field-group">
                             <label class="form-label">
@@ -446,6 +486,11 @@
                                 <span class="required-star">*</span>
                             </label>
                             {{ visa_form.contact_postcode|add_class:"form-input"|attr:"required" }}
+                            {% if visa_form.contact_postcode.errors %}
+                                {% for error in visa_form.contact_postcode.errors %}
+                                    <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
                         </div>
                     </div>
                     
@@ -456,6 +501,11 @@
                                 <span class="required-star">*</span>
                             </label>
                             {{ visa_form.departure_date|add_class:"form-input"|attr:"required" }}
+                            {% if visa_form.departure_date.errors %}
+                                {% for error in visa_form.departure_date.errors %}
+                                    <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
                         </div>
                         <div class="field-group">
                             <label class="form-label">
@@ -463,6 +513,11 @@
                                 <span class="required-star">*</span>
                             </label>
                             {{ visa_form.return_date|add_class:"form-input"|attr:"required" }}
+                            {% if visa_form.return_date.errors %}
+                                {% for error in visa_form.return_date.errors %}
+                                    <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -520,6 +575,11 @@
                                             <span class="required-star">*</span>
                                         </label>
                                         {{ form.name|add_class:"form-input"|attr:"required" }}
+                                        {% if form.name.errors %}
+                                            {% for error in form.name.errors %}
+                                                <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                            {% endfor %}
+                                        {% endif %}
                                     </div>
                                     <div class="field-group">
                                         <label class="form-label">
@@ -527,6 +587,11 @@
                                             <span class="required-star">*</span>
                                         </label>
                                         {{ form.surname|add_class:"form-input"|attr:"required" }}
+                                        {% if form.surname.errors %}
+                                            {% for error in form.surname.errors %}
+                                                <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                            {% endfor %}
+                                        {% endif %}
                                     </div>
                                 </div>
                                 
@@ -537,6 +602,11 @@
                                             <span class="required-star">*</span>
                                         </label>
                                         {{ form.gender|add_class:"form-select"|attr:"required" }}
+                                        {% if form.gender.errors %}
+                                            {% for error in form.gender.errors %}
+                                                <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                            {% endfor %}
+                                        {% endif %}
                                     </div>
                                     <div class="field-group">
                                         <label class="form-label">
@@ -544,6 +614,11 @@
                                             <span class="required-star">*</span>
                                         </label>
                                         {{ form.marital_status|add_class:"form-select"|attr:"required" }}
+                                        {% if form.marital_status.errors %}
+                                            {% for error in form.marital_status.errors %}
+                                                <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                            {% endfor %}
+                                        {% endif %}
                                     </div>
                                 </div>
                                 
@@ -553,6 +628,11 @@
                                         <span class="required-star">*</span>
                                     </label>
                                     {{ form.birthday|add_class:"form-input"|attr:"required"|attr:"type:date" }}
+                                    {% if form.birthday.errors %}
+                                        {% for error in form.birthday.errors %}
+                                            <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                                 
                                 <div class="field-group">
@@ -561,6 +641,11 @@
                                         <span class="required-star">*</span>
                                     </label>
                                     {{ form.birth_place|add_class:"form-input"|attr:"required" }}
+                                    {% if form.birth_place.errors %}
+                                        {% for error in form.birth_place.errors %}
+                                            <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
 
                                 <div class="field-group">
@@ -569,6 +654,11 @@
                                         <span class="required-star">*</span>
                                     </label>
                                     {{ form.passport_number|add_class:"form-input"|attr:"required" }}
+                                    {% if form.passport_number.errors %}
+                                        {% for error in form.passport_number.errors %}
+                                            <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
 
                                 <div class="field-group">
@@ -577,6 +667,11 @@
                                         <span class="required-star">*</span>
                                     </label>
                                     {{ form.occupation|add_class:"form-select"|attr:"required" }}
+                                    {% if form.occupation.errors %}
+                                        {% for error in form.occupation.errors %}
+                                            <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                             </div>
                             
@@ -588,6 +683,11 @@
                                         <span class="required-star">*</span>
                                     </label>
                                     {{ form.father_name|add_class:"form-input"|attr:"required" }}
+                                    {% if form.father_name.errors %}
+                                        {% for error in form.father_name.errors %}
+                                            <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                                 
                                 <div class="field-group">
@@ -596,6 +696,11 @@
                                         <span class="required-star">*</span>
                                     </label>
                                     {{ form.mother_name|add_class:"form-input"|attr:"required" }}
+                                    {% if form.mother_name.errors %}
+                                        {% for error in form.mother_name.errors %}
+                                            <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                                 
                                 <div class="field-group">
@@ -604,6 +709,11 @@
                                         <span class="required-star">*</span>
                                     </label>
                                     {{ form.travel_document|add_class:"form-select"|attr:"required" }}
+                                    {% if form.travel_document.errors %}
+                                        {% for error in form.travel_document.errors %}
+                                            <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                                 
                                 <div class="field-group">
@@ -612,6 +722,11 @@
                                         <span class="required-star">*</span>
                                     </label>
                                     {{ form.passport_issued_by|add_class:"form-input"|attr:"required" }}
+                                    {% if form.passport_issued_by.errors %}
+                                        {% for error in form.passport_issued_by.errors %}
+                                            <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                                 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -621,6 +736,11 @@
                                             <span class="required-star">*</span>
                                         </label>
                                         {{ form.passport_issue_date|add_class:"form-input"|attr:"required"|attr:"type:date" }}
+                                        {% if form.passport_issue_date.errors %}
+                                            {% for error in form.passport_issue_date.errors %}
+                                                <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                            {% endfor %}
+                                        {% endif %}
                                     </div>
                                     <div class="field-group">
                                         <label class="form-label">
@@ -628,6 +748,11 @@
                                             <span class="required-star">*</span>
                                         </label>
                                         {{ form.passport_expiry|add_class:"form-input"|attr:"required"|attr:"type:date" }}
+                                        {% if form.passport_expiry.errors %}
+                                            {% for error in form.passport_expiry.errors %}
+                                                <div class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                            {% endfor %}
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>

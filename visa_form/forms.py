@@ -129,9 +129,12 @@ class VisaApplicationForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
+        today = date.today()
+
         start_date = cleaned_data.get('start_date')
         max_date = cleaned_data.get('max_date')
-        today = date.today()
+        departure = cleaned_data.get('departure_date')
+        return_date = cleaned_data.get('return_date')
 
         if start_date:
             if start_date < today:
@@ -142,13 +145,22 @@ class VisaApplicationForm(forms.Form):
         if max_date and max_date < today:
             self.add_error('max_date', _("Maximum allowed date cannot be in the past."))
 
-        # Also validate departure/return? Already done in JS, but we can add server-side if needed.
+        if departure:
+            if departure < today:
+                self.add_error('departure_date', _("Departure date cannot be in the past."))
+            if return_date and departure >= return_date:
+                self.add_error('return_date', _("Return date must be after departure date."))
+
+        if return_date and return_date < today:
+            self.add_error('return_date', _("Return date cannot be in the past."))
+
         return cleaned_data
 
 
 class ApplicantForm(forms.Form):
     name = forms.CharField(
         label=_('First Name'),
+        required=True,
         widget=forms.TextInput(attrs={
             'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full',
             'placeholder': _('First Name')
@@ -157,6 +169,7 @@ class ApplicantForm(forms.Form):
     
     surname = forms.CharField(
         label=_('Last Name'),
+        required=True,
         widget=forms.TextInput(attrs={
             'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full',
             'placeholder': _('Last Name')
@@ -173,6 +186,7 @@ class ApplicantForm(forms.Form):
     
     birthday = forms.DateField(
         label=_('Date of Birth'),
+        required=True,
         widget=forms.DateInput(attrs={
             'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full',
             'type': 'date'
@@ -181,6 +195,7 @@ class ApplicantForm(forms.Form):
     
     birth_place = forms.CharField(
         label=_('Place of Birth'),
+        required=True,
         widget=forms.TextInput(attrs={
             'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full',
             'placeholder': _('Place of Birth')
@@ -190,6 +205,7 @@ class ApplicantForm(forms.Form):
     marital_status = forms.ChoiceField(
         label=_('Marital Status'),
         choices=[('0', _('Single')), ('1', _('Married'))],
+        required=True,
         widget=forms.Select(attrs={
             'class': 'form-select rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'
         })
@@ -224,6 +240,7 @@ class ApplicantForm(forms.Form):
     
     occupation = forms.ChoiceField(
         label=_('Occupation'),
+        required=True,
         choices=[
             ('Agriculture', _('Agriculture')),
             ('Armed/Security Force', _('Armed/Security Force')),
@@ -260,6 +277,7 @@ class ApplicantForm(forms.Form):
     
     passport_issued_by = forms.CharField(
         label=_('Passport Issued By'),
+        required=True,
         widget=forms.TextInput(attrs={
             'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full',
             'placeholder': _('Passport Authority')
@@ -268,6 +286,7 @@ class ApplicantForm(forms.Form):
     
     passport_issue_date = forms.DateField(
         label=_('Issue Date'),
+        required=True,
         widget=forms.DateInput(attrs={
             'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full',
             'type': 'date'
@@ -276,6 +295,7 @@ class ApplicantForm(forms.Form):
     
     passport_expiry = forms.DateField(
         label=_('Expiry Date'),
+        required=True,
         widget=forms.DateInput(attrs={
             'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full',
             'type': 'date'
