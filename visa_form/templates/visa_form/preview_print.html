@@ -6,7 +6,7 @@
 
 {% block extra_head %}
 <style>
-    /* (same enhanced CSS as before – unchanged) */
+    /* Modern, clean, theme‑aware design (same as before) */
     .summary-container {
         max-width: 1100px;
         margin: 2rem auto;
@@ -245,14 +245,14 @@
 <div class="summary-container">
     <div class="summary-header">
         <h1>{% trans "Visa Application Summary" %}</h1>
-        <p>{% trans "Please review the details below before downloading your PDF." %}</p>
+        <p>{% trans "Please review the details below." %}</p>
     </div>
 
     <!-- Common Information Card -->
     <div class="summary-card">
         <h2><i class="fas fa-globe-americas"></i> {% trans "Common Information" %}</h2>
         <div class="summary-content">
-            <!-- all data items with icons as before -->
+            <!-- All data items with icons (same as before) -->
             <div class="data-item">
                 <span class="data-label"><i class="fas fa-calendar-day"></i> {% trans "Min Desired Date" %}</span>
                 <span class="data-value">{{ data.common.start_date }}</span>
@@ -309,7 +309,7 @@
     <div class="summary-card">
         <h2><i class="fas fa-user"></i> {% trans "Applicant" %} {{ forloop.counter }}</h2>
         <div class="summary-content">
-            <!-- all applicant fields with icons -->
+            <!-- All applicant fields with icons -->
             <div class="data-item">
                 <span class="data-label"><i class="fas fa-user"></i> {% trans "First Name" %}</span>
                 <span class="data-value">{{ applicant.name }}</span>
@@ -370,7 +370,7 @@
     </div>
     {% endfor %}
 
-    <!-- PDF Action -->
+    <!-- Print / PDF Action -->
     <div class="pdf-action">
         <a href="{% url 'preview_pdf' %}" class="btn-pdf">
             <i class="fas fa-file-pdf"></i> {% trans "Download PDF" %}

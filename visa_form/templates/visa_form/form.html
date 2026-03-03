@@ -986,8 +986,101 @@
         window.addEventListener('beforeunload', () => observer.disconnect());
     })();
 
-    // ================ REST OF YOUR EXISTING FORM SCRIPT (unchanged) ================
+    // ================ FORM SCRIPT WITH SPACE PREVENTION ================
     document.addEventListener('DOMContentLoaded', function() {
+        // Helper to trim leading/trailing spaces on input/paste for fields that allow internal spaces
+        function applyTrimBehavior(field) {
+            // Trim on blur
+            field.addEventListener('blur', function() {
+                this.value = this.value.trim();
+            });
+            // Optional: also trim on paste? We'll handle in paste event
+        }
+
+        // Fields that allow internal spaces: contact_address, contact_city, name, surname, birth_place, father_name, mother_name, passport_issued_by
+        // Also contact_address is already allowed spaces.
+        function allowInternalSpaces(field) {
+            // Do not prevent space key, but trim on blur/paste
+            field.addEventListener('blur', function() {
+                this.value = this.value.trim();
+            });
+            field.addEventListener('paste', function(e) {
+                e.preventDefault();
+                let pasted = (e.clipboardData || window.clipboardData).getData('text');
+                // Trim leading/trailing spaces from pasted content
+                let cleaned = pasted.trim();
+                this.value = cleaned;
+            });
+        }
+
+        // Fields that disallow spaces completely: email, phone_local, contact_postcode, passport_number
+        function disallowSpaces(field) {
+            field.addEventListener('keydown', function(e) {
+                if (e.key === ' ') {
+                    e.preventDefault();
+                }
+            });
+            field.addEventListener('input', function() {
+                this.value = this.value.replace(/\s/g, '');
+            });
+            field.addEventListener('paste', function(e) {
+                e.preventDefault();
+                let pasted = (e.clipboardData || window.clipboardData).getData('text');
+                let cleaned = pasted.replace(/\s/g, '');
+                this.value = cleaned;
+            });
+        }
+
+        // Apply appropriate handlers to all fields
+        function setupFieldHandlers() {
+            // Contact address (allow spaces, but trim)
+            document.querySelectorAll('[name="contact_address"]').forEach(field => {
+                allowInternalSpaces(field);
+            });
+            // City
+            document.querySelectorAll('[name="contact_city"]').forEach(field => {
+                allowInternalSpaces(field);
+            });
+            // Postal code – disallow spaces
+            document.querySelectorAll('[name="contact_postcode"]').forEach(field => {
+                disallowSpaces(field);
+            });
+            // Email – disallow spaces
+            document.querySelectorAll('[name="email"]').forEach(field => {
+                disallowSpaces(field);
+            });
+            // Phone – disallow spaces
+            document.querySelectorAll('[name="phone_local"]').forEach(field => {
+                disallowSpaces(field);
+            });
+            // Applicant fields
+            document.querySelectorAll('[name$="name"], [name$="surname"], [name$="birth_place"], [name$="father_name"], [name$="mother_name"], [name$="passport_issued_by"]').forEach(field => {
+                allowInternalSpaces(field);
+            });
+            // Passport number – disallow spaces (special handling with digits)
+            document.querySelectorAll('[name$="passport_number"]').forEach(field => {
+                // Special: remove spaces and non-digits
+                field.addEventListener('keydown', function(e) {
+                    if (e.key === ' ') {
+                        e.preventDefault();
+                    }
+                });
+                field.addEventListener('input', function() {
+                    this.value = this.value.replace(/\s/g, '').replace(/\D/g, '');
+                });
+                field.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    let pasted = (e.clipboardData || window.clipboardData).getData('text');
+                    let cleaned = pasted.replace(/\s/g, '').replace(/\D/g, '');
+                    this.value = cleaned;
+                });
+                field.addEventListener('blur', function() {
+                    // Trim (already no spaces)
+                });
+            });
+            // All other text fields (if any) we could apply a default, but above covers all.
+        }
+
         const formset    = document.getElementById('applicant-formset');
         const totalForms = document.getElementById('id_form-TOTAL_FORMS');
         const addBtn     = document.getElementById('add-applicant');
@@ -1103,6 +1196,9 @@
                 totalForms.value = formCount;
                 updateRelationRequired();
 
+                // Apply handlers to the new fields
+                setupFieldHandlers();
+
                 setTimeout(() => newForm.scrollIntoView({ behavior: 'smooth', block: 'center' }), 120);
                 showToast(`{% trans "Applicant" %} ${formCount} {% trans "added!" %}`, 'success');
 
@@ -1183,7 +1279,11 @@
 
             // Required fields (all with [required] attribute)
             document.querySelectorAll('[required]').forEach(field => {
-                if (!field.value.trim()) {
+                let value = field.value.trim();
+                if (field.name.includes('passport_number')) {
+                    value = field.value.replace(/\s/g, '').replace(/\D/g, '');
+                }
+                if (!value) {
                     setError(field, `{% trans "This field is required." %}`);
                 }
             });
@@ -1232,12 +1332,15 @@
                 }
             });
 
+            // Passport number: must be exactly 9 digits (no spaces)
             document.querySelectorAll('[name$="passport_number"]').forEach(field => {
-                if (field.value && !/^\d{9}$/.test(field.value.trim())) {
+                let value = field.value.replace(/\s/g, '').replace(/\D/g, '');
+                if (value && (!/^\d{9}$/.test(value))) {
                     setError(field, `{% trans "Passport number must be exactly 9 digits." %}`);
                 }
             });
 
+            // Passport issue <= expiry (per applicant)
             document.querySelectorAll('.applicant-card').forEach(card => {
                 const issue = card.querySelector('[name$="passport_issue_date"]');
                 const expiry = card.querySelector('[name$="passport_expiry"]');
@@ -1278,6 +1381,9 @@
                 }
             });
         });
+
+        // Initial setup
+        setupFieldHandlers();
     });
 </script>
 {% endblock %}

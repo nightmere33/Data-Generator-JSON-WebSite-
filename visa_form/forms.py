@@ -1,8 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
-from datetime import date, timedelta
-from .models import AgencyProfile
+from datetime import date
 
 class VisaApplicationForm(forms.Form):
     visa = forms.ChoiceField(
@@ -122,6 +121,53 @@ class VisaApplicationForm(forms.Form):
             'class': 'form-select rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'
         })
     )
+
+    # Custom cleaning for text fields
+    def clean_contact_address(self):
+        value = self.cleaned_data.get('contact_address', '')
+        if value:
+            stripped = value.strip()
+            if not stripped:
+                raise forms.ValidationError(_("This field cannot consist of only spaces."))
+            return stripped
+        return value
+
+    def clean_contact_city(self):
+        value = self.cleaned_data.get('contact_city', '')
+        if value:
+            stripped = value.strip()
+            if not stripped:
+                raise forms.ValidationError(_("This field cannot consist of only spaces."))
+            return stripped
+        return value
+
+    def clean_contact_postcode(self):
+        value = self.cleaned_data.get('contact_postcode', '')
+        if value:
+            stripped = value.strip()
+            if not stripped:
+                raise forms.ValidationError(_("This field cannot consist of only spaces."))
+            return stripped
+        return value
+
+    def clean_email(self):
+        value = self.cleaned_data.get('email', '')
+        if value:
+            stripped = value.strip()
+            if not stripped:
+                raise forms.ValidationError(_("This field cannot consist of only spaces."))
+            # EmailField will validate the format
+            return stripped
+        return value
+
+    def clean_phone_local(self):
+        value = self.cleaned_data.get('phone_local', '')
+        if value:
+            stripped = value.strip()
+            if not stripped:
+                raise forms.ValidationError(_("This field cannot consist of only spaces."))
+            return stripped
+        return value
 
     def clean(self):
         cleaned_data = super().clean()
@@ -314,6 +360,74 @@ class ApplicantForm(forms.Form):
         })
     )
 
+    # Custom cleaning for text fields
+    def clean_name(self):
+        value = self.cleaned_data.get('name', '')
+        if value:
+            stripped = value.strip()
+            if not stripped:
+                raise forms.ValidationError(_("This field cannot consist of only spaces."))
+            return stripped
+        return value
+
+    def clean_surname(self):
+        value = self.cleaned_data.get('surname', '')
+        if value:
+            stripped = value.strip()
+            if not stripped:
+                raise forms.ValidationError(_("This field cannot consist of only spaces."))
+            return stripped
+        return value
+
+    def clean_birth_place(self):
+        value = self.cleaned_data.get('birth_place', '')
+        if value:
+            stripped = value.strip()
+            if not stripped:
+                raise forms.ValidationError(_("This field cannot consist of only spaces."))
+            return stripped
+        return value
+
+    def clean_father_name(self):
+        value = self.cleaned_data.get('father_name', '')
+        if value:
+            stripped = value.strip()
+            if not stripped:
+                raise forms.ValidationError(_("This field cannot consist of only spaces."))
+            return stripped
+        return value
+
+    def clean_mother_name(self):
+        value = self.cleaned_data.get('mother_name', '')
+        if value:
+            stripped = value.strip()
+            if not stripped:
+                raise forms.ValidationError(_("This field cannot consist of only spaces."))
+            return stripped
+        return value
+
+    def clean_passport_number(self):
+        value = self.cleaned_data.get('passport_number', '')
+        if value:
+            # Remove ALL spaces (internal too) and check if not empty
+            no_spaces = value.replace(' ', '')
+            if not no_spaces:
+                raise forms.ValidationError(_("Passport number cannot consist of only spaces."))
+            # Optional: validate 9 digits (if your requirement)
+            if not no_spaces.isdigit() or len(no_spaces) != 9:
+                raise forms.ValidationError(_("Passport number must be exactly 9 digits."))
+            return no_spaces
+        return value
+
+    def clean_passport_issued_by(self):
+        value = self.cleaned_data.get('passport_issued_by', '')
+        if value:
+            stripped = value.strip()
+            if not stripped:
+                raise forms.ValidationError(_("This field cannot consist of only spaces."))
+            return stripped
+        return value
+
 
 class AgencyRegistrationForm(forms.Form):
     email = forms.EmailField(
@@ -340,6 +454,35 @@ class AgencyRegistrationForm(forms.Form):
         widget=forms.TextInput(attrs={'class': 'form-input rounded-lg w-full'})
     )
 
+    # Custom cleaning
+    def clean_email(self):
+        value = self.cleaned_data.get('email', '')
+        if value:
+            stripped = value.strip()
+            if not stripped:
+                raise forms.ValidationError(_("This field cannot consist of only spaces."))
+            return stripped
+        return value
+
+    def clean_agency_name(self):
+        value = self.cleaned_data.get('agency_name', '')
+        if value:
+            stripped = value.strip()
+            if not stripped:
+                raise forms.ValidationError(_("Agency name cannot consist of only spaces."))
+            return stripped
+        return value
+
+    def clean_phone(self):
+        value = self.cleaned_data.get('phone', '')
+        if value:
+            stripped = value.strip()
+            if not stripped:
+                # Optional field: if only spaces, treat as empty
+                return ''
+            return stripped
+        return value
+
     def clean(self):
         cleaned_data = super().clean()
         password = cleaned_data.get("password")
@@ -347,6 +490,6 @@ class AgencyRegistrationForm(forms.Form):
         if password and confirm and password != confirm:
             raise forms.ValidationError(_("Passwords do not match"))
         email = cleaned_data.get("email")
-        if User.objects.filter(email=email).exists():
+        if email and User.objects.filter(email=email).exists():
             raise forms.ValidationError(_("Email already registered"))
         return cleaned_data

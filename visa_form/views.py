@@ -12,9 +12,21 @@ import random
 from datetime import datetime, date, timedelta
 from django.utils.translation import gettext as _
 
-from django.template.loader import render_to_string
-from xhtml2pdf import pisa
+
+
+
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.lib.units import cm
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_CENTER
 from io import BytesIO
+
+
+#from django.template.loader import render_to_string
+#from xhtml2pdf import pisa
+#from io import BytesIO
 
 def index(request):
     return render(request, 'visa_form/index.html')
@@ -295,7 +307,147 @@ def preview_print(request):
     data = request.session['visa_data']
     return render(request, 'visa_form/preview_print.html', {'data': data})
 
+
 @login_required
+def preview_pdf(request):
+    if 'visa_data' not in request.session:
+        return redirect('form')
+    data = request.session['visa_data']
+
+    # Mapping dictionaries for code → label (same as in visa_filters.py)
+    VISA_MAP = {
+        '88': 'Business Multiple', '87': 'Business Single', '95': 'Double Transit',
+        '96': 'Family Reunion', '94': 'Single Transit', '125': 'Sport & Cultural Single',
+        '93': 'Student Single', '86': 'Tourism Multiple', '85': 'Tourism Single',
+        '90': 'Treatment Multiple', '89': 'Treatment Single', '92': 'Work Permit Multiple',
+        '91': 'Work Permit Single',
+    }
+    NATIONALITY_MAP = {
+        '31': 'Algérie', '1': 'États-Unis d\'Amérique', '77': 'Royaume-Uni',
+        '35': 'Chine', '71': 'Inde', '84': 'Italie', '91': 'Canada', '9': 'Australie',
+        '3': 'Allemagne', '55': 'France', '80': 'Espagne', '191': 'Turquie',
+    }
+    GENDER_MAP = {'M': 'Male', 'F': 'Female'}
+    MARITAL_STATUS_MAP = {'0': 'Single', '1': 'Married'}
+    OCCUPATION_MAP = {
+        'Agriculture': 'Agriculture', 'Armed/Security Force': 'Armed/Security Force',
+        'Artist/Performer': 'Artist/Performer', 'Business': 'Business',
+        'Caregiver/Babysitter': 'Caregiver/Babysitter', 'Construction': 'Construction',
+        'Culinary/Cookery': 'Culinary/Cookery', 'Driver/Lorry': 'Driver/Lorry',
+        'Education/Training': 'Education/Training', 'Engineer': 'Engineer',
+        'Finance/Banking': 'Finance/Banking', 'Government': 'Government',
+        'Health/Medical': 'Health/Medical', 'Information Technologies': 'Information Technologies',
+        'Legal Professional': 'Legal Professional', 'Other': 'Other',
+        'Press/Media': 'Press/Media', 'Professional Sportsperson': 'Professional Sportsperson',
+        'Religious Functionary': 'Religious Functionary', 'Researcher/Scientist': 'Researcher/Scientist',
+        'Retired': 'Retired', 'Seafarer': 'Seafarer', 'Self-Employed': 'Self-Employed',
+        'Service Sector': 'Service Sector', 'Student/Trainee': 'Student/Trainee',
+        'Tourism': 'Tourism', 'Unemployed': 'Unemployed',
+    }
+    TRAVEL_DOCUMENT_MAP = {
+        '10': 'Passeport Ordinaire', '3': 'Passeport Diplomatique',
+        '2': 'Carte d\'Identité', '9': 'Autres', '11': 'Document de Voyage pour Réfugiés',
+    }
+    RELATION_MAP = {
+        'Wife': 'Wife', 'Husband': 'Husband', 'Father': 'Father',
+        'Mother': 'Mother', 'Child': 'Child', 'Other': 'Other',
+    }
+
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4,
+                            rightMargin=72, leftMargin=72,
+                            topMargin=72, bottomMargin=72)
+
+    styles = getSampleStyleSheet()
+    style_normal = styles['Normal']
+    style_heading = styles['Heading2']
+    style_title = styles['Title']
+
+    story = []
+
+    # Title
+    story.append(Paragraph(_("Visa Application Summary"), style_title))
+    story.append(Spacer(1, 0.5*cm))
+
+    # Common Information
+    story.append(Paragraph(_("Common Information"), style_heading))
+    story.append(Spacer(1, 0.3*cm))
+
+    common = data['common']
+    common_data = [
+        [_("Min Desired Date"), common.get('start_date', '')],
+        [_("Max Allowed Date"), common.get('max_date', '')],
+        [_("Email"), common.get('email', '')],
+        [_("Phone"), common.get('phone_local', '')],
+        [_("Visa Type"), VISA_MAP.get(common.get('visa'), common.get('visa'))],
+        [_("Nationality"), NATIONALITY_MAP.get(common.get('nationality'), common.get('nationality'))],
+        [_("Relation"), RELATION_MAP.get(common.get('relations'), common.get('relations', ''))],
+        [_("Address"), common.get('contact_address', '')],
+        [_("City"), common.get('contact_city', '')],
+        [_("Postal Code"), common.get('contact_postcode', '')],
+        [_("Departure"), common.get('departure_date', '')],
+        [_("Return"), common.get('return_date', '')],
+    ]
+
+    common_table = Table(common_data, colWidths=[5*cm, 10*cm])
+    common_table.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+        ('TEXTCOLOR', (0,0), (-1,-1), colors.black),
+        ('ALIGN', (0,0), (-1,-1), 'LEFT'),
+        ('FONTNAME', (0,0), (-1,-1), 'Helvetica'),
+        ('FONTSIZE', (0,0), (-1,-1), 10),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 6),
+        ('GRID', (0,0), (-1,-1), 1, colors.black)
+    ]))
+    story.append(common_table)
+    story.append(Spacer(1, 0.5*cm))
+
+    # Applicants
+    for idx, applicant in enumerate(data['applicants'], start=1):
+        story.append(Paragraph(_("Applicant {}").format(idx), style_heading))
+        story.append(Spacer(1, 0.3*cm))
+
+        app_data = [
+            [_("First Name"), applicant.get('name', '')],
+            [_("Last Name"), applicant.get('surname', '')],
+            [_("Gender"), GENDER_MAP.get(applicant.get('gender'), applicant.get('gender'))],
+            [_("Marital Status"), MARITAL_STATUS_MAP.get(applicant.get('marital_status'), applicant.get('marital_status'))],
+            [_("Date of Birth"), applicant.get('birthday', '')],
+            [_("Place of Birth"), applicant.get('birth_place', '')],
+            [_("Passport Number"), applicant.get('passport_number', '')],
+            [_("Occupation"), OCCUPATION_MAP.get(applicant.get('occupation'), applicant.get('occupation'))],
+            [_("Father's Name"), applicant.get('father_name', '')],
+            [_("Mother's Name"), applicant.get('mother_name', '')],
+            [_("Travel Document"), TRAVEL_DOCUMENT_MAP.get(applicant.get('travel_document'), applicant.get('travel_document'))],
+            [_("Issued By"), applicant.get('passport_issued_by', '')],
+            [_("Issue Date"), applicant.get('passport_issue_date', '')],
+            [_("Expiry Date"), applicant.get('passport_expiry', '')],
+        ]
+
+        app_table = Table(app_data, colWidths=[5*cm, 10*cm])
+        app_table.setStyle(TableStyle([
+            ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+            ('TEXTCOLOR', (0,0), (-1,-1), colors.black),
+            ('ALIGN', (0,0), (-1,-1), 'LEFT'),
+            ('FONTNAME', (0,0), (-1,-1), 'Helvetica'),
+            ('FONTSIZE', (0,0), (-1,-1), 10),
+            ('BOTTOMPADDING', (0,0), (-1,-1), 6),
+            ('GRID', (0,0), (-1,-1), 1, colors.black)
+        ]))
+        story.append(app_table)
+        story.append(Spacer(1, 0.5*cm))
+
+    doc.build(story)
+
+    pdf = buffer.getvalue()
+    buffer.close()
+
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="visa_summary.pdf"'
+    return response
+
+
+''''@login_required
 def preview_pdf(request):
     if 'visa_data' not in request.session:
         return redirect('form')
@@ -312,4 +464,4 @@ def preview_pdf(request):
         response['Content-Disposition'] = 'attachment; filename="visa_summary.pdf"'
         return response
 
-    return HttpResponse('Error generating PDF', status=500)
+    return HttpResponse('Error generating PDF', status=500)'''
