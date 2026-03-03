@@ -12,6 +12,10 @@ import random
 from datetime import datetime, date, timedelta
 from django.utils.translation import gettext as _
 
+from django.template.loader import render_to_string
+from xhtml2pdf import pisa
+from io import BytesIO
+
 def index(request):
     return render(request, 'visa_form/index.html')
 
@@ -290,3 +294,22 @@ def preview_print(request):
         return redirect('form')
     data = request.session['visa_data']
     return render(request, 'visa_form/preview_print.html', {'data': data})
+
+@login_required
+def preview_pdf(request):
+    if 'visa_data' not in request.session:
+        return redirect('form')
+    data = request.session['visa_data']
+
+    # Render the simple PDF template
+    html_string = render_to_string('visa_form/preview_pdf.html', {'data': data})
+
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html_string.encode("UTF-8")), result)
+
+    if not pdf.err:
+        response = HttpResponse(result.getvalue(), content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="visa_summary.pdf"'
+        return response
+
+    return HttpResponse('Error generating PDF', status=500)

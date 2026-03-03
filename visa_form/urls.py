@@ -10,4 +10,5 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('preview-print/', views.preview_print, name='preview_print'),
+    path('preview-pdf/', views.preview_pdf, name='preview_pdf'),
 ]

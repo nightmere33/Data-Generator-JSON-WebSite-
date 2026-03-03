@@ -1,0 +1,89 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{% trans "Visa Application Summary" %}</title>
+    <style>
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            margin: 2rem;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #1a3a6c;
+            font-size: 24px;
+            margin-bottom: 2rem;
+        }
+        h2 {
+            background-color: #eef2ff;
+            padding: 0.75rem;
+            border-left: 5px solid #4f46e5;
+            font-size: 18px;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+        td {
+            padding: 0.5rem;
+            border-bottom: 1px solid #ddd;
+            vertical-align: top;
+        }
+        .label {
+            font-weight: bold;
+            width: 30%;
+            background-color: #f9f9f9;
+        }
+        .value {
+            width: 70%;
+        }
+        .section {
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>{% trans "Visa Application Summary" %}</h1>
+
+    <h2>{% trans "Common Information" %}</h2>
+    <table>
+        <tr><td class="label">{% trans "Min Desired Date" %}</td><td class="value">{{ data.common.start_date|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Max Allowed Date" %}</td><td class="value">{{ data.common.max_date|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Email" %}</td><td class="value">{{ data.common.email|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Phone" %}</td><td class="value">{{ data.common.phone_local|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Visa Type" %}</td><td class="value">{{ data.common.visa|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Nationality" %}</td><td class="value">{{ data.common.nationality|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Relation" %}</td><td class="value">{{ data.common.relations|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Address" %}</td><td class="value">{{ data.common.contact_address|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "City" %}</td><td class="value">{{ data.common.contact_city|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Postal Code" %}</td><td class="value">{{ data.common.contact_postcode|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Departure" %}</td><td class="value">{{ data.common.departure_date|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Return" %}</td><td class="value">{{ data.common.return_date|default:"-" }}</td></tr>
+    </table>
+
+    {% for applicant in data.applicants %}
+    <h2>{% trans "Applicant" %} {{ forloop.counter }}</h2>
+    <table>
+        <tr><td class="label">{% trans "First Name" %}</td><td class="value">{{ applicant.name|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Last Name" %}</td><td class="value">{{ applicant.surname|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Gender" %}</td><td class="value">{{ applicant.gender|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Marital Status" %}</td><td class="value">{{ applicant.marital_status|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Date of Birth" %}</td><td class="value">{{ applicant.birthday|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Place of Birth" %}</td><td class="value">{{ applicant.birth_place|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Passport Number" %}</td><td class="value">{{ applicant.passport_number|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Occupation" %}</td><td class="value">{{ applicant.occupation|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Father's Name" %}</td><td class="value">{{ applicant.father_name|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Mother's Name" %}</td><td class="value">{{ applicant.mother_name|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Travel Document" %}</td><td class="value">{{ applicant.travel_document|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Issued By" %}</td><td class="value">{{ applicant.passport_issued_by|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Issue Date" %}</td><td class="value">{{ applicant.passport_issue_date|default:"-" }}</td></tr>
+        <tr><td class="label">{% trans "Expiry Date" %}</td><td class="value">{{ applicant.passport_expiry|default:"-" }}</td></tr>
+    </table>
+    {% endfor %}
+</body>
+</html>

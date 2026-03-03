@@ -320,22 +320,19 @@
         const ctx = canvas.getContext('2d');
         let width, height;
         let particles = [];
+        let animationFrame;
+        let color;
+
         const isMobile = window.innerWidth <= 768;
         const PARTICLE_COUNT = isMobile ? 40 : 70;
         const MAX_SPEED = 0.15;
         const CONNECT_DISTANCE = isMobile ? 120 : 180;
-        
-        // Choose color based on dark mode
-        const isDark = document.documentElement.classList.contains('dark');
         const BASE_OPACITY = 0.35;
         const LINE_OPACITY = 0.2;
-        // Light mode: indigo, dark mode: light gray
-        const color = isDark ? '200,200,200' : '79,70,229';
 
-        function init() {
-            resizeCanvas();
-            createParticles();
-            animate();
+        function getThemeColor() {
+            const isDark = document.documentElement.classList.contains('dark');
+            return isDark ? '200,200,200' : '79,70,229';
         }
 
         function resizeCanvas() {
@@ -359,7 +356,7 @@
 
         function animate() {
             if (width === 0 || height === 0) {
-                requestAnimationFrame(animate);
+                animationFrame = requestAnimationFrame(animate);
                 return;
             }
 
@@ -396,19 +393,39 @@
                 }
             }
 
-            requestAnimationFrame(animate);
+            animationFrame = requestAnimationFrame(animate);
         }
 
+        function restartAnimation() {
+            if (animationFrame) cancelAnimationFrame(animationFrame);
+            resizeCanvas();
+            createParticles();
+            animate();
+        }
+
+        // Initial setup
+        color = getThemeColor();
+        resizeCanvas();
+        createParticles();
+        animate();
+
+        // Watch for theme changes
+        const observer = new MutationObserver(() => {
+            const newColor = getThemeColor();
+            if (newColor !== color) {
+                color = newColor;
+                restartAnimation();
+            }
+        });
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+        // Handle window resize
         window.addEventListener('resize', () => {
             resizeCanvas();
             createParticles();
         });
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
-        } else {
-            init();
-        }
+        window.addEventListener('beforeunload', () => observer.disconnect());
     })();
 </script>
 {% endblock %}
