@@ -18,7 +18,7 @@ from django.utils.translation import gettext as _
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.lib.units import cm
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer,KeepTogether
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER
 from io import BytesIO
@@ -404,8 +404,11 @@ def preview_pdf(request):
 
     # Applicants
     for idx, applicant in enumerate(data['applicants'], start=1):
-        story.append(Paragraph(_("Applicant {}").format(idx), style_heading))
-        story.append(Spacer(1, 0.3*cm))
+        # Build a list of flowables for this applicant
+        applicant_block = []
+
+        applicant_block.append(Paragraph(_("Applicant {}").format(idx), style_heading))
+        applicant_block.append(Spacer(1, 0.3*cm))
 
         app_data = [
             [_("First Name"), applicant.get('name', '')],
@@ -434,8 +437,12 @@ def preview_pdf(request):
             ('BOTTOMPADDING', (0,0), (-1,-1), 6),
             ('GRID', (0,0), (-1,-1), 1, colors.black)
         ]))
-        story.append(app_table)
-        story.append(Spacer(1, 0.5*cm))
+
+        applicant_block.append(app_table)
+        applicant_block.append(Spacer(1, 0.5*cm))  # optional trailing space
+
+        # Wrap the whole applicant block together to prevent page breaks inside
+        story.append(KeepTogether(applicant_block))
 
     doc.build(story)
 
@@ -445,23 +452,3 @@ def preview_pdf(request):
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="visa_summary.pdf"'
     return response
-
-
-''''@login_required
-def preview_pdf(request):
-    if 'visa_data' not in request.session:
-        return redirect('form')
-    data = request.session['visa_data']
-
-    # Render the simple PDF template
-    html_string = render_to_string('visa_form/preview_pdf.html', {'data': data})
-
-    result = BytesIO()
-    pdf = pisa.pisaDocument(BytesIO(html_string.encode("UTF-8")), result)
-
-    if not pdf.err:
-        response = HttpResponse(result.getvalue(), content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="visa_summary.pdf"'
-        return response
-
-    return HttpResponse('Error generating PDF', status=500)'''
