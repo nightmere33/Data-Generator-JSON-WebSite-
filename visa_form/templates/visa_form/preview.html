@@ -230,18 +230,16 @@
 
     <!-- Scrollable Cards Area -->
     <div class="cards-scrollable">
-        <!-- Common Information Card -->
+        <!-- Common Information Card (without relation) -->
         <div class="summary-card">
             <h2>{% trans "Common Information" %}</h2>
             <div class="summary-content">
-                <!-- all data items -->
                 <div class="data-item"><span class="data-label">{% trans "Min Desired Date" %}</span><span class="data-value">{{ data.common.start_date }}</span></div>
                 <div class="data-item"><span class="data-label">{% trans "Max Allowed Date" %}</span><span class="data-value">{{ data.common.max_date }}</span></div>
                 <div class="data-item"><span class="data-label">{% trans "Email" %}</span><span class="data-value">{{ data.common.email }}</span></div>
                 <div class="data-item"><span class="data-label">{% trans "Phone" %}</span><span class="data-value">{{ data.common.phone_local }}</span></div>
                 <div class="data-item"><span class="data-label">{% trans "Visa Type" %}</span><span class="data-value">{{ data.common.visa|visa_label }}</span></div>
                 <div class="data-item"><span class="data-label">{% trans "Nationality" %}</span><span class="data-value">{{ data.common.nationality|nationality_label }}</span></div>
-                <div class="data-item"><span class="data-label">{% trans "Relation" %}</span><span class="data-value">{{ data.common.relations|relation_label|default:"-" }}</span></div>
                 <div class="data-item"><span class="data-label">{% trans "Address" %}</span><span class="data-value">{{ data.common.contact_address }}</span></div>
                 <div class="data-item"><span class="data-label">{% trans "City" %}</span><span class="data-value">{{ data.common.contact_city }}</span></div>
                 <div class="data-item"><span class="data-label">{% trans "Postal Code" %}</span><span class="data-value">{{ data.common.contact_postcode }}</span></div>
@@ -255,7 +253,6 @@
         <div class="summary-card">
             <h2>{% trans "Applicant" %} {{ forloop.counter }}</h2>
             <div class="summary-content">
-                <!-- all applicant data -->
                 <div class="data-item"><span class="data-label">{% trans "First Name" %}</span><span class="data-value">{{ applicant.name }}</span></div>
                 <div class="data-item"><span class="data-label">{% trans "Last Name" %}</span><span class="data-value">{{ applicant.surname }}</span></div>
                 <div class="data-item"><span class="data-label">{% trans "Gender" %}</span><span class="data-value">{{ applicant.gender|gender_label }}</span></div>
@@ -264,6 +261,8 @@
                 <div class="data-item"><span class="data-label">{% trans "Place of Birth" %}</span><span class="data-value">{{ applicant.birth_place }}</span></div>
                 <div class="data-item"><span class="data-label">{% trans "Passport Number" %}</span><span class="data-value">{{ applicant.passport_number|default:"-" }}</span></div>
                 <div class="data-item"><span class="data-label">{% trans "Occupation" %}</span><span class="data-value">{{ applicant.occupation|occupation_label }}</span></div>
+                <!-- Relation field per applicant (empty for first, otherwise value) -->
+                <div class="data-item"><span class="data-label">{% trans "Relation" %}</span><span class="data-value">{{ applicant.relation|relation_label|default:"-" }}</span></div>
                 <div class="data-item"><span class="data-label">{% trans "Father's Name" %}</span><span class="data-value">{{ applicant.father_name|default:"-" }}</span></div>
                 <div class="data-item"><span class="data-label">{% trans "Mother's Name" %}</span><span class="data-value">{{ applicant.mother_name|default:"-" }}</span></div>
                 <div class="data-item"><span class="data-label">{% trans "Travel Document" %}</span><span class="data-value">{{ applicant.travel_document|travel_document_label }}</span></div>

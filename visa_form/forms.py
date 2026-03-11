@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from datetime import date
+import re
 
 class VisaApplicationForm(forms.Form):
     visa = forms.ChoiceField(
@@ -12,12 +13,12 @@ class VisaApplicationForm(forms.Form):
             ('96', _('Family Reunion')),
             ('94', _('Single Transit')),
             ('125', _('Sport & Cultural Single')),
-            ('93', _('Student Single')),
             ('86', _('Tourism Multiple')),
             ('85', _('Tourism Single')),
             ('90', _('Treatment Multiple')),
             ('89', _('Treatment Single')),
             ('92', _('Work Permit Multiple')),
+            ('93', _('Student Single')),
             ('91', _('Work Permit Single')),
         ],
         initial='',
@@ -96,29 +97,13 @@ class VisaApplicationForm(forms.Form):
     )
     email = forms.EmailField(
         label=_("Email"),
-        widget=forms.EmailInput(attrs={'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'})
+        widget=forms.EmailInput(attrs={'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full', 'placeholder': _('exemple@domaine.com')})
     )
     phone_local = forms.CharField(
         label=_("Phone"),
-        widget=forms.TextInput(attrs={'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'})
-    )
-
-    RELATION_CHOICES = [
-        ('', _('Select relation')),
-        ('Wife', _('Wife')),
-        ('Husband', _('Husband')),
-        ('Father', _('Father')),
-        ('Mother', _('Mother')),
-        ('Child', _('Child')),
-        ('Other', _('Other')),
-    ]
-
-    relations = forms.ChoiceField(
-        label=_('Relation'),
-        choices=RELATION_CHOICES,
-        required=False,
-        widget=forms.Select(attrs={
-            'class': 'form-select rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'
+        widget=forms.TextInput(attrs={
+            'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full',
+            'placeholder': _('555 88 73 971')
         })
     )
 
@@ -156,17 +141,22 @@ class VisaApplicationForm(forms.Form):
             stripped = value.strip()
             if not stripped:
                 raise forms.ValidationError(_("This field cannot consist of only spaces."))
-            # EmailField will validate the format
             return stripped
         return value
 
     def clean_phone_local(self):
         value = self.cleaned_data.get('phone_local', '')
         if value:
-            stripped = value.strip()
-            if not stripped:
+            # Remove spaces and any non-digit characters
+            digits = re.sub(r'\D', '', value)
+            if not digits:
                 raise forms.ValidationError(_("This field cannot consist of only spaces."))
-            return stripped
+            # Algerian phone numbers: 10 digits starting with 0 (after +213, it's 9 digits, but we store without +213)
+            if len(digits) != 10:
+                raise forms.ValidationError(_("Le numéro de téléphone doit comporter 10 chiffres (ex: 0558873971)."))
+            if not digits.startswith('0'):
+                raise forms.ValidationError(_("Le numéro doit commencer par 0."))
+            return digits
         return value
 
     def clean(self):
@@ -360,6 +350,26 @@ class ApplicantForm(forms.Form):
         })
     )
 
+    # New relation field for each applicant
+    RELATION_CHOICES = [
+        ('', _('Select relation')),
+        ('Wife', _('Wife')),
+        ('Husband', _('Husband')),
+        ('Father', _('Father')),
+        ('Mother', _('Mother')),
+        ('Child', _('Child')),
+        ('Other', _('Other')),
+    ]
+
+    relation = forms.ChoiceField(
+        label=_('Relation'),
+        choices=RELATION_CHOICES,
+        required=False,
+        widget=forms.Select(attrs={
+            'class': 'form-select rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'
+        })
+    )
+
     # Custom cleaning for text fields
     def clean_name(self):
         value = self.cleaned_data.get('name', '')
@@ -413,7 +423,7 @@ class ApplicantForm(forms.Form):
             no_spaces = value.replace(' ', '')
             if not no_spaces:
                 raise forms.ValidationError(_("Passport number cannot consist of only spaces."))
-            # Optional: validate 9 digits (if your requirement)
+            # Validate 9 digits
             if not no_spaces.isdigit() or len(no_spaces) != 9:
                 raise forms.ValidationError(_("Passport number must be exactly 9 digits."))
             return no_spaces
@@ -432,26 +442,41 @@ class ApplicantForm(forms.Form):
 class AgencyRegistrationForm(forms.Form):
     email = forms.EmailField(
         label=_('Email'),
-        widget=forms.EmailInput(attrs={'class': 'form-input rounded-lg w-full'})
+        widget=forms.EmailInput(attrs={
+            'class': 'form-input rounded-lg w-full',
+            'placeholder': _('Entrez votre email')
+        })
     )
     password = forms.CharField(
         label=_('Password'),
-        widget=forms.PasswordInput(attrs={'class': 'form-input rounded-lg w-full'})
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-input rounded-lg w-full',
+            'placeholder': _('Entrez votre mot de passe')
+        })
     )
     confirm_password = forms.CharField(
         label=_('Confirm Password'),
-        widget=forms.PasswordInput(attrs={'class': 'form-input rounded-lg w-full'})
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-input rounded-lg w-full',
+            'placeholder': _('Confirmez votre mot de passe')
+        })
     )
     agency_name = forms.CharField(
         label=_('Agency Name'),
         max_length=200,
-        widget=forms.TextInput(attrs={'class': 'form-input rounded-lg w-full'})
+        widget=forms.TextInput(attrs={
+            'class': 'form-input rounded-lg w-full',
+            'placeholder': _('Nom de l\'agence')
+        })
     )
     phone = forms.CharField(
         label=_('Phone'),
         max_length=20,
         required=False,
-        widget=forms.TextInput(attrs={'class': 'form-input rounded-lg w-full'})
+        widget=forms.TextInput(attrs={
+            'class': 'form-input rounded-lg w-full',
+            'placeholder': _('Téléphone (optionnel)')
+        })
     )
 
     # Custom cleaning
@@ -478,7 +503,6 @@ class AgencyRegistrationForm(forms.Form):
         if value:
             stripped = value.strip()
             if not stripped:
-                # Optional field: if only spaces, treat as empty
                 return ''
             return stripped
         return value

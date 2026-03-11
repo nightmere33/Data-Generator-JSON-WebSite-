@@ -183,18 +183,59 @@
         text-transform: uppercase;
         color: var(--label);
         margin-bottom: 7px;
-        display: block;
+        display: flex;
+        align-items: center;
+        gap: 4px;
     }
 
     .required-star { color: var(--red); margin-left: 2px; }
 
-    .form-help {
-        font-size: 11px;
-        color: var(--muted);
-        margin-top: 4px;
-        display: flex;
+    /* Tooltip icon */
+    .tooltip-icon {
+        display: inline-flex;
         align-items: center;
-        gap: 4px;
+        justify-content: center;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background-color: var(--muted);
+        color: white;
+        font-size: 10px;
+        cursor: help;
+        position: relative;
+        margin-left: 4px;
+    }
+
+    .tooltip-icon:hover::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 150%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 6px 10px;
+        font-size: 12px;
+        font-weight: normal;
+        text-transform: none;
+        white-space: nowrap;
+        z-index: 20;
+        box-shadow: var(--card-shadow);
+        pointer-events: none;
+    }
+
+    .tooltip-icon:hover::before {
+        content: '';
+        position: absolute;
+        bottom: 140%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 5px;
+        border-style: solid;
+        border-color: var(--border) transparent transparent transparent;
+        z-index: 20;
     }
 
     /* Field group */
@@ -558,6 +599,33 @@
             font-size: 16px;
             padding: 13px 14px;
         }
+        .tooltip-icon:hover::after {
+            white-space: normal;
+            width: 200px;
+            left: 0;
+            transform: none;
+        }
+    }
+
+    /* Phone input group */
+    .input-group {
+        display: flex;
+        align-items: stretch;
+    }
+    .input-group .input-group-text {
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        border-right: none;
+        border-radius: var(--radius) 0 0 var(--radius);
+        padding: 11px 14px;
+        color: var(--text);
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    .input-group .form-input {
+        border-left: none;
+        border-radius: 0 var(--radius) var(--radius) 0;
+        flex: 1;
     }
 </style>
 {% endblock %}
@@ -613,17 +681,17 @@
                         <div class="field-group">
                             <label class="form-label">
                                 <i class="fas fa-calendar-day mr-1 text-blue-400"></i> {% trans "Minimum Desired Date" %} <span class="required-star">*</span>
+                                <span class="tooltip-icon" data-tooltip="{% trans 'Date de rendez‑vous la plus proche acceptable' %}">i</span>
                             </label>
                             {{ visa_form.start_date|add_class:"form-input" }}
-                            <p class="form-help"><i class="fas fa-info-circle"></i> {% trans "Earliest acceptable appointment date" %}</p>
                         </div>
 
                         <div class="field-group">
                             <label class="form-label">
                                 <i class="fas fa-calendar-times mr-1 text-blue-400"></i> {% trans "Maximum Allowed Date" %} <span class="required-star">*</span>
+                                <span class="tooltip-icon" data-tooltip="{% trans 'Date de rendez‑vous la plus éloignée acceptable' %}">i</span>
                             </label>
                             {{ visa_form.max_date|add_class:"form-input" }}
-                            <p class="form-help"><i class="fas fa-info-circle"></i> {% trans "Latest acceptable appointment date" %}</p>
                         </div>
 
                         <div class="field-group">
@@ -631,13 +699,6 @@
                                 <i class="fas fa-envelope mr-1 text-blue-400"></i> {% trans "Email" %} <span class="required-star">*</span>
                             </label>
                             {{ visa_form.email|add_class:"form-input" }}
-                        </div>
-
-                        <div class="field-group">
-                            <label class="form-label">
-                                <i class="fas fa-phone mr-1 text-blue-400"></i> {% trans "Phone" %} <span class="required-star">*</span>
-                            </label>
-                            {{ visa_form.phone_local|add_class:"form-input" }}
                         </div>
                     </div>
 
@@ -659,11 +720,13 @@
 
                         <div class="field-group">
                             <label class="form-label">
-                                <i class="fas fa-users mr-1 text-blue-400"></i> {% trans "Relation" %}
-                                <span class="required-star" id="relation-star">*</span>
+                                <i class="fas fa-phone mr-1 text-blue-400"></i> {% trans "Phone" %} <span class="required-star">*</span>
+                                <span class="tooltip-icon" data-tooltip="{% trans 'Numéro à 10 chiffres commençant par 0 (ex: 0558873971). Le +213 est ajouté automatiquement.' %}">i</span>
                             </label>
-                            {{ visa_form.relations|add_class:"form-select" }}
-                            <p class="form-help">{% trans "Select the relationship to the main applicant" %}</p>
+                            <div class="input-group">
+                                <span class="input-group-text">+213</span>
+                                {{ visa_form.phone_local|add_class:"form-input" }}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -796,6 +859,15 @@
                                         {{ form.mother_name|add_class:"form-input"|attr:"required" }}
                                     </div>
 
+                                    <!-- Relation field – hidden for first applicant, shown for others -->
+                                    <div class="field-group relation-field" {% if forloop.first %}style="display:none;"{% endif %}>
+                                        <label class="form-label">
+                                            <i class="fas fa-users mr-1 text-blue-400"></i> {% trans "Relation" %} <span class="required-star">*</span>
+                                            <span class="tooltip-icon" data-tooltip="{% trans 'Sélectionnez le lien avec le demandeur principal' %}">i</span>
+                                        </label>
+                                        {{ form.relation|add_class:"form-select" }}
+                                    </div>
+
                                     <div class="section-divider"><span>{% trans "Travel Document" %}</span></div>
 
                                     <div class="field-group">
@@ -877,7 +949,7 @@
         let width, height;
         let particles = [];
         let animationFrame;
-        let color; // current color based on theme
+        let color;
 
         const isMobile = window.innerWidth <= 768;
         const PARTICLE_COUNT = isMobile ? 50 : 90;
@@ -886,7 +958,6 @@
         const BASE_OPACITY = 0.7;
         const LINE_OPACITY = 0.4;
 
-        // Get color for current theme
         function getThemeColor() {
             const isDark = document.documentElement.classList.contains('dark');
             return isDark ? '220,220,255' : '15,34,64';
@@ -960,13 +1031,11 @@
             animate();
         }
 
-        // Initial setup
         color = getThemeColor();
         resizeCanvas();
         createParticles();
         animate();
 
-        // Watch for theme changes (dark class on <html>)
         const observer = new MutationObserver(() => {
             const newColor = getThemeColor();
             if (newColor !== color) {
@@ -976,133 +1045,75 @@
         });
         observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
-        // Handle window resize
         window.addEventListener('resize', () => {
             resizeCanvas();
             createParticles();
         });
-
-        // Cleanup observer on page unload (optional)
         window.addEventListener('beforeunload', () => observer.disconnect());
     })();
 
-    // ================ FORM SCRIPT WITH SPACE PREVENTION ================
+    // ================ FORM SCRIPT ================
     document.addEventListener('DOMContentLoaded', function() {
-        // Helper to trim leading/trailing spaces on input/paste for fields that allow internal spaces
-        function applyTrimBehavior(field) {
-            // Trim on blur
-            field.addEventListener('blur', function() {
-                this.value = this.value.trim();
-            });
-            // Optional: also trim on paste? We'll handle in paste event
-        }
-
-        // Fields that allow internal spaces: contact_address, contact_city, name, surname, birth_place, father_name, mother_name, passport_issued_by
-        // Also contact_address is already allowed spaces.
+        // Espaces
         function allowInternalSpaces(field) {
-            // Do not prevent space key, but trim on blur/paste
-            field.addEventListener('blur', function() {
-                this.value = this.value.trim();
-            });
+            field.addEventListener('blur', function() { this.value = this.value.trim(); });
             field.addEventListener('paste', function(e) {
                 e.preventDefault();
                 let pasted = (e.clipboardData || window.clipboardData).getData('text');
-                // Trim leading/trailing spaces from pasted content
-                let cleaned = pasted.trim();
-                this.value = cleaned;
+                this.value = pasted.trim();
             });
         }
 
-        // Fields that disallow spaces completely: email, phone_local, contact_postcode, passport_number
         function disallowSpaces(field) {
-            field.addEventListener('keydown', function(e) {
-                if (e.key === ' ') {
-                    e.preventDefault();
-                }
-            });
-            field.addEventListener('input', function() {
-                this.value = this.value.replace(/\s/g, '');
-            });
+            field.addEventListener('keydown', function(e) { if (e.key === ' ') e.preventDefault(); });
+            field.addEventListener('input', function() { this.value = this.value.replace(/\s/g, ''); });
             field.addEventListener('paste', function(e) {
                 e.preventDefault();
                 let pasted = (e.clipboardData || window.clipboardData).getData('text');
-                let cleaned = pasted.replace(/\s/g, '');
-                this.value = cleaned;
+                this.value = pasted.replace(/\s/g, '');
             });
         }
 
-        // Apply appropriate handlers to all fields
         function setupFieldHandlers() {
-            // Contact address (allow spaces, but trim)
-            document.querySelectorAll('[name="contact_address"]').forEach(field => {
-                allowInternalSpaces(field);
-            });
-            // City
-            document.querySelectorAll('[name="contact_city"]').forEach(field => {
-                allowInternalSpaces(field);
-            });
-            // Postal code – disallow spaces
-            document.querySelectorAll('[name="contact_postcode"]').forEach(field => {
-                disallowSpaces(field);
-            });
-            // Email – disallow spaces
-            document.querySelectorAll('[name="email"]').forEach(field => {
-                disallowSpaces(field);
-            });
-            // Phone – disallow spaces
-            document.querySelectorAll('[name="phone_local"]').forEach(field => {
-                disallowSpaces(field);
-            });
-            // Applicant fields
-            document.querySelectorAll('[name$="name"], [name$="surname"], [name$="birth_place"], [name$="father_name"], [name$="mother_name"], [name$="passport_issued_by"]').forEach(field => {
-                allowInternalSpaces(field);
-            });
-            // Passport number – disallow spaces (special handling with digits)
+            document.querySelectorAll('[name="contact_address"], [name="contact_city"], [name$="name"], [name$="surname"], [name$="birth_place"], [name$="father_name"], [name$="mother_name"], [name$="passport_issued_by"]')
+                .forEach(allowInternalSpaces);
+            document.querySelectorAll('[name="contact_postcode"], [name="email"], [name="phone_local"], [name$="passport_number"]')
+                .forEach(disallowSpaces);
+
             document.querySelectorAll('[name$="passport_number"]').forEach(field => {
-                // Special: remove spaces and non-digits
-                field.addEventListener('keydown', function(e) {
-                    if (e.key === ' ') {
-                        e.preventDefault();
-                    }
-                });
                 field.addEventListener('input', function() {
                     this.value = this.value.replace(/\s/g, '').replace(/\D/g, '');
                 });
                 field.addEventListener('paste', function(e) {
                     e.preventDefault();
                     let pasted = (e.clipboardData || window.clipboardData).getData('text');
-                    let cleaned = pasted.replace(/\s/g, '').replace(/\D/g, '');
-                    this.value = cleaned;
-                });
-                field.addEventListener('blur', function() {
-                    // Trim (already no spaces)
+                    this.value = pasted.replace(/\s/g, '').replace(/\D/g, '');
                 });
             });
-            // All other text fields (if any) we could apply a default, but above covers all.
         }
 
-        const formset    = document.getElementById('applicant-formset');
+        const formset = document.getElementById('applicant-formset');
         const totalForms = document.getElementById('id_form-TOTAL_FORMS');
-        const addBtn     = document.getElementById('add-applicant');
-        let formCount    = parseInt(totalForms.value);
+        const addBtn = document.getElementById('add-applicant');
+        let formCount = parseInt(totalForms.value);
 
-        // Update relation required/disabled based on number of applicants
-        function updateRelationRequired() {
-            const relationField = document.querySelector('[name="relations"]');
-            const relationStar = document.getElementById('relation-star');
-            if (formCount > 1) {
-                relationField?.removeAttribute('disabled');
-                relationField?.setAttribute('required', 'required');
-                if (relationStar) relationStar.style.display = 'inline';
-            } else {
-                relationField?.setAttribute('disabled', 'disabled');
-                relationField?.removeAttribute('required');
-                if (relationStar) relationStar.style.display = 'none';
-            }
+        function updateRelationVisibilityAndRequirement() {
+            document.querySelectorAll('.applicant-card').forEach((card, index) => {
+                const relationField = card.querySelector('[name$="relation"]');
+                const relationGroup = card.querySelector('.relation-field');
+                if (!relationField || !relationGroup) return;
+                if (index === 0) {
+                    relationGroup.style.display = 'none';
+                    relationField.removeAttribute('required');
+                    relationField.value = '';
+                } else {
+                    relationGroup.style.display = 'block';
+                    relationField.setAttribute('required', 'required');
+                }
+            });
         }
-        updateRelationRequired();
+        updateRelationVisibilityAndRequirement();
 
-        // Toast function
         function showToast(message, type = 'info') {
             document.querySelectorAll('.custom-toast').forEach(t => t.remove());
             const icons = { success:'check-circle', warning:'exclamation-triangle', error:'times-circle', info:'info-circle' };
@@ -1117,7 +1128,6 @@
             }, 4000);
         }
 
-        // Initialize remove buttons
         function initRemoveButtons() {
             document.querySelectorAll('.remove-applicant').forEach((btn, index) => {
                 if (index === 0) btn.style.display = 'none';
@@ -1131,7 +1141,7 @@
                             formCount--;
                             totalForms.value = formCount;
                             updateFormIndices();
-                            updateRelationRequired();
+                            updateRelationVisibilityAndRequirement();
                             showToast('{% trans "Applicant removed" %}', 'info');
                         }, 280);
                     }
@@ -1140,29 +1150,24 @@
         }
         initRemoveButtons();
 
-        // Add new applicant
         if (addBtn) {
             addBtn.addEventListener('click', function() {
                 if (formCount >= 5) {
                     showToast('{% trans "Maximum of 5 applicants allowed" %}', 'warning');
                     return;
                 }
-
                 const template = document.querySelector('.applicant-card');
-                const newForm  = template.cloneNode(true);
+                const newForm = template.cloneNode(true);
                 newForm.dataset.index = formCount;
-
                 newForm.querySelectorAll('input, select, textarea').forEach(input => {
                     if (input.name) input.name = input.name.replace(/-\d+-/, `-${formCount}-`);
-                    if (input.id)   input.id   = input.id.replace(/-\d+-/, `-${formCount}-`);
+                    if (input.id) input.id = input.id.replace(/-\d+-/, `-${formCount}-`);
                     if (input.type !== 'hidden') input.value = '';
                 });
-
                 const num = newForm.querySelector('.applicant-num');
                 if (num) num.textContent = formCount + 1;
                 const title = newForm.querySelector('h3');
                 if (title) title.textContent = `{% trans "Applicant" %} ${formCount + 1}`;
-
                 const removeBtn = newForm.querySelector('.remove-applicant');
                 if (removeBtn) {
                     removeBtn.style.display = 'flex';
@@ -1176,13 +1181,12 @@
                                 formCount--;
                                 totalForms.value = formCount;
                                 updateFormIndices();
-                                updateRelationRequired();
+                                updateRelationVisibilityAndRequirement();
                                 showToast('{% trans "Applicant removed" %}', 'info');
                             }, 280);
                         }
                     });
                 }
-
                 newForm.style.opacity = '0';
                 newForm.style.transform = 'translateY(16px)';
                 newForm.style.transition = 'opacity .3s, transform .3s';
@@ -1191,17 +1195,12 @@
                     newForm.style.opacity = '1';
                     newForm.style.transform = 'translateY(0)';
                 });
-
                 formCount++;
                 totalForms.value = formCount;
-                updateRelationRequired();
-
-                // Apply handlers to the new fields
+                updateRelationVisibilityAndRequirement();
                 setupFieldHandlers();
-
                 setTimeout(() => newForm.scrollIntoView({ behavior: 'smooth', block: 'center' }), 120);
                 showToast(`{% trans "Applicant" %} ${formCount} {% trans "added!" %}`, 'success');
-
                 if (formCount >= 5) {
                     addBtn.disabled = true;
                     addBtn.innerHTML = '<i class="fas fa-ban"></i> {% trans "Maximum Reached" %}';
@@ -1209,7 +1208,6 @@
             });
         }
 
-        // Reindex after removal
         function updateFormIndices() {
             document.querySelectorAll('.applicant-card').forEach((card, index) => {
                 card.dataset.index = index;
@@ -1219,19 +1217,17 @@
                 if (title) title.textContent = `{% trans "Applicant" %} ${index + 1}`;
                 card.querySelectorAll('input, select, textarea').forEach(input => {
                     if (input.name) input.name = input.name.replace(/-\d+-/, `-${index}-`);
-                    if (input.id)   input.id   = input.id.replace(/-\d+-/, `-${index}-`);
+                    if (input.id) input.id = input.id.replace(/-\d+-/, `-${index}-`);
                 });
                 const rm = card.querySelector('.remove-applicant');
                 if (rm) rm.style.display = index === 0 ? 'none' : 'flex';
             });
-
             if (formCount < 5 && addBtn) {
                 addBtn.disabled = false;
                 addBtn.innerHTML = '<i class="fas fa-user-plus"></i> {% trans "Add Another Applicant" %}';
             }
         }
 
-        // Reset button
         const resetBtn = document.querySelector('button[type="reset"]');
         if (resetBtn) {
             resetBtn.addEventListener('click', function(e) {
@@ -1241,13 +1237,20 @@
                 formCount = 1;
                 totalForms.value = 1;
                 updateFormIndices();
-                updateRelationRequired();
+                updateRelationVisibilityAndRequirement();
                 document.getElementById('visaForm').reset();
                 showToast('{% trans "Form cleared" %}', 'info');
             });
         }
 
-        // ------------------ VALIDATION (works for all fields) ------------------
+        const phoneInput = document.querySelector('[name="phone_local"]');
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g, '').slice(0, 10);
+            });
+        }
+
+        // ------------------ VALIDATION (avec email) ------------------
         function validateForm() {
             let isValid = true;
             let firstErrorField = null;
@@ -1267,7 +1270,6 @@
                 isValid = false;
             }
 
-            // Clear previous errors
             document.querySelectorAll('.field-group').forEach(g => {
                 g.classList.remove('has-error');
                 const err = g.querySelector('.error-message');
@@ -1277,7 +1279,6 @@
             const today = new Date();
             today.setHours(0,0,0,0);
 
-            // Required fields (all with [required] attribute)
             document.querySelectorAll('[required]').forEach(field => {
                 let value = field.value.trim();
                 if (field.name.includes('passport_number')) {
@@ -1288,7 +1289,16 @@
                 }
             });
 
-            // Date validations
+            // Validation spécifique pour l'email
+            const emailField = document.querySelector('[name="email"]');
+            if (emailField && emailField.value.trim()) {
+                const email = emailField.value.trim();
+                // Vérification simple de présence d'un @ et d'un point après
+                if (!email.includes('@') || email.indexOf('@') === 0 || email.lastIndexOf('.') < email.indexOf('@') + 2) {
+                    setError(emailField, `{% trans "Veuillez entrer une adresse email valide contenant @" %}`);
+                }
+            }
+
             const startDate = document.querySelector('[name="start_date"]');
             if (startDate && startDate.value) {
                 const start = new Date(startDate.value);
@@ -1332,7 +1342,6 @@
                 }
             });
 
-            // Passport number: must be exactly 9 digits (no spaces)
             document.querySelectorAll('[name$="passport_number"]').forEach(field => {
                 let value = field.value.replace(/\s/g, '').replace(/\D/g, '');
                 if (value && (!/^\d{9}$/.test(value))) {
@@ -1340,7 +1349,6 @@
                 }
             });
 
-            // Passport issue <= expiry (per applicant)
             document.querySelectorAll('.applicant-card').forEach(card => {
                 const issue = card.querySelector('[name$="passport_issue_date"]');
                 const expiry = card.querySelector('[name$="passport_expiry"]');
@@ -1356,7 +1364,6 @@
             return { isValid, firstErrorField };
         }
 
-        // Form submit handler
         const form = document.getElementById('visaForm');
         form.addEventListener('submit', function(e) {
             const { isValid, firstErrorField } = validateForm();
@@ -1370,7 +1377,6 @@
             }
         });
 
-        // Remove error on input
         form.querySelectorAll('input, select, textarea').forEach(el => {
             el.addEventListener('input', function() {
                 const group = this.closest('.field-group');
@@ -1382,7 +1388,6 @@
             });
         });
 
-        // Initial setup
         setupFieldHandlers();
     });
 </script>

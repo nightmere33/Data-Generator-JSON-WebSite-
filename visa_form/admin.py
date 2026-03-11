@@ -193,47 +193,53 @@ class SubmissionAdmin(admin.ModelAdmin):
         for i in range(len(passports), 5):
             passports.append(f"{i+1}emepersonne")
 
+        # Build relations array: first empty, then relation from each applicant
+        relations_array = [""]  # first applicant always empty
+        for app in full_applicants[1:]:
+            relations_array.append(app.get('relation', ''))
+        # Pad to 5 with empty strings
+        while len(relations_array) < 5:
+            relations_array.append("")
+
         email = additional.get('email', '')
         phone = additional.get('phone_local', '')
-        relation = additional.get('relations', '')
-        relations_array = [relation, "Wife", "Father", "Mother", "Child"]
+        # Plus besoin de récupérer 'relations' de additional
 
         start_date = additional.get('start_date', '')
         max_date = additional.get('max_date', '')
         start_date_dmy = format_date_dmy(start_date)
         max_date_dmy = format_date_dmy(max_date)
 
-        # Part 1: Tampermonkey
+        # Part 1: Tampermonkey (inchangé)
         applicants_js = js_object_dumps(applicants_script, level=1, indent=2)
         common_core_js = js_object_dumps(common_core, level=1, indent=2)
         tampermonkey_code = f"""// ============================================
-// TAMPERMONKEY INTEGRATION CODE
-// ============================================
-const COMMON_DATA = {common_core_js};
+    // 
+    // ============================================
+    const COMMON_DATA = {common_core_js};
 
-const APPLICANT_DATA = {applicants_js};
+    const APPLICANT_DATA = {applicants_js};
 
-// That's it! Your script is ready to auto-fill.
-// ============================================
+   
 
-"""
+    """
 
         # Part 2: Second script
         second_script = f"""// ============================================
-// SCRIPT 2 CONFIGURATION
-// ============================================
-const START_DATE_FORMATTED = "{start_date_dmy}"; // Date minimale souhaitée (DD.MM.YYYY)
-const MAX_DATE_FORMATTED   = "{max_date_dmy}"; // Date maximale autorisée
+    // 
+    // ============================================
+    const START_DATE_FORMATTED = "{start_date_dmy}"; // Date minimale souhaitée (DD.MM.YYYY)
+    const MAX_DATE_FORMATTED   = "{max_date_dmy}"; // Date maximale autorisée
 
-const CONFIG = {{
-    defaultApplicants: {num_applicants},
-    passports: {json.dumps(passports, indent=2)},
-    email: "{email}",
-    phoneLocal: "{phone}",
-    relations: {json.dumps(relations_array, indent=2)}
-}};
+    const CONFIG = {{
+        defaultApplicants: {num_applicants},
+        passports: {json.dumps(passports, indent=2)},
+        email: "{email}",
+        phoneLocal: "{phone}",
+        relations: {json.dumps(relations_array, indent=2)}
+    }};
 
-"""
+    """
 
         full_content = tampermonkey_code + "\n" + second_script
 
@@ -287,8 +293,7 @@ const COMMON_DATA = {common_core_js};
 
 const APPLICANT_DATA = {applicants_js};
 
-// That's it! Your script is ready to auto-fill.
-// ============================================
+
 
 """
 

@@ -101,13 +101,22 @@ def form_view(request):
                 if form.cleaned_data and form.cleaned_data.get('name'):
                     cleaned_applicants.append(convert_dates_for_session(form.cleaned_data))
 
-            # Conditional validation: if more than one applicant, relation must be selected
+            # Validate relation for each applicant beyond first
             num_applicants = len(cleaned_applicants)
-            relation_value = visa_form.cleaned_data.get('relations')
-            if num_applicants > 1 and not relation_value:
-                visa_form.add_error('relations', _("Please select a relation when there are multiple applicants."))
-                # fall through to re-render with errors
-            else:
+            has_relation_error = False
+            for idx, app in enumerate(cleaned_applicants):
+                if idx == 0:
+                    # First applicant: relation must be empty
+                    if app.get('relation'):
+                        applicant_formset.forms[idx].add_error('relation', _("Le premier demandeur ne doit pas avoir de relation."))
+                        has_relation_error = True
+                else:
+                    # Subsequent applicants: relation must be selected
+                    if not app.get('relation'):
+                        applicant_formset.forms[idx].add_error('relation', _("Veuillez sélectionner une relation pour ce demandeur."))
+                        has_relation_error = True
+
+            if not has_relation_error:
                 common_data = visa_form.cleaned_data.copy()
                 session_data = {
                     'common': convert_dates_for_session(common_data),
@@ -115,18 +124,16 @@ def form_view(request):
                 }
                 request.session['visa_data'] = session_data
                 return redirect('preview')
-        # If invalid (either form errors or conditional), re-render with errors
+        # If invalid, re-render with errors
     else:
         # GET request
         if request.GET.get('edit') == '1' and 'visa_data' in request.session:
-            # Editing existing data – use raw strings from session
             session_data = request.session['visa_data']
             common_data = session_data['common']
             applicants_data = session_data['applicants']
 
             visa_form = VisaApplicationForm(initial=common_data)
 
-            # Prepare initial for applicants (keep as strings)
             initial_applicants = []
             for app in applicants_data:
                 app_copy = {}
@@ -137,7 +144,6 @@ def form_view(request):
             ApplicantFormSet = formset_factory(ApplicantForm, extra=0, max_num=5)
             applicant_formset = ApplicantFormSet(initial=initial_applicants)
         else:
-            # New form
             visa_form = VisaApplicationForm()
             ApplicantFormSet = formset_factory(ApplicantForm, extra=profile.default_applicants, max_num=5)
             applicant_formset = ApplicantFormSet()
@@ -155,6 +161,7 @@ def preview_view(request):
     return render(request, 'visa_form/preview.html', {
         'data': data,
     })
+
 
 @login_required
 def download_json(request):
@@ -175,11 +182,12 @@ def download_json(request):
 
     additional_info = {k: v for k, v in data['common'].items() if k not in core_fields}
 
-    # Prepare applicants for Tampermonkey (without passport_number)
+    # Prepare applicants for Tampermonkey (without passport_number and without relation)
     applicants_script = []
     for app in data['applicants']:
         app_copy = app.copy()
         app_copy.pop('passport_number', None)
+        app_copy.pop('relation', None)  # remove relation from individual objects
         applicants_script.append(app_copy)
 
     # Prepare data for second script
@@ -189,9 +197,14 @@ def download_json(request):
     for i in range(len(passports), 5):
         passports.append(f"{i+1}emepersonne")
 
-    # Relations: first element = common relation, then fixed list
-    relation = data['common'].get('relations', '')
-    relations_array = [relation, "Wife", "Father", "Mother", "Child"]
+    # Build relations array: first element empty, then relation for each applicant beyond first
+    relations_array = [""]  # first applicant always empty
+    for app in data['applicants'][1:]:  # skip first
+        relations_array.append(app.get('relation', ''))
+    # Pad to 5 with empty strings (or placeholders if needed)
+    while len(relations_array) < 5:
+        relations_array.append("")
+
     email = data['common'].get('email', '')
     phone = data['common'].get('phone_local', '')
 
@@ -209,8 +222,7 @@ const COMMON_DATA = {common_core_js};
 
 const APPLICANT_DATA = {applicants_js};
 
-// That's it! Your script is ready to auto-fill.
-// ============================================
+
 
 """
 
@@ -232,7 +244,7 @@ const CONFIG = {{
 
     full_content = tampermonkey_code + "\n" + second_script
 
-    # Generate filename
+    # Generate filename (as before)
     if data['applicants']:
         first = data['applicants'][0]
         first_name = first.get('name', '').replace(' ', '_')
@@ -256,8 +268,6 @@ const CONFIG = {{
 
     response = HttpResponse(full_content, content_type='text/plain')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
-    #make it possible to download agian
-    # del request.session['visa_data']
     return response
 
 def register_with_invite(request, token):
@@ -369,7 +379,7 @@ def preview_pdf(request):
     story.append(Paragraph(_("Visa Application Summary"), style_title))
     story.append(Spacer(1, 0.5*cm))
 
-    # Common Information
+    # Common Information (sans relation)
     story.append(Paragraph(_("Common Information"), style_heading))
     story.append(Spacer(1, 0.3*cm))
 
@@ -381,7 +391,6 @@ def preview_pdf(request):
         [_("Phone"), common.get('phone_local', '')],
         [_("Visa Type"), VISA_MAP.get(common.get('visa'), common.get('visa'))],
         [_("Nationality"), NATIONALITY_MAP.get(common.get('nationality'), common.get('nationality'))],
-        [_("Relation"), RELATION_MAP.get(common.get('relations'), common.get('relations', ''))],
         [_("Address"), common.get('contact_address', '')],
         [_("City"), common.get('contact_city', '')],
         [_("Postal Code"), common.get('contact_postcode', '')],
@@ -404,9 +413,7 @@ def preview_pdf(request):
 
     # Applicants
     for idx, applicant in enumerate(data['applicants'], start=1):
-        # Build a list of flowables for this applicant
         applicant_block = []
-
         applicant_block.append(Paragraph(_("Applicant {}").format(idx), style_heading))
         applicant_block.append(Spacer(1, 0.3*cm))
 
@@ -419,6 +426,7 @@ def preview_pdf(request):
             [_("Place of Birth"), applicant.get('birth_place', '')],
             [_("Passport Number"), applicant.get('passport_number', '')],
             [_("Occupation"), OCCUPATION_MAP.get(applicant.get('occupation'), applicant.get('occupation'))],
+            [_("Relation"), RELATION_MAP.get(applicant.get('relation'), applicant.get('relation', ''))],
             [_("Father's Name"), applicant.get('father_name', '')],
             [_("Mother's Name"), applicant.get('mother_name', '')],
             [_("Travel Document"), TRAVEL_DOCUMENT_MAP.get(applicant.get('travel_document'), applicant.get('travel_document'))],
@@ -439,9 +447,7 @@ def preview_pdf(request):
         ]))
 
         applicant_block.append(app_table)
-        applicant_block.append(Spacer(1, 0.5*cm))  # optional trailing space
-
-        # Wrap the whole applicant block together to prevent page breaks inside
+        applicant_block.append(Spacer(1, 0.5*cm))
         story.append(KeepTogether(applicant_block))
 
     doc.build(story)
@@ -449,7 +455,7 @@ def preview_pdf(request):
     pdf = buffer.getvalue()
     buffer.close()
 
-    # --- Nouveau : génération du nom de fichier ---
+    # Generate filename
     if data['applicants']:
         first = data['applicants'][0]
         first_name = first.get('name', 'applicant').replace(' ', '_')
@@ -457,7 +463,6 @@ def preview_pdf(request):
         filename = f"{first_name}_{last_name}.pdf"
     else:
         filename = "visa_summary.pdf"
-    # ---------------------------------------------
 
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
