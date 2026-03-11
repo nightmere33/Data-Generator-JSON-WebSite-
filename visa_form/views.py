@@ -449,6 +449,16 @@ def preview_pdf(request):
     pdf = buffer.getvalue()
     buffer.close()
 
+    # --- Nouveau : génération du nom de fichier ---
+    if data['applicants']:
+        first = data['applicants'][0]
+        first_name = first.get('name', 'applicant').replace(' ', '_')
+        last_name = first.get('surname', 'unknown').replace(' ', '_')
+        filename = f"{first_name}_{last_name}.pdf"
+    else:
+        filename = "visa_summary.pdf"
+    # ---------------------------------------------
+
     response = HttpResponse(pdf, content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="visa_summary.pdf"'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response

@@ -3,15 +3,15 @@ from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 from django.http import HttpResponse
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from .models import AgencyProfile, InviteLink, Submission
 import json
-import random
 import re
 import uuid
-from django.utils.timezone import now
 import zipfile
 from io import BytesIO
 from datetime import datetime
+from django.utils.timezone import now
 
 def js_object_dumps(obj, level=0, indent=2):
     """Convert Python object to JavaScript object literal string with unquoted keys."""
@@ -71,14 +71,25 @@ admin.site.register(User, CustomUserAdmin)
 
 @admin.register(InviteLink)
 class InviteLinkAdmin(admin.ModelAdmin):
-    list_display = ('token_short', 'created_at', 'is_used', 'used_by')
+    list_display = ('token_short', 'invite_url_display', 'created_at', 'is_used', 'used_by')
     list_filter = ('is_used', 'created_at')
     search_fields = ('token', 'used_by__email')
-    readonly_fields = ('token', 'created_at')
+    readonly_fields = ('token', 'created_at', 'invite_url_display')
 
     def token_short(self, obj):
         return f"{str(obj.token)[:8]}..."
     token_short.short_description = 'Token'
+
+    def invite_url_display(self, obj):
+        url = f"https://vdzservice.com/register/{obj.token}/"
+        # Bouton avec onclick utilisant l'API Clipboard, avec échappement correct
+        button = f'''
+        <button onclick="navigator.clipboard.writeText('{url}').then(() => {{ this.innerHTML='<i class=\\'fas fa-check\\' style=\\'color:green\\'></i> Copié'; setTimeout(() => this.innerHTML='<i class=\\'fas fa-copy\\'></i> Copier', 2000); }})" style="background:none; border:1px solid #ccc; border-radius:4px; padding:2px 8px; cursor:pointer; margin-left:8px; font-size:12px;">
+            <i class="fas fa-copy"></i> Copier
+        </button>
+        '''
+        return mark_safe(f'{url} {button}')
+    invite_url_display.short_description = "Lien d'invitation"
 
 @admin.register(Submission)
 class SubmissionAdmin(admin.ModelAdmin):

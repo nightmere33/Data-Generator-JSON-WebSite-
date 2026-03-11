@@ -663,7 +663,7 @@ msgstr "Effacer le formulaire"
 
 #: .\visa_form\templates\visa_form\form.html:611
 msgid "Preview & Generate JSON"
-msgstr "Aperçu et génération JSON"
+msgstr "Aperçu et génération de donnée"
 
 #: .\visa_form\templates\visa_form\form.html:618
 msgid "Data processed locally, never stored"

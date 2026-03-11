@@ -1,7 +1,7 @@
 {% extends 'visa_form/base.html' %}
 {% load i18n %}
 {% load visa_filters %}
-{% block title %}{% trans "Preview Data - Mosaic Visa Generator" %}{% endblock %}
+{% block title %}{% trans "vdzservice - Preview Data" %}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -275,27 +275,27 @@
         {% endfor %}
     </div>
 
-    <!-- Fixed Action Buttons -->
+   <!-- Fixed Action Buttons -->
     <div class="action-container">
         <div class="flex flex-col sm:flex-row justify-center gap-4">
             <a href="{% url 'form' %}?edit=1" 
-               class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-6 rounded-lg transition inline-flex items-center justify-center text-sm md:text-base"
-               style="background-color: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color);">
+            class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-6 rounded-lg transition inline-flex items-center justify-center text-sm md:text-base"
+            style="background-color: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color);">
                 <i class="fas fa-edit mr-2"></i> {% trans "Edit Data" %}
             </a>
-            <button onclick="window.open('{% url 'preview_print' %}', '_self')" 
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition inline-flex items-center justify-center text-sm md:text-base">
+            <a href="{% url 'preview_pdf' %}" 
+            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition inline-flex items-center justify-center text-sm md:text-base">
                 <i class="fas fa-print mr-2"></i> {% trans "Print / PDF" %}
-            </button>
+            </a>
             <a href="{% url 'download_json' %}" 
-               class="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-8 rounded-lg shadow hover:shadow-lg transition-all duration-300 inline-flex items-center justify-center text-sm md:text-base">
+            class="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-8 rounded-lg shadow hover:shadow-lg transition-all duration-300 inline-flex items-center justify-center text-sm md:text-base">
                 <i class="fas fa-download mr-3"></i> {% trans "Download JSON" %}
                 <i class="fas fa-arrow-right ml-2"></i>
             </a>
         </div>
         <p class="text-xs md:text-sm text-center mt-4" style="color: var(--text-secondary);">
             <i class="fas fa-info-circle mr-2"></i>
-            {% trans "The JSON file is ready for Tampermonkey auto-filling." %}
+            {% trans "Cliquer sur le bouton pour télécharger le document(PDF|TXT)." %}
         </p>
     </div>
 </div>

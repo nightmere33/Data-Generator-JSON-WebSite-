@@ -1,7 +1,7 @@
 {% extends 'visa_form/base.html' %}
 {% load i18n %}
 
-{% block title %}{% trans "Login - Mosaic Visa Generator" %}{% endblock %}
+{% block title %}{% trans "vdzservice - Login" %}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -79,11 +79,11 @@
             {% csrf_token %}
             <div>
                 <label class="form-label">{% trans "Email" %}</label>
-                <input type="email" name="email" required class="form-input">
+                <input type="email" name="email" placeholder="Enter your email" required class="form-input">
             </div>
             <div>
                 <label class="form-label">{% trans "Password" %}</label>
-                <input type="password" name="password" required class="form-input">
+                <input type="password" name="password" placeholder="Enter your password" required class="form-input">
             </div>
             <button type="submit"
                     class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
