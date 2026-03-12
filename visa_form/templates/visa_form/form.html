@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load widget_tweaks %}
 
-{% block title %}vdzservice - Create Visa Data {% endblock %}
+{% block title %}vdzservice - Form {% endblock %}
 
 {% block extra_head %}
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -1054,16 +1054,24 @@
 
     // ================ FORM SCRIPT ================
     document.addEventListener('DOMContentLoaded', function() {
-        // Espaces
+        // Fonction pour normaliser les espaces : trim et remplacer les espaces multiples par un seul
+        function normalizeSpaces(str) {
+            return str.trim().replace(/\s+/g, ' ');
+        }
+
+        // Pour les champs qui autorisent les espaces internes (noms, adresse, ville, etc.)
         function allowInternalSpaces(field) {
-            field.addEventListener('blur', function() { this.value = this.value.trim(); });
+            field.addEventListener('blur', function() {
+                this.value = normalizeSpaces(this.value);
+            });
             field.addEventListener('paste', function(e) {
                 e.preventDefault();
                 let pasted = (e.clipboardData || window.clipboardData).getData('text');
-                this.value = pasted.trim();
+                this.value = normalizeSpaces(pasted);
             });
         }
 
+        // Pour les champs qui ne doivent pas contenir d'espaces (email, téléphone, code postal, numéro passeport)
         function disallowSpaces(field) {
             field.addEventListener('keydown', function(e) { if (e.key === ' ') e.preventDefault(); });
             field.addEventListener('input', function() { this.value = this.value.replace(/\s/g, ''); });
@@ -1075,11 +1083,14 @@
         }
 
         function setupFieldHandlers() {
+            // Champs avec espaces autorisés (normalisés)
             document.querySelectorAll('[name="contact_address"], [name="contact_city"], [name$="name"], [name$="surname"], [name$="birth_place"], [name$="father_name"], [name$="mother_name"], [name$="passport_issued_by"]')
                 .forEach(allowInternalSpaces);
+            // Champs sans espaces
             document.querySelectorAll('[name="contact_postcode"], [name="email"], [name="phone_local"], [name$="passport_number"]')
                 .forEach(disallowSpaces);
 
+            // Traitement spécial pour numéro de passeport (suppression des non-chiffres)
             document.querySelectorAll('[name$="passport_number"]').forEach(field => {
                 field.addEventListener('input', function() {
                     this.value = this.value.replace(/\s/g, '').replace(/\D/g, '');
@@ -1250,7 +1261,7 @@
             });
         }
 
-        // ------------------ VALIDATION (avec email) ------------------
+        // ------------------ VALIDATION (avec email, caractères spéciaux) ------------------
         function validateForm() {
             let isValid = true;
             let firstErrorField = null;
@@ -1293,11 +1304,40 @@
             const emailField = document.querySelector('[name="email"]');
             if (emailField && emailField.value.trim()) {
                 const email = emailField.value.trim();
-                // Vérification simple de présence d'un @ et d'un point après
                 if (!email.includes('@') || email.indexOf('@') === 0 || email.lastIndexOf('.') < email.indexOf('@') + 2) {
                     setError(emailField, `{% trans "Veuillez entrer une adresse email valide contenant @" %}`);
                 }
             }
+
+            // Validation spécifique pour le téléphone (10 chiffres, commence par 0)
+            const phoneField = document.querySelector('[name="phone_local"]');
+            if (phoneField && phoneField.value.trim()) {
+                const phoneDigits = phoneField.value.replace(/\D/g, '');
+                if (phoneDigits.length !== 10) {
+                    setError(phoneField, `{% trans "Le numéro de téléphone doit comporter 10 chiffres." %}`);
+                } else if (!phoneDigits.startsWith('0')) {
+                    setError(phoneField, `{% trans "Le numéro doit commencer par 0." %}`);
+                }
+            }
+
+            // Validation des noms : uniquement lettres (y compris accentuées) et espaces
+            const nameFields = [
+                '[name="contact_city"]',
+                '[name$="name"]',
+                '[name$="surname"]',
+                '[name$="birth_place"]',
+                '[name$="father_name"]',
+                '[name$="mother_name"]',
+                '[name$="passport_issued_by"]'
+            ].join(',');
+            document.querySelectorAll(nameFields).forEach(field => {
+                if (field.value.trim()) {
+                    const value = field.value;
+                    if (!/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(value)) {
+                        setError(field, `{% trans "Ce champ ne doit contenir que des lettres et des espaces." %}`);
+                    }
+                }
+            });
 
             const startDate = document.querySelector('[name="start_date"]');
             if (startDate && startDate.value) {

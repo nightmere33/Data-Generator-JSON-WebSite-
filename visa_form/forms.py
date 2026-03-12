@@ -9,12 +9,14 @@ class VisaApplicationForm(forms.Form):
         choices=[('', _('Select visa type'))] + [
             ('88', _('Business Multiple')),
             ('87', _('Business Single')),
+            ('86', _('Tourism Multiple')),
+            ('85', _('Tourism Single')),
             ('95', _('Double Transit')),
-            ('96', _('Family Reunion')),
             ('94', _('Single Transit')),
             ('125', _('Sport & Cultural Single')),
             ('86', _('Tourism Multiple')),
             ('85', _('Tourism Single')),
+            ('96', _('Family Reunion')),
             ('90', _('Treatment Multiple')),
             ('89', _('Treatment Single')),
             ('92', _('Work Permit Multiple')),
@@ -103,7 +105,7 @@ class VisaApplicationForm(forms.Form):
         label=_("Phone"),
         widget=forms.TextInput(attrs={
             'class': 'form-input rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full',
-            'placeholder': _('555 88 73 971')
+            'placeholder': _('055 88 73 971')
         })
     )
 
@@ -358,7 +360,7 @@ class ApplicantForm(forms.Form):
         ('Father', _('Father')),
         ('Mother', _('Mother')),
         ('Child', _('Child')),
-        ('Other', _('Other')),
+        
     ]
 
     relation = forms.ChoiceField(
