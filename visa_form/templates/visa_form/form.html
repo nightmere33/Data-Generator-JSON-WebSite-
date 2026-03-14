@@ -25,6 +25,7 @@
         --heading:  #0f1f35;
         --hover-bg: #eef0f4;
         --focus-ring: rgba(79, 70, 229, 0.2);
+        --label-focus: var(--navy); /* light mode focus label colour */
         --canvas-color-light: '15,34,64';
         --canvas-color-dark: '220,220,255';
     }
@@ -46,6 +47,7 @@
         --heading:  #f0f0f0;
         --hover-bg: #3d4459;
         --focus-ring: rgba(95, 90, 240, 0.3);
+        --label-focus: #00ffb3c2; /* bright purple for dark mode */
         --canvas-color-light: #1a1e2c;
         --canvas-color-dark: '220,220,255';
     }
@@ -246,7 +248,7 @@
     }
 
     .field-group:focus-within .form-label {
-        color: var(--navy);
+        color: var(--label-focus);
     }
 
     /* Error state */
@@ -940,7 +942,7 @@
 
 {% block extra_scripts %}
 <script>
-    // ==================== DYNAMIC PARTICLES (theme-aware) ====================
+    // ==================== DYNAMIC PARTICLES (unchanged) ====================
     (function() {
         const canvas = document.getElementById('particles-canvas');
         if (!canvas) return;
@@ -1054,12 +1056,11 @@
 
     // ================ FORM SCRIPT ================
     document.addEventListener('DOMContentLoaded', function() {
-        // Fonction pour normaliser les espaces : trim et remplacer les espaces multiples par un seul
+        // ----- Helper: normalise spaces -----
         function normalizeSpaces(str) {
             return str.trim().replace(/\s+/g, ' ');
         }
 
-        // Pour les champs qui autorisent les espaces internes (noms, adresse, ville, etc.)
         function allowInternalSpaces(field) {
             field.addEventListener('blur', function() {
                 this.value = normalizeSpaces(this.value);
@@ -1071,7 +1072,6 @@
             });
         }
 
-        // Pour les champs qui ne doivent pas contenir d'espaces (email, téléphone, code postal, numéro passeport)
         function disallowSpaces(field) {
             field.addEventListener('keydown', function(e) { if (e.key === ' ') e.preventDefault(); });
             field.addEventListener('input', function() { this.value = this.value.replace(/\s/g, ''); });
@@ -1083,22 +1083,19 @@
         }
 
         function setupFieldHandlers() {
-            // Champs avec espaces autorisés (normalisés)
             document.querySelectorAll('[name="contact_address"], [name="contact_city"], [name$="name"], [name$="surname"], [name$="birth_place"], [name$="father_name"], [name$="mother_name"], [name$="passport_issued_by"]')
                 .forEach(allowInternalSpaces);
-            // Champs sans espaces
             document.querySelectorAll('[name="contact_postcode"], [name="email"], [name="phone_local"], [name$="passport_number"]')
                 .forEach(disallowSpaces);
-
-            // Traitement spécial pour numéro de passeport (suppression des non-chiffres)
             document.querySelectorAll('[name$="passport_number"]').forEach(field => {
                 field.addEventListener('input', function() {
-                    this.value = this.value.replace(/\s/g, '').replace(/\D/g, '');
+                    // Allow only digits, limit to 9
+                    this.value = this.value.replace(/\s/g, '').replace(/\D/g, '').slice(0, 9);
                 });
                 field.addEventListener('paste', function(e) {
                     e.preventDefault();
                     let pasted = (e.clipboardData || window.clipboardData).getData('text');
-                    this.value = pasted.replace(/\s/g, '').replace(/\D/g, '');
+                    this.value = pasted.replace(/\s/g, '').replace(/\D/g, '').slice(0, 9);
                 });
             });
         }
@@ -1261,26 +1258,73 @@
             });
         }
 
-        // ------------------ VALIDATION (avec email, caractères spéciaux) ------------------
+        // ------------------ VALIDATION (robuste) ------------------
+        function isValidDateString(dateStr) {
+            // Must be YYYY-MM-DD and a real date
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
+            const parts = dateStr.split('-');
+            const year = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10);
+            const day = parseInt(parts[2], 10);
+            if (year < 1900 || year > 2100) return false;
+            const date = new Date(year, month - 1, day);
+            return date.getFullYear() === year &&
+                   date.getMonth() === month - 1 &&
+                   date.getDate() === day;
+        }
+
+        function getValidDate(field) {
+            if (!field || !field.value) return null;
+            if (!isValidDateString(field.value)) return null;
+            return new Date(field.value);
+        }
+
+        function setError(field, message) {
+            const group = field.closest('.field-group');
+            if (!group) return;
+            group.classList.add('has-error');
+            let errorDiv = group.querySelector('.error-message');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message';
+                group.appendChild(errorDiv);
+            }
+            errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+        }
+
+        function clearError(field) {
+            const group = field.closest('.field-group');
+            if (!group) return;
+            group.classList.remove('has-error');
+            const err = group.querySelector('.error-message');
+            if (err) err.remove();
+        }
+
+        // List of all date fields
+        const dateFieldsSelector = '[name="start_date"], [name="max_date"], [name="departure_date"], [name="return_date"], [name$="birthday"], [name$="passport_issue_date"], [name$="passport_expiry"]';
+
+        // Blur validation for date fields (catches invalid entries like "201165")
+        document.querySelectorAll(dateFieldsSelector).forEach(field => {
+            field.addEventListener('blur', function() {
+                // If the field is empty but the browser considers it a bad input (user typed an invalid date)
+                if (!this.value && this.validity && this.validity.badInput) {
+                    setError(this, '{% trans "Invalid date format. Please use YYYY-MM-DD." %}');
+                } else if (this.value && !isValidDateString(this.value)) {
+                    setError(this, '{% trans "Please enter a valid date in YYYY-MM-DD format." %}');
+                } else {
+                    clearError(this);
+                }
+            });
+            field.addEventListener('input', function() {
+                clearError(this);
+            });
+        });
+
         function validateForm() {
             let isValid = true;
             let firstErrorField = null;
 
-            function setError(field, message) {
-                const group = field.closest('.field-group');
-                if (!group) return;
-                group.classList.add('has-error');
-                let errorDiv = group.querySelector('.error-message');
-                if (!errorDiv) {
-                    errorDiv = document.createElement('div');
-                    errorDiv.className = 'error-message';
-                    group.appendChild(errorDiv);
-                }
-                errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
-                if (!firstErrorField) firstErrorField = field;
-                isValid = false;
-            }
-
+            // Clear all errors first
             document.querySelectorAll('.field-group').forEach(g => {
                 g.classList.remove('has-error');
                 const err = g.querySelector('.error-message');
@@ -1290,37 +1334,51 @@
             const today = new Date();
             today.setHours(0,0,0,0);
 
+            // Required fields
             document.querySelectorAll('[required]').forEach(field => {
                 let value = field.value.trim();
                 if (field.name.includes('passport_number')) {
                     value = field.value.replace(/\s/g, '').replace(/\D/g, '');
                 }
                 if (!value) {
-                    setError(field, `{% trans "This field is required." %}`);
+                    // For date fields, also check if it's empty due to bad input
+                    if (field.type === 'date' && field.validity && field.validity.badInput) {
+                        setError(field, '{% trans "Invalid date format. Please use YYYY-MM-DD." %}');
+                    } else {
+                        setError(field, '{% trans "This field is required." %}');
+                    }
+                    if (!firstErrorField) firstErrorField = field;
+                    isValid = false;
                 }
             });
 
-            // Validation spécifique pour l'email
+            // Email
             const emailField = document.querySelector('[name="email"]');
             if (emailField && emailField.value.trim()) {
                 const email = emailField.value.trim();
                 if (!email.includes('@') || email.indexOf('@') === 0 || email.lastIndexOf('.') < email.indexOf('@') + 2) {
                     setError(emailField, `{% trans "Veuillez entrer une adresse email valide contenant @" %}`);
+                    if (!firstErrorField) firstErrorField = emailField;
+                    isValid = false;
                 }
             }
 
-            // Validation spécifique pour le téléphone (10 chiffres, commence par 0)
+            // Phone
             const phoneField = document.querySelector('[name="phone_local"]');
             if (phoneField && phoneField.value.trim()) {
                 const phoneDigits = phoneField.value.replace(/\D/g, '');
                 if (phoneDigits.length !== 10) {
                     setError(phoneField, `{% trans "Le numéro de téléphone doit comporter 10 chiffres." %}`);
+                    if (!firstErrorField) firstErrorField = phoneField;
+                    isValid = false;
                 } else if (!phoneDigits.startsWith('0')) {
                     setError(phoneField, `{% trans "Le numéro doit commencer par 0." %}`);
+                    if (!firstErrorField) firstErrorField = phoneField;
+                    isValid = false;
                 }
             }
 
-            // Validation des noms : uniquement lettres (y compris accentuées) et espaces
+            // Name fields (letters only)
             const nameFields = [
                 '[name="contact_city"]',
                 '[name$="name"]',
@@ -1335,69 +1393,101 @@
                     const value = field.value;
                     if (!/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(value)) {
                         setError(field, `{% trans "Ce champ ne doit contenir que des lettres et des espaces." %}`);
+                        if (!firstErrorField) firstErrorField = field;
+                        isValid = false;
                     }
                 }
             });
 
-            const startDate = document.querySelector('[name="start_date"]');
-            if (startDate && startDate.value) {
-                const start = new Date(startDate.value);
-                if (start < today) setError(startDate, `{% trans "Date cannot be in the past." %}`);
-            }
-
-            const maxDate = document.querySelector('[name="max_date"]');
-            if (maxDate && maxDate.value) {
-                const max = new Date(maxDate.value);
-                if (max < today) setError(maxDate, `{% trans "Date cannot be in the past." %}`);
-            }
-
-            if (startDate && startDate.value && maxDate && maxDate.value) {
-                const start = new Date(startDate.value);
-                const max = new Date(maxDate.value);
-                if (start > max) setError(startDate, `{% trans "Minimum date must not be after maximum date." %}`);
-            }
-
-            const depDate = document.querySelector('[name="departure_date"]');
-            if (depDate && depDate.value) {
-                const dep = new Date(depDate.value);
-                if (dep < today) setError(depDate, `{% trans "Departure date cannot be in the past." %}`);
-            }
-
-            const retDate = document.querySelector('[name="return_date"]');
-            if (retDate && retDate.value) {
-                const ret = new Date(retDate.value);
-                if (ret < today) setError(retDate, `{% trans "Return date cannot be in the past." %}`);
-            }
-
-            if (depDate && depDate.value && retDate && retDate.value) {
-                const dep = new Date(depDate.value);
-                const ret = new Date(retDate.value);
-                if (dep >= ret) setError(retDate, `{% trans "Return date must be after departure date." %}`);
-            }
-
-            document.querySelectorAll('[name$="birthday"]').forEach(field => {
-                if (field.value) {
-                    const dob = new Date(field.value);
-                    if (dob > today) setError(field, `{% trans "Date of birth cannot be in the future." %}`);
-                }
-            });
-
+            // Passport number (9 digits)
             document.querySelectorAll('[name$="passport_number"]').forEach(field => {
                 let value = field.value.replace(/\s/g, '').replace(/\D/g, '');
                 if (value && (!/^\d{9}$/.test(value))) {
                     setError(field, `{% trans "Passport number must be exactly 9 digits." %}`);
+                    if (!firstErrorField) firstErrorField = field;
+                    isValid = false;
+                }
+            });
+
+            // ---------- DATE VALIDATIONS ----------
+            // 1. Format (re-check, but blur already handled)
+            document.querySelectorAll(dateFieldsSelector).forEach(field => {
+                // Skip if already has error from required check
+                if (field.closest('.field-group').classList.contains('has-error')) return;
+                if (field.value && !isValidDateString(field.value)) {
+                    setError(field, `{% trans "Please enter a valid date in YYYY-MM-DD format." %}`);
+                    if (!firstErrorField) firstErrorField = field;
+                    isValid = false;
+                } else if (!field.value && field.validity && field.validity.badInput) {
+                    setError(field, `{% trans "Invalid date format. Please use YYYY-MM-DD." %}`);
+                    if (!firstErrorField) firstErrorField = field;
+                    isValid = false;
+                }
+            });
+
+            // 2. Logical comparisons (only if dates are valid)
+            const startDateField = document.querySelector('[name="start_date"]');
+            const startDate = getValidDate(startDateField);
+            if (startDate && startDate < today) {
+                setError(startDateField, `{% trans "Date cannot be in the past." %}`);
+                if (!firstErrorField) firstErrorField = startDateField;
+                isValid = false;
+            }
+
+            const maxDateField = document.querySelector('[name="max_date"]');
+            const maxDate = getValidDate(maxDateField);
+            if (maxDate && maxDate < today) {
+                setError(maxDateField, `{% trans "Date cannot be in the past." %}`);
+                if (!firstErrorField) firstErrorField = maxDateField;
+                isValid = false;
+            }
+
+            if (startDate && maxDate && startDate > maxDate) {
+                setError(startDateField, `{% trans "Minimum date must not be after maximum date." %}`);
+                if (!firstErrorField) firstErrorField = startDateField;
+                isValid = false;
+            }
+
+            const depDateField = document.querySelector('[name="departure_date"]');
+            const depDate = getValidDate(depDateField);
+            if (depDate && depDate < today) {
+                setError(depDateField, `{% trans "Departure date cannot be in the past." %}`);
+                if (!firstErrorField) firstErrorField = depDateField;
+                isValid = false;
+            }
+
+            const retDateField = document.querySelector('[name="return_date"]');
+            const retDate = getValidDate(retDateField);
+            if (retDate && retDate < today) {
+                setError(retDateField, `{% trans "Return date cannot be in the past." %}`);
+                if (!firstErrorField) firstErrorField = retDateField;
+                isValid = false;
+            }
+
+            if (depDate && retDate && depDate >= retDate) {
+                setError(retDateField, `{% trans "Return date must be after departure date." %}`);
+                if (!firstErrorField) firstErrorField = retDateField;
+                isValid = false;
+            }
+
+            document.querySelectorAll('[name$="birthday"]').forEach(field => {
+                const dob = getValidDate(field);
+                if (dob && dob > today) {
+                    setError(field, `{% trans "Date of birth cannot be in the future." %}`);
+                    if (!firstErrorField) firstErrorField = field;
+                    isValid = false;
                 }
             });
 
             document.querySelectorAll('.applicant-card').forEach(card => {
-                const issue = card.querySelector('[name$="passport_issue_date"]');
-                const expiry = card.querySelector('[name$="passport_expiry"]');
-                if (issue && issue.value && expiry && expiry.value) {
-                    const issueDate = new Date(issue.value);
-                    const expiryDate = new Date(expiry.value);
-                    if (issueDate >= expiryDate) {
-                        setError(expiry, `{% trans "Expiry date must be after issue date." %}`);
-                    }
+                const issueField = card.querySelector('[name$="passport_issue_date"]');
+                const expiryField = card.querySelector('[name$="passport_expiry"]');
+                const issueDate = getValidDate(issueField);
+                const expiryDate = getValidDate(expiryField);
+                if (issueDate && expiryDate && issueDate >= expiryDate) {
+                    setError(expiryField, `{% trans "Expiry date must be after issue date." %}`);
+                    if (!firstErrorField) firstErrorField = expiryField;
+                    isValid = false;
                 }
             });
 
@@ -1417,14 +1507,10 @@
             }
         });
 
+        // Clear errors when user types in any field
         form.querySelectorAll('input, select, textarea').forEach(el => {
             el.addEventListener('input', function() {
-                const group = this.closest('.field-group');
-                if (group && group.classList.contains('has-error')) {
-                    group.classList.remove('has-error');
-                    const err = group.querySelector('.error-message');
-                    if (err) err.remove();
-                }
+                clearError(this);
             });
         });
 

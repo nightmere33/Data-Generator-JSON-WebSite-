@@ -14,8 +14,6 @@ class VisaApplicationForm(forms.Form):
             ('95', _('Double Transit')),
             ('94', _('Single Transit')),
             ('125', _('Sport & Cultural Single')),
-            ('86', _('Tourism Multiple')),
-            ('85', _('Tourism Single')),
             ('96', _('Family Reunion')),
             ('90', _('Treatment Multiple')),
             ('89', _('Treatment Single')),
