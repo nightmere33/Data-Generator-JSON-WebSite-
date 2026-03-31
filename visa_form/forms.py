@@ -45,6 +45,21 @@ class VisaApplicationForm(forms.Form):
         label=_('Nationality'),
         widget=forms.Select(attrs={'class': 'form-select rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'})
     )
+    LOCALISATION_CHOICES = [
+        ('',_("Select location")),
+        ('9',_('Algiers')),
+        ('7',_('Oran')),
+        ('8',_('Oran VIP')),
+        
+        ('17',_('Constantine')),
+
+    ]
+    localisation = forms.ChoiceField(
+        choices=LOCALISATION_CHOICES,
+        label=_('Localisation'),
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-select rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full'})
+    )
     
     contact_address = forms.CharField(
         label=_('Contact Address'),

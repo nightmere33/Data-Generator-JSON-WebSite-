@@ -720,6 +720,15 @@
                             {{ visa_form.nationality|add_class:"form-select" }}
                         </div>
 
+                        <!-- Localisation NEW -->
+                         
+                        <div class="field-group">
+                            <label class="form-label">
+                                <i class="fas fa-map-marker-alt mr-1 text-blue-400"></i> {% trans "Localisation" %} <span class="required-star">*</span>
+                            </label>
+                            {{ visa_form.localisation|add_class:"form-select" }}
+                        </div>
+
                         <div class="field-group">
                             <label class="form-label">
                                 <i class="fas fa-phone mr-1 text-blue-400"></i> {% trans "Phone" %} <span class="required-star">*</span>

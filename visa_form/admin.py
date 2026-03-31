@@ -209,6 +209,7 @@ class SubmissionAdmin(admin.ModelAdmin):
         max_date = additional.get('max_date', '')
         start_date_dmy = format_date_dmy(start_date)
         max_date_dmy = format_date_dmy(max_date)
+        localisation = int(additional.get('localisation', '0')) if additional.get('localisation') else 0
 
         # Part 1: Tampermonkey (inchangé)
         applicants_js = js_object_dumps(applicants_script, level=1, indent=2)
@@ -232,6 +233,7 @@ class SubmissionAdmin(admin.ModelAdmin):
     const MAX_DATE_FORMATTED   = "{max_date_dmy}"; // Date maximale autorisée
 
     const CONFIG = {{
+        localisation: {localisation},
         defaultApplicants: {num_applicants},
         passports: {json.dumps(passports, indent=2)},
         email: "{email}",
@@ -283,6 +285,7 @@ class SubmissionAdmin(admin.ModelAdmin):
                     max_date = additional.get('max_date', '')
                     start_date_dmy = format_date_dmy(start_date)
                     max_date_dmy = format_date_dmy(max_date)
+                    localisation = int(additional.get('localisation', '0')) if additional.get('localisation') else 0
 
                     applicants_js = js_object_dumps(applicants_script, level=1, indent=2)
                     common_core_js = js_object_dumps(common_core, level=1, indent=2)
@@ -303,6 +306,7 @@ const START_DATE_FORMATTED = "{start_date_dmy}"; // Date minimale souhaitée (DD
 const MAX_DATE_FORMATTED   = "{max_date_dmy}"; // Date maximale autorisée
 
 const CONFIG = {{
+    localisation: {localisation},
     defaultApplicants: {num_applicants},
     passports: {json.dumps(passports, indent=2)},
     email: "{email}",

@@ -93,6 +93,13 @@ RELATION_MAP = {
     'Other': _('Other'),
 }
 
+LOCALISATION_MAP = {
+    '7': _('Oran'),
+    '8': _('Oran VIP'),
+    '9': _('Algiers'),
+    '17': _('Constantine'),
+}
+
 @register.filter
 def visa_label(value):
     return VISA_MAP.get(value, value)
@@ -120,3 +127,7 @@ def occupation_label(value):
 @register.filter
 def relation_label(value):
     return RELATION_MAP.get(value, value)
+
+@register.filter
+def localisation_label(value):
+    return LOCALISATION_MAP.get(value, value)

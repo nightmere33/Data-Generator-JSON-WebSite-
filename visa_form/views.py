@@ -210,6 +210,7 @@ def download_json(request):
 
     email = data['common'].get('email', '')
     phone = data['common'].get('phone_local', '')
+    localisation = int(data['common'].get('localisation', '0')) if data['common'].get('localisation') else 0
 
     # Format dates to DD.MM.YYYY
     start_date_dmy = format_date_dmy(data['common'].get('start_date', ''))
@@ -236,6 +237,7 @@ const START_DATE_FORMATTED = "{start_date_dmy}"; // Date minimale souhaitée (DD
 const MAX_DATE_FORMATTED   = "{max_date_dmy}"; // Date maximale autorisée
 
 const CONFIG = {{
+    localisation: {localisation},
     defaultApplicants: {num_applicants},
     passports: {json.dumps(passports, indent=2)},
     email: "{email}",
@@ -356,6 +358,12 @@ def preview_pdf(request):
         '55': 'France',
         '80': 'Espagne',
         '191': 'Turquie',
+    }
+    LOCALISATION_MAP = {
+        '7': 'Oran',
+        '8': 'Oran VIP',
+        '9': 'Algiers',
+        '17': 'Constantine',
     }
     GENDER_MAP = {'M': 'Male', 'F': 'Female'}
     MARITAL_STATUS_MAP = {'0': 'Single', '1': 'Married'}
@@ -514,11 +522,13 @@ def preview_pdf(request):
         [_("Phone"), common.get('phone_local', '')],
         [_("Visa Type"), VISA_MAP.get(common.get('visa'), common.get('visa'))],
         [_("Nationality"), NATIONALITY_MAP.get(common.get('nationality'), common.get('nationality'))],
+        [_("Localisation"), LOCALISATION_MAP.get(common.get('localisation', ''), common.get('localisation', ''))],
         [_("Address"), common.get('contact_address', '')],
         [_("City"), common.get('contact_city', '')],
         [_("Postal Code"), common.get('contact_postcode', '')],
         [_("Departure"), common.get('departure_date', '')],
         [_("Return"), common.get('return_date', '')],
+        
     ]
 
     common_table = Table(common_data, colWidths=[5*cm, 10*cm])
