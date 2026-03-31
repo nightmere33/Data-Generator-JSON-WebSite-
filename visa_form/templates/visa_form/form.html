@@ -908,8 +908,29 @@
             </div>
         </div>
 
-        <!-- Submit -->
+       <!-- Submit -->
         <div class="submit-section">
+            <!-- CONFIRMATION CHECKBOX SECTION -->
+            <div class="mb-6 p-4 border border-amber-200 rounded-lg bg-amber-50 dark:bg-amber-900/20 dark:border-amber-800">
+                <div class="flex items-start gap-3">
+                    <div class="text-amber-600 dark:text-amber-400 text-xl">⚠️</div>
+                    <div class="flex-1">
+                        <p class="font-semibold text-amber-800 dark:text-amber-300 mb-2">
+                            {% trans "Confirmation requise" %} / <span lang="ar">تأكيد مطلوب</span>
+                        </p>
+                        <div class="field-group">
+                            <label class="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                <input type="checkbox" id="confirmCheckbox" required class="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span>
+                                    {% trans "J'ai lu et vérifié tous les champs." %} /
+                                    <span lang="ar">لقد قرأت وتحققت من جميع الحقول.</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="flex flex-col sm:flex-row gap-4 mb-6">
                 <button type="reset" class="btn-reset">
                     <i class="fas fa-redo"></i> {% trans "Clear Form" %}
@@ -1409,6 +1430,14 @@
                 }
             });
 
+            // Checkbox validation
+            const confirmCheckbox = document.getElementById('confirmCheckbox');
+            if (!confirmCheckbox.checked) {
+                setError(confirmCheckbox, '{% trans "Vous devez confirmer que vous avez vérifié les informations." %}');
+                if (!firstErrorField) firstErrorField = confirmCheckbox;
+                isValid = false;
+            }
+
             // ---------- DATE VALIDATIONS ----------
             // 1. Format (re-check, but blur already handled)
             document.querySelectorAll(dateFieldsSelector).forEach(field => {
@@ -1513,7 +1542,12 @@
                 clearError(this);
             });
         });
-
+        const confirmCheckbox = document.getElementById('confirmCheckbox');
+        if (confirmCheckbox) {
+            confirmCheckbox.addEventListener('change', function() {
+                clearError(this);
+            });
+        }
         setupFieldHandlers();
     });
 </script>

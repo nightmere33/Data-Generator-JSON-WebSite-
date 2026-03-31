@@ -350,19 +350,18 @@ class ApplicantForm(forms.Form):
         })
     )
 
-    # New relation field for each applicant
+    # Relation field with French display labels (values stay English)
     RELATION_CHOICES = [
-        ('', _('Select relation')),
-        ('Wife', _('Wife')),
-        ('Husband', _('Husband')),
-        ('Father', _('Father')),
-        ('Mother', _('Mother')),
-        ('Child', _('Child')),
-        
+        ('', 'Sélectionner le lien'),
+        ('Wife', 'Épouse'),
+        ('Husband', 'Époux'),
+        ('Father', 'Père'),
+        ('Mother', 'Mère'),
+        ('Child', 'Enfant'),
     ]
 
     relation = forms.ChoiceField(
-        label=_('Relation'),
+        label='Lien',  # French label
         choices=RELATION_CHOICES,
         required=False,
         widget=forms.Select(attrs={

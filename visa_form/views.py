@@ -12,8 +12,8 @@ import random
 from datetime import datetime, date, timedelta
 from django.utils.translation import gettext as _
 
-
-
+from reportlab.lib.enums import TA_LEFT
+from reportlab.lib.enums import TA_RIGHT
 
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
@@ -22,7 +22,10 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER
 from io import BytesIO
-
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase import pdfmetrics
+from django.conf import settings
+import os
 
 #from django.template.loader import render_to_string
 #from xhtml2pdf import pisa
@@ -324,43 +327,81 @@ def preview_pdf(request):
         return redirect('form')
     data = request.session['visa_data']
 
-    # Mapping dictionaries for code → label (same as in visa_filters.py)
+    # ---- Mapping dictionaries (copied from visa_filters.py) ----
     VISA_MAP = {
-        '88': 'Business Multiple', '87': 'Business Single', '95': 'Double Transit',
-        '96': 'Family Reunion', '94': 'Single Transit', '125': 'Sport & Cultural Single',
-        '93': 'Student Single', '86': 'Tourism Multiple', '85': 'Tourism Single',
-        '90': 'Treatment Multiple', '89': 'Treatment Single', '92': 'Work Permit Multiple',
+        '88': 'Business Multiple',
+        '87': 'Business Single',
+        '95': 'Double Transit',
+        '96': 'Family Reunion',
+        '94': 'Single Transit',
+        '125': 'Sport & Cultural Single',
+        '93': 'Student Single',
+        '86': 'Tourism Multiple',
+        '85': 'Tourism Single',
+        '90': 'Treatment Multiple',
+        '89': 'Treatment Single',
+        '92': 'Work Permit Multiple',
         '91': 'Work Permit Single',
     }
     NATIONALITY_MAP = {
-        '31': 'Algérie', '1': 'États-Unis d\'Amérique', '77': 'Royaume-Uni',
-        '35': 'Chine', '71': 'Inde', '84': 'Italie', '91': 'Canada', '9': 'Australie',
-        '3': 'Allemagne', '55': 'France', '80': 'Espagne', '191': 'Turquie',
+        '31': 'Algérie',
+        '1': 'États-Unis d\'Amérique',
+        '77': 'Royaume-Uni',
+        '35': 'Chine',
+        '71': 'Inde',
+        '84': 'Italie',
+        '91': 'Canada',
+        '9': 'Australie',
+        '3': 'Allemagne',
+        '55': 'France',
+        '80': 'Espagne',
+        '191': 'Turquie',
     }
     GENDER_MAP = {'M': 'Male', 'F': 'Female'}
     MARITAL_STATUS_MAP = {'0': 'Single', '1': 'Married'}
     OCCUPATION_MAP = {
-        'Agriculture': 'Agriculture', 'Armed/Security Force': 'Armed/Security Force',
-        'Artist/Performer': 'Artist/Performer', 'Business': 'Business',
-        'Caregiver/Babysitter': 'Caregiver/Babysitter', 'Construction': 'Construction',
-        'Culinary/Cookery': 'Culinary/Cookery', 'Driver/Lorry': 'Driver/Lorry',
-        'Education/Training': 'Education/Training', 'Engineer': 'Engineer',
-        'Finance/Banking': 'Finance/Banking', 'Government': 'Government',
-        'Health/Medical': 'Health/Medical', 'Information Technologies': 'Information Technologies',
-        'Legal Professional': 'Legal Professional', 'Other': 'Other',
-        'Press/Media': 'Press/Media', 'Professional Sportsperson': 'Professional Sportsperson',
-        'Religious Functionary': 'Religious Functionary', 'Researcher/Scientist': 'Researcher/Scientist',
-        'Retired': 'Retired', 'Seafarer': 'Seafarer', 'Self-Employed': 'Self-Employed',
-        'Service Sector': 'Service Sector', 'Student/Trainee': 'Student/Trainee',
-        'Tourism': 'Tourism', 'Unemployed': 'Unemployed',
+        'Agriculture': 'Agriculture',
+        'Armed/Security Force': 'Armed/Security Force',
+        'Artist/Performer': 'Artist/Performer',
+        'Business': 'Business',
+        'Caregiver/Babysitter': 'Caregiver/Babysitter',
+        'Construction': 'Construction',
+        'Culinary/Cookery': 'Culinary/Cookery',
+        'Driver/Lorry': 'Driver/Lorry',
+        'Education/Training': 'Education/Training',
+        'Engineer': 'Engineer',
+        'Finance/Banking': 'Finance/Banking',
+        'Government': 'Government',
+        'Health/Medical': 'Health/Medical',
+        'Information Technologies': 'Information Technologies',
+        'Legal Professional': 'Legal Professional',
+        'Other': 'Other',
+        'Press/Media': 'Press/Media',
+        'Professional Sportsperson': 'Professional Sportsperson',
+        'Religious Functionary': 'Religious Functionary',
+        'Researcher/Scientist': 'Researcher/Scientist',
+        'Retired': 'Retired',
+        'Seafarer': 'Seafarer',
+        'Self-Employed': 'Self-Employed',
+        'Service Sector': 'Service Sector',
+        'Student/Trainee': 'Student/Trainee',
+        'Tourism': 'Tourism',
+        'Unemployed': 'Unemployed',
     }
     TRAVEL_DOCUMENT_MAP = {
-        '10': 'Passeport Ordinaire', '3': 'Passeport Diplomatique',
-        '2': 'Carte d\'Identité', '9': 'Autres', '11': 'Document de Voyage pour Réfugiés',
+        '10': 'Passeport Ordinaire',
+        '3': 'Passeport Diplomatique',
+        '2': 'Carte d\'Identité',
+        '9': 'Autres',
+        '11': 'Document de Voyage pour Réfugiés',
     }
     RELATION_MAP = {
-        'Wife': 'Wife', 'Husband': 'Husband', 'Father': 'Father',
-        'Mother': 'Mother', 'Child': 'Child', 'Other': 'Other',
+        'Wife': 'Wife',
+        'Husband': 'Husband',
+        'Father': 'Father',
+        'Mother': 'Mother',
+        'Child': 'Child',
+        'Other': 'Other',
     }
 
     buffer = BytesIO()
@@ -373,13 +414,95 @@ def preview_pdf(request):
     style_heading = styles['Heading2']
     style_title = styles['Title']
 
+    # --- Arabic text reshaping and bidi ---
+    import re
+    import arabic_reshaper
+    from bidi.algorithm import get_display
+
+    def reshape_arabic_html(html_string):
+        """Reshape Arabic text inside HTML tags while preserving tags."""
+        pattern = re.compile(r'(<[^>]+>)|([^<>]+)')
+        parts = []
+        for match in pattern.finditer(html_string):
+            if match.group(1):  # HTML tag
+                parts.append(match.group(1))
+            else:  # text
+                text = match.group(2)
+                if text.strip():
+                    reshaped = arabic_reshaper.reshape(text)
+                    bidi_text = get_display(reshaped)
+                    parts.append(bidi_text)
+                else:
+                    parts.append(text)
+        return ''.join(parts)
+
+    # --- Register Arabic font (Noto Naskh Arabic) ---
+    import os
+    from django.conf import settings
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.lib.enums import TA_LEFT, TA_RIGHT
+
+    font_path = os.path.join(settings.BASE_DIR, 'visa_form', 'fonts', 'NotoNaskhArabic-Regular.ttf')
+    pdfmetrics.registerFont(TTFont('NotoNaskhArabic', font_path))
+
     story = []
 
     # Title
     story.append(Paragraph(_("Visa Application Summary"), style_title))
     story.append(Spacer(1, 0.5*cm))
 
-    # Common Information (sans relation)
+    # --- Reminder section (French and Arabic) ---
+    reminder_french = """
+    <font size=10><b> Rappels importants</b></font><br/>
+    <font size=9>• Veuillez vérifier que toutes les informations sont correctes.<br/>
+    • Nous ne sommes pas responsables des erreurs ou informations incorrectes fournies.<br/>
+    • Assurez-vous que la date et l'heure exactes du rendez-vous demandé.</font>
+    """
+
+    reminder_arabic = """
+    <font size=11><b>تذكيرات هامة</b></font><br/>
+    <font size=10>• يرجى التأكد من صحة جميع المعلومات.<br/>
+    • نحن غير مسؤولين عن أي أخطاء أو معلومات غير صحيحة.<br/>
+    • تأكد من صحة التاريخ الموعد المطلوب.</font>
+    """
+
+    # Reshape the Arabic text
+    reminder_arabic_shaped = reshape_arabic_html(reminder_arabic)
+
+    # Style for French (left-aligned, default font)
+    style_reminder_fr = ParagraphStyle(
+        'ReminderFrStyle',
+        parent=styles['Normal'],
+        borderPadding=5,
+        backColor=colors.HexColor('#fff3cd'),
+        borderColor=colors.HexColor('#ffeeba'),
+        borderWidth=1,
+        borderRadius=5,
+        alignment=TA_LEFT,
+    )
+
+    # Style for Arabic (right-aligned, using the Arabic font)
+    style_reminder_ar = ParagraphStyle(
+        'ReminderArStyle',
+        parent=styles['Normal'],
+        fontName='NotoNaskhArabic',
+        fontSize=10,
+        leading=13,
+        borderPadding=5,
+        backColor=colors.HexColor('#fff3cd'),
+        borderColor=colors.HexColor('#ffeeba'),
+        borderWidth=1,
+        borderRadius=5,
+        alignment=TA_RIGHT,
+    )
+
+    story.append(Paragraph(reminder_french, style_reminder_fr))
+    story.append(Spacer(1, 0.2*cm))
+    story.append(Paragraph(reminder_arabic_shaped, style_reminder_ar))
+    story.append(Spacer(1, 0.5*cm))
+
+    # Common Information
     story.append(Paragraph(_("Common Information"), style_heading))
     story.append(Spacer(1, 0.3*cm))
 
@@ -400,7 +523,6 @@ def preview_pdf(request):
 
     common_table = Table(common_data, colWidths=[5*cm, 10*cm])
     common_table.setStyle(TableStyle([
-        ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
         ('TEXTCOLOR', (0,0), (-1,-1), colors.black),
         ('ALIGN', (0,0), (-1,-1), 'LEFT'),
         ('FONTNAME', (0,0), (-1,-1), 'Helvetica'),
@@ -437,7 +559,6 @@ def preview_pdf(request):
 
         app_table = Table(app_data, colWidths=[5*cm, 10*cm])
         app_table.setStyle(TableStyle([
-            ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
             ('TEXTCOLOR', (0,0), (-1,-1), colors.black),
             ('ALIGN', (0,0), (-1,-1), 'LEFT'),
             ('FONTNAME', (0,0), (-1,-1), 'Helvetica'),
